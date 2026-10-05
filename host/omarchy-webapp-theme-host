@@ -1,0 +1,254 @@
+#!/usr/bin/python3
+"""Read-only Chromium native messaging host for the active Omarchy palette.
+
+Reads only theme/colors.toml and theme.name under the Omarchy state directory,
+sends validated colours on connect and whenever the theme settles on a new
+value, and answers {"type": "get"}. It never writes files or runs commands.
+"""
+
+import json
+import os
+import re
+import select
+import stat
+import struct
+import sys
+import time
+
+STATE_DIR = os.environ.get("OMARCHY_PALETTE_STATE_DIR") or os.path.expanduser(
+    "~/.local/state/omarchy/current"
+)
+TICK = 0.5
+MISSING_GRACE = 2.0
+MAX_FILE_BYTES = 64 * 1024
+MAX_MESSAGE_BYTES = 4 * 1024
+
+COLOUR_KEYS = frozenset(
+    """accent selection muted cursor
+    background dark_background darker_background lighter_background
+    foreground dark_foreground light_foreground bright_foreground
+    selection_background selection_foreground active_border_color
+    red yellow orange green cyan blue magenta brown
+    bright_red bright_yellow bright_green bright_cyan bright_blue bright_magenta
+    color0 color1 color2 color3 color4 color5 color6 color7
+    color8 color9 color10 color11 color12 color13 color14 color15""".split()
+)
+REQUIRED = ("background", "foreground", "accent")
+LINE = re.compile(r'^\s*([a-z_][a-z0-9_]*)\s*=\s*"([^"\n]*)"\s*(?:#.*)?$')
+HEX = re.compile(r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
+NAME = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+
+
+class Malformed(Exception):
+    pass
+
+
+def theme_dir():
+    return os.path.join(STATE_DIR, "theme")
+
+
+def colours_path():
+    return os.path.join(theme_dir(), "colors.toml")
+
+
+def name_path():
+    return os.path.join(STATE_DIR, "theme.name")
+
+
+def normalise_hex(value):
+    if not HEX.match(value):
+        return None
+    digits = value[1:].lower()
+    if len(digits) == 3:
+        digits = "".join(c * 2 for c in digits)
+    return "#" + digits
+
+
+def luminance(hex_colour):
+    def channel(i):
+        c = int(hex_colour[i : i + 2], 16) / 255
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+    return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5)
+
+
+def read_text(path, limit):
+    # Non-blocking open and a regular-file check, so a symlink to a FIFO or
+    # device cannot stall or flood the host.
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_CLOEXEC)
+    with os.fdopen(fd, "rb") as handle:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise Malformed("not a regular file")
+        data = handle.read(limit + 1)
+    if len(data) > limit:
+        raise Malformed("too large")
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise Malformed("not UTF-8") from error
+
+
+def parse_palette(text):
+    colours = {}
+    mode = None
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = LINE.match(line)
+        if not match:
+            if line.startswith("["):
+                continue
+            raise Malformed("unexpected line")
+        key, value = match.groups()
+        if key == "mode":
+            if value in ("light", "dark"):
+                mode = value
+        elif key in COLOUR_KEYS:
+            colour = normalise_hex(value)
+            if colour:
+                colours[key] = colour
+    for key in REQUIRED:
+        if key not in colours:
+            raise Malformed("missing " + key)
+    return colours, mode
+
+
+def read_name():
+    try:
+        name = read_text(name_path(), 256).strip()
+    except (OSError, Malformed):
+        return None
+    return name if NAME.match(name) else None
+
+
+def load():
+    """Return a message describing the current palette state."""
+    try:
+        text = read_text(colours_path(), MAX_FILE_BYTES)
+    except FileNotFoundError:
+        return {"type": "status", "state": "missing"}
+    except (OSError, Malformed):
+        return {"type": "status", "state": "malformed"}
+    try:
+        colours, mode = parse_palette(text)
+    except Malformed:
+        return {"type": "status", "state": "malformed"}
+    if mode is None:
+        if os.path.exists(os.path.join(theme_dir(), "light.mode")):
+            mode = "light"
+        else:
+            mode = "light" if luminance(colours["background"]) > 0.5 else "dark"
+    return {"type": "palette", "name": read_name(), "mode": mode, "colors": colours}
+
+
+def signature():
+    parts = []
+    for path in (name_path(), colours_path()):
+        try:
+            st = os.stat(path)
+            parts.append((st.st_ino, st.st_size, st.st_mtime_ns))
+        except OSError:
+            parts.append(None)
+    return tuple(parts)
+
+
+def send(message):
+    data = json.dumps(message, separators=(",", ":")).encode("utf-8")
+    sys.stdout.buffer.write(struct.pack("=I", len(data)) + data)
+    sys.stdout.buffer.flush()
+
+
+def read_exact(stream, size):
+    data = b""
+    while len(data) < size:
+        chunk = os.read(stream.fileno(), size - len(data))
+        if not chunk:
+            return None
+        data += chunk
+    return data
+
+
+def read_request(stream):
+    """Return a decoded request, {} for an unusable one, or None on EOF."""
+    header = read_exact(stream, 4)
+    if header is None:
+        return None
+    (length,) = struct.unpack("=I", header)
+    if length > MAX_MESSAGE_BYTES:
+        return None
+    body = read_exact(stream, length)
+    if body is None:
+        return None
+    try:
+        request = json.loads(body)
+    except ValueError:
+        return {}
+    return request if isinstance(request, dict) else {}
+
+
+class Watcher:
+    """Emit a message once the palette has settled on a new state.
+
+    A change must be seen unchanged on two consecutive ticks before it is
+    read, which absorbs Omarchy's remove-then-move swap. Absence is reported
+    only after MISSING_GRACE seconds.
+    """
+
+    def __init__(self):
+        self.sent = None
+        self.seen = signature()
+        self.loaded = self.seen
+        self.missing_since = None
+
+    def current(self):
+        self.sent = load()
+        return self.sent
+
+    def tick(self, now):
+        sig = signature()
+        if sig != self.seen:
+            self.seen = sig
+            return None
+        if sig == self.loaded and self.missing_since is None:
+            return None
+        self.loaded = sig
+        message = load()
+        if message.get("state") == "missing":
+            if self.sent == message:
+                self.missing_since = None
+                return None
+            if self.missing_since is None:
+                self.missing_since = now
+            if now - self.missing_since < MISSING_GRACE:
+                return None
+        self.missing_since = None
+        if message == self.sent:
+            return None
+        self.sent = message
+        return message
+
+
+def main():
+    stdin = sys.stdin.buffer
+    watcher = Watcher()
+    send(watcher.current())
+    while True:
+        readable, _, _ = select.select([stdin], [], [], TICK)
+        if readable:
+            request = read_request(stdin)
+            if request is None:
+                return 0
+            if request.get("type") == "get":
+                send(watcher.current())
+            continue
+        message = watcher.tick(time.monotonic())
+        if message is not None:
+            send(message)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (BrokenPipeError, KeyboardInterrupt):
+        sys.exit(0)

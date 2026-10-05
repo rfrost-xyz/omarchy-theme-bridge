@@ -2,8 +2,8 @@
 
 ## 1. Read-only palette helper
 
-- [ ] 1.1 Implement `host/omarchy-webapp-theme-host` (framing, whitelist parsing, mode resolution, `get` handling, EOF exit); verify with `python3 -m unittest discover tests/host` covering valid, mode fallback, unknown keys, symlinked non-palette file and ignored requests
-- [ ] 1.2 Add the stable-signature watch with the missing grace period; verify with helper tests for live change, Omarchy-style directory replacement (one palette, no missing status), missing then restored, malformed then fixed, and exit on stdin close
+- [x] 1.1 Implement `host/omarchy-webapp-theme-host` (framing, whitelist parsing, mode resolution, `get` handling, EOF exit); verify with `python3 -m unittest discover tests/host` covering valid, mode fallback, unknown keys, symlinked non-palette file and ignored requests
+- [x] 1.2 Add the stable-signature watch with the missing grace period; verify with helper tests for live change, Omarchy-style directory replacement (one palette, no missing status), missing then restored, malformed then fixed, and exit on stdin close
 
 ## 2. Extension transport
 

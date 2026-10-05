@@ -29,10 +29,7 @@ if [[ -e $DATA_DIR && ! -f $DATA_DIR/$MARKER ]]; then
   exit 1
 fi
 
-if [[ $DATA_DIR != /* ]]; then
-  echo "The install directory must be an absolute path (check XDG_DATA_HOME): $DATA_DIR" >&2
-  exit 1
-fi
+require_absolute_dirs
 if ((FLAG)) && ! path_is_safe "$EXTENSION_DIR"; then
   echo "Flags: $EXTENSION_DIR contains spaces, commas, quotes or other characters the flags file cannot hold; load the extension unpacked instead." >&2
   FLAG=0

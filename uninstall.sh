@@ -21,6 +21,8 @@ for arg in "$@"; do
   esac
 done
 
+require_absolute_dirs
+
 changed=0
 # Flags first: the record of how the line was changed lives in $DATA_DIR.
 if [[ -f $FLAGS_FILE ]]; then

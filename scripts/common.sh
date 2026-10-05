@@ -20,6 +20,19 @@ HOST_PATH=$DATA_DIR/bin/$HOST_FILE
 MANIFEST_PATH=$CONFIG_DIR/chromium/NativeMessagingHosts/$HOST_NAME.json
 FLAGS_FILE=$CONFIG_DIR/chromium-flags.conf
 
+# XDG directories must be absolute; refuse rather than write relative to
+# wherever the script happens to run.
+require_absolute_dirs() {
+  if [[ $CONFIG_DIR != /* ]]; then
+    echo "The configuration directory must be an absolute path (check XDG_CONFIG_HOME): $CONFIG_DIR" >&2
+    exit 1
+  fi
+  if [[ $DATA_DIR != /* ]]; then
+    echo "The install directory must be an absolute path (check XDG_DATA_HOME): $DATA_DIR" >&2
+    exit 1
+  fi
+}
+
 host_manifest() {
   /usr/bin/python3 - "$HOST_NAME" "$HOST_PATH" "$EXTENSION_ID" <<'PY'
 import json, sys

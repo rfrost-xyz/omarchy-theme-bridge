@@ -146,6 +146,9 @@ class InstallTest(unittest.TestCase):
             "no switch, no final newline": b"--a\n--b",
             "empty file": b"",
             "trailing slash entry kept": b"--load-extension=/x/\n",
+            "leading empty item": b"--load-extension=,/usr/share/omarchy/a\n",
+            "trailing empty item": b"--load-extension=/a,\n",
+            "empty item in the middle": b"--load-extension=/a,,/b\n",
         }
         for label, original in cases.items():
             with self.subTest(label):
@@ -176,7 +179,7 @@ class InstallTest(unittest.TestCase):
                 env = {"HOME": self.home, "PATH": os.environ["PATH"]}
                 result = subprocess.run([os.path.join(ROOT, "install.sh"), "--load-extension-flag"], env=env, capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertIn("shares a line or is indented", result.stderr)
+                self.assertIn("shares a line, is indented or is quoted", result.stderr)
                 self.assertIn("Load unpacked", result.stdout)
                 self.assertEqual(self.read_flags(), original)
                 self.run_script("uninstall.sh")
@@ -227,7 +230,7 @@ class InstallTest(unittest.TestCase):
             with self.subTest(original=original):
                 self.write_flags(original)
                 result = self.run_env({}, "install.sh", "--load-extension-flag")
-                self.assertIn("shares a line or is indented", result.stderr)
+                self.assertIn("shares a line, is indented or is quoted", result.stderr)
                 self.assertEqual(self.read_flags(), original)
                 self.run_script("uninstall.sh")
 
@@ -270,7 +273,7 @@ class InstallTest(unittest.TestCase):
         original = b"--load-extension=/a\n--homepage=https://x/#/ --load-extension=/b\n"
         self.write_flags(original)
         result = self.run_env({}, "install.sh", "--load-extension-flag")
-        self.assertIn("shares a line or is indented", result.stderr)
+        self.assertIn("shares a line, is indented or is quoted", result.stderr)
         self.assertEqual(self.read_flags(), original)
 
     def test_other_spelling_of_data_home_uninstalls_cleanly(self):
@@ -291,6 +294,20 @@ class InstallTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Remove that entry by hand", result.stderr)
         self.assertNotIn("Remove:", result.stdout)
+
+    def test_relative_config_home_is_refused(self):
+        for script in ("install.sh", "uninstall.sh"):
+            with self.subTest(script=script):
+                result = self.run_env({"XDG_CONFIG_HOME": "cfg"}, script)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("XDG_CONFIG_HOME", result.stderr)
+
+    def test_quoted_list_is_not_edited(self):
+        original = f'--load-extension="/opt/a,{self.data}/extension"\n'.encode()
+        self.write_flags(original)
+        result = self.run_env({}, "install.sh", "--load-extension-flag")
+        self.assertIn("shares a line, is indented or is quoted", result.stderr)
+        self.assertEqual(self.read_flags(), original)
 
     def test_foreign_files_are_left_alone(self):
         os.makedirs(self.data)

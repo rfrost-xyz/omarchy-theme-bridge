@@ -71,7 +71,9 @@ def occurrences(lines):
     for index, line in enumerate(lines):
         if any(token.startswith(SWITCH) for token in tokens(line)):
             text = body(line)
-            yield index, text.startswith(SWITCH) and not any(c.isspace() for c in text)
+            # Quotes or backslashes make the launcher's value differ from the
+            # raw text, so such a line is never edited.
+            yield index, text.startswith(SWITCH) and not any(c.isspace() or c in "\"'\\" for c in text)
 
 
 def entries(line):
@@ -95,15 +97,19 @@ def add(lines, ext):
     index, standalone = found[-1]
     if not standalone:
         raise Refuse(
-            "the last --load-extension switch shares a line or is indented; "
+            "the last --load-extension switch shares a line, is indented or is quoted; "
             "edit it by hand or load the extension unpacked"
         )
     line = lines[index]
     current = entries(line)
     if any(same(item, ext) for item in current):
         return lines, None, None, None
-    state = {"action": "appended", "was_empty": not current}
-    new_line = SWITCH + ",".join(current + [ext]) + ending(line)
+    # Append verbatim so empty items (Omarchy's migrations can leave a leading
+    # comma) survive, and record both bodies so removal restores the original.
+    value = body(line)[len(SWITCH):]
+    written = value + ("" if value == "" or value.endswith(",") else ",") + ext
+    state = {"action": "appended", "original": value, "written": written}
+    new_line = SWITCH + written + ending(line)
     new = list(lines)
     new[index] = new_line
     return new, state, line, new_line
@@ -116,13 +122,21 @@ def remove(lines, ext, state):
         if not standalone:
             continue
         line = lines[index]
-        current = entries(line)
-        kept = [item for item in current if not same(item, ext)]
-        if kept == current:
+        value = body(line)[len(SWITCH):]
+        items = value.split(",")
+        kept = [item for item in items if not (item and same(item, ext))]
+        if kept == items:
             continue
         old_line = line
-        if kept or (state or {}).get("was_empty"):
-            new_line = SWITCH + ",".join(kept) + ending(line)
+        state = state or {}
+        if state.get("action") == "appended" and state.get("written") == value:
+            restored = state.get("original", "")
+        elif not any(kept) and state.get("action") != "appended":
+            restored = None
+        else:
+            restored = ",".join(kept)
+        if restored is not None:
+            new_line = SWITCH + restored + ending(line)
             new[index] = new_line
         else:
             del new[index]

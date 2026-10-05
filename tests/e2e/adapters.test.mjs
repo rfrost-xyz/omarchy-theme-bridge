@@ -84,11 +84,20 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.equal(await page.style('#sidebar', 'color'), css(derived['text-secondary']));
   assert.equal(await page.style('#rail', 'color'), css(derived.text));
   assert.equal(await page.style('#legacy-link', 'color'), css(derived['accent-text']));
-  // Tooltips, who-reacted popovers and shortcut hints: raised surface, not a literal inverse.
+  // Tooltips and who-reacted popovers: raised surface, not a literal inverse.
   assert.equal(await page.style('#tooltip', 'backgroundColor'), css(derived.ramp[12]));
   assert.equal(await page.style('#tooltip', 'color'), css(derived.text));
-  assert.equal(await page.style('#shortcut-hint', 'backgroundColor'), css(derived.ramp[12]));
   assert.match(await page.style('#reacted', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.2\)$/);
+  // Everything else drawn from the inverse pair keeps Slack's values.
+  assert.equal(await page.style('#shortcut-hint', 'backgroundColor'), css('#d1d2d3'));
+  assert.equal(await page.style('#red-badge', 'backgroundColor'), css('#e01e5a'));
+  assert.equal(await page.style('#red-badge', 'color'), css('#1a1d21'));
+  assert.equal(await page.style('#white-badge', 'color'), css('#0a77a7'));
+  assert.equal(await page.style('#icon-badge', 'backgroundColor'), css('#0a77a7'));
+  // Menus follow the palette, including the highlighted row.
+  assert.equal(await page.style('#menu-item', 'color'), css(derived.text));
+  assert.match(await page.style('#menu-highlight', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.2\)$/);
+  assert.equal(await page.style('#menu-highlight', 'color'), css(derived.text));
   // Triplet tokens still resolve inside rgba().
   assert.equal(await page.style('#triplet', 'backgroundColor'), css('#1a1b26'));
   assert.match(await page.style('#triplet', 'color'), /^rgba\(169, 177, 214, 0\.7/);

@@ -61,8 +61,10 @@ const CHECKS = {
     ['#rail', 4.5, 'rail text on backdrop'],
     ['#legacy-link', 4.5, 'legacy link'],
     ['#tooltip', 4.5, 'tooltip and reaction popover text'],
-    ['#shortcut-hint', 4.5, 'shortcut hint text'],
     ['#reacted', 4.5, 'text on your own reaction'],
+    ['#menu-item', 4.5, 'menu item'],
+    ['#menu-shortcut', 3, 'menu shortcut hint'],
+    ['#menu-highlight', 4.5, 'highlighted menu item'],
   ],
 };
 // Slack's own status colours on our surfaces. Only Slack's light values were
@@ -71,6 +73,8 @@ const PRESERVED_LIGHT = {
   slack: [
     ['#error-inline', 4.5, 'Slack important text on messages'],
     ['#success-inline', 3, 'Slack success text on messages'],
+    ['#red-badge', 4.5, 'red badge count'],
+    ['#white-badge', 4.5, 'white badge count'],
   ],
 };
 

@@ -22,21 +22,31 @@ html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
   --dt_color-content-pry: var(--omarchy-text) !important;
   --dt_color-content-sec: var(--omarchy-text-secondary) !important;
   --dt_color-content-ter: var(--omarchy-text-tertiary) !important;
-  /* Inverted surfaces (tooltips, who-reacted popovers, shortcut hints) are a
-     raised palette surface with normal text rather than a literal inverse. */
-  --dt_color-content-inv-pry: var(--omarchy-text) !important;
-  --dt_color-content-inv-sec: var(--omarchy-text-secondary) !important;
+
   --dt_color-content-hgl-1: var(--omarchy-accent-text) !important;
 
   /* Base surfaces: messages, panes, menus and dialogs */
   --dt_color-base-pry: var(--omarchy-background) !important;
   --dt_color-base-sec: var(--omarchy-mix-3) !important;
   --dt_color-base-ter: var(--omarchy-mix-8) !important;
-  --dt_color-base-inv-pry: var(--omarchy-mix-12) !important;
 
-  /* Highlight 1 (links, your own reactions, selection) follows the accent */
+  /* Pale highlight 1 background (selection, your own reactions in light mode)
+     follows the accent. The solid inverse fills (--dt_color-base-inv-*) and
+     inverse ink (--dt_color-content-inv-*, --sk_inverted_*) stay Slack's:
+     badges, unread dots, menu highlights and danger items pair them with
+     Slack's saturated fills. */
   --dt_color-base-hgl-1: rgba(var(--omarchy-accent-rgb), 0.16) !important;
-  --dt_color-base-inv-hgl-1: rgba(var(--omarchy-accent-rgb), 0.2) !important;
+
+  /* Containers: menus, including the message right-click menu (observed in
+     the signed-in client as .c-menu on --dt_color-ctr-pry) */
+  --dt_color-ctr-pry: var(--omarchy-mix-3) !important;
+  --dt_color-ctr-pry-hover: var(--omarchy-mix-6) !important;
+  --dt_color-ctr-pry-pressed: var(--omarchy-mix-8) !important;
+  --dt_color-ctr-sec: var(--omarchy-mix-5) !important;
+  --dt_color-ctr-sec-hover: var(--omarchy-mix-8) !important;
+  --dt_color-ctr-sec-pressed: var(--omarchy-mix-10) !important;
+  --sk_menu-item_highlight-background: rgba(var(--omarchy-accent-rgb), 0.2) !important;
+  --sk_menu-item_highlight-color: var(--omarchy-text) !important;
 
   /* Hover and press washes */
   --dt_color-surf-pry: rgba(var(--omarchy-foreground-rgb), 0.06) !important;
@@ -58,8 +68,6 @@ html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
   --sk_primary_background: var(--omarchy-background-rgb) !important;
   --sk_primary_foreground: var(--omarchy-text-rgb) !important;
   --sk_secondary_background: var(--omarchy-mix-4-rgb) !important;
-  --sk_inverted_background: var(--omarchy-mix-12-rgb) !important;
-  --sk_inverted_foreground: var(--omarchy-text-rgb) !important;
   --sk_foreground_max: var(--omarchy-foreground-rgb) !important;
   --sk_foreground_high: var(--omarchy-foreground-rgb) !important;
   --sk_foreground_mid: var(--omarchy-foreground-rgb) !important;
@@ -152,4 +160,20 @@ html[data-omarchy-remap~="slack"][data-omarchy-mode="light"] > body {
 html[data-omarchy-remap~="slack"][data-omarchy-mode="dark"],
 html[data-omarchy-remap~="slack"][data-omarchy-mode="dark"] > body {
   color-scheme: dark !important;
+}
+
+/* Tooltips (including the who-reacted popover) are drawn from the inverse
+   pair; inside them only, use a raised palette surface with normal text. */
+html[data-omarchy-adapters~="slack"] .c-tooltip__tip {
+  --background: var(--omarchy-mix-12) !important;
+  --dt_color-base-inv-pry: var(--omarchy-mix-12) !important;
+  --dt_color-content-inv-pry: var(--omarchy-text) !important;
+  --dt_color-content-inv-sec: var(--omarchy-text-secondary) !important;
+}
+
+/* Your own reactions: an accent tint instead of Slack's solid blue (in dark
+   mode the pill uses the inverse highlight, which badges also use). */
+html[data-omarchy-adapters~="slack"] .c-reaction--reacted {
+  --dt_color-base-inv-hgl-1: rgba(var(--omarchy-accent-rgb), 0.2) !important;
+  --dt_color-content-hgl-1: var(--omarchy-text) !important;
 }

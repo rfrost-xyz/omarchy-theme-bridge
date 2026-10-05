@@ -4,8 +4,8 @@
  * <body> and nested theme containers of the same mode only.
  *
  * Deliberately untouched: the chromatic block families (blu, bro, gre, ora,
- * pin, pur, red, tea, yel and their --ca/--cd/--cl twins), shadows, scrims
- * and error rings. Those are authored content or carry meaning.
+ * pin, pur, red, tea, yel and their --ca/--cd/--cl twins), the primary
+ * button blue, shadows, scrims and error rings. Those are authored content or carry meaning.
  */
 html[data-omarchy-adapters~="notion"],
 html[data-omarchy-adapters~="notion"] > body,
@@ -61,8 +61,9 @@ html[data-omarchy-adapters~="notion"][data-omarchy-mode="light"] .notion-light-t
   --c-graTexTer: var(--omarchy-text-tertiary) !important;
   --c-graTexDis: var(--omarchy-text-disabled) !important;
 
-  /* Interface blue: links, focus and primary buttons */
-  --c-palUiBlu600: var(--omarchy-accent) !important;
+  /* Interface blue: link text and the selection tint. --c-palUiBlu600 also
+     fills primary buttons under white labels, so it stays Notion's to keep
+     those labels readable with bright accents. */
   --c-palUiBlu700: var(--omarchy-accent-text) !important;
   --ca-palUiBlu300: rgba(var(--omarchy-accent-rgb), 0.2) !important;
 }

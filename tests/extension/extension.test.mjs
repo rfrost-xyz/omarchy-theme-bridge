@@ -24,7 +24,9 @@ test('content scripts match only the adapter origins and load the shared core fi
   assert.deepEqual(matches, ['https://app.notion.com/*', 'https://app.slack.com/*']);
   for (const entry of manifest.content_scripts) {
     assert.deepEqual(entry.js.slice(0, 2), ['content/colour.js', 'content/palette.js']);
-    assert.match(entry.js[2], /^adapters\/[a-z0-9-]+\/adapter\.js$/);
+    const id = /^adapters\/([a-z0-9-]+)\/adapter\.js$/.exec(entry.js[2])?.[1];
+    assert.ok(id, 'third script is an adapter');
+    assert.deepEqual(entry.css, [`adapters/${id}/adapter.css`]);
     assert.equal(entry.all_frames, undefined);
   }
 });

@@ -71,7 +71,9 @@ export class Browser {
   send(method, params = {}, sessionId) {
     const id = ++this.nextId;
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject, method });
+      const timer = setTimeout(() => { this.pending.delete(id); reject(new Error(`${method}: no reply`)); }, 15000);
+      const settle = (fn) => (value) => { clearTimeout(timer); fn(value); };
+      this.pending.set(id, { resolve: settle(resolve), reject: settle(reject), method });
       this.ws.send(JSON.stringify({ id, method, params, sessionId }));
     });
   }
@@ -130,6 +132,17 @@ export class Browser {
     try {
       return execFileSync('pgrep', ['-f', this.hostPath], { encoding: 'utf8' }).trim().split('\n').filter(Boolean).map(Number);
     } catch { return []; }
+  }
+
+  // Swap the registered helper for one that exits at once, and back.
+  breakHost() {
+    writeFileSync(this.hostPath, '#!/bin/sh\nexit 0\n');
+    chmodSync(this.hostPath, 0o755);
+  }
+
+  restoreHost() {
+    copyFileSync(join(ROOT, 'host', 'omarchy-webapp-theme-host'), this.hostPath);
+    chmodSync(this.hostPath, 0o755);
   }
 
   killHost() {

@@ -41,6 +41,8 @@ test('notion: chrome follows the palette and authored colours stay', async () =>
   assert.equal(await page.style('#red-block', 'backgroundColor'), css('#241d1d'));
   assert.equal(await page.token('#blue-text', '--c-bluTexPri'), NOTION_DARK['--c-bluTexPri']);
   assert.equal(await page.token('#red-block', '--c-redTexPri'), NOTION_DARK['--c-redTexPri']);
+  // Primary buttons draw white labels on this blue, so it stays Notion's.
+  assert.equal(await page.token('body', '--c-palUiBlu600'), '#2383e2');
   // A light-theme container inside the dark page keeps Notion's light surface.
   assert.equal(await page.style('#opposite', 'backgroundColor'), 'rgb(255, 255, 255)');
   await page.close();

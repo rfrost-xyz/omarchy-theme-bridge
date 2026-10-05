@@ -70,6 +70,25 @@ test('stopped service worker reconnects when a page regains attention', async ()
   await page.close();
 });
 
+test('a live worker reconnects at once on ensure instead of waiting for backoff', async () => {
+  const page = await browser.open('https://app.notion.com/');
+  await waitBg(page, '#1a1b26');
+  browser.breakHost();
+  browser.killHost();
+  // Failed relaunches at about 1, 3 and 7 s push the next retry to about 15 s.
+  await new Promise((r) => setTimeout(r, 8500));
+  assert.ok(await browser.workerTarget(), 'worker stayed alive');
+  browser.restoreHost();
+  browser.setTheme('vantablack', DARK2);
+  const start = Date.now();
+  await page.eval("window.dispatchEvent(new Event('focus'))");
+  await waitBg(page, '#000000', 3000);
+  assert.ok(Date.now() - start < 3000);
+  browser.setTheme('tokyo-night', DARK);
+  await waitBg(page, '#1a1b26', 6000);
+  await page.close();
+});
+
 test('missing palette keeps the last good palette and reports missing', async () => {
   const page = await browser.open('https://app.slack.com/');
   await waitBg(page, '#1a1b26');

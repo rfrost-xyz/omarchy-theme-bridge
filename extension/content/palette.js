@@ -35,7 +35,9 @@
     const key = JSON.stringify(status);
     if (reported.get(id) === key) return;
     reported.set(id, key);
-    chrome.storage.local.set({ [`adapter:${id}`]: { ...status, at: Date.now() } }).catch(() => {});
+    try {
+      chrome.storage.local.set({ [`adapter:${id}`]: { ...status, at: Date.now() } }).catch(() => {});
+    } catch { /* context invalidated; teardown follows */ }
   }
 
   function evaluate() {
@@ -58,8 +60,18 @@
     }
   }
 
+  // After the extension is reloaded or removed, this script is orphaned and
+  // no longer hears palette changes. Remove everything it added so the page
+  // falls back to the app's own colours instead of a stale palette.
+  function alive() {
+    if (chrome.runtime?.id) return true;
+    teardown();
+    return false;
+  }
+
   function ensureConnection() {
-    try { chrome.runtime.sendMessage({ type: 'ensure' }).catch(() => {}); } catch { /* extension reloaded */ }
+    if (!alive()) return;
+    try { chrome.runtime.sendMessage({ type: 'ensure' }).catch(() => {}); } catch { /* reloaded */ }
   }
 
   function load(values) {
@@ -72,6 +84,7 @@
   // Re-check when the app flips its own theme classes, and keep our style
   // element and attribute in place if the page rewrites the root.
   const observer = new MutationObserver(() => {
+    if (!alive()) return;
     if (palette && style && style.parentNode !== root) ensureStyle();
     evaluate();
   });
@@ -84,7 +97,8 @@
       evaluate();
     }
   };
-  new MutationObserver(watchBody).observe(root, { childList: true });
+  const bodyWatcher = new MutationObserver(watchBody);
+  bodyWatcher.observe(root, { childList: true });
   document.addEventListener('DOMContentLoaded', watchBody);
 
   chrome.storage.local.get(['palette', 'disabledAdapters']).then(load).catch(() => {});
@@ -97,10 +111,23 @@
 
   // Some apps mark their theme below <body>; a cheap re-check while visible
   // catches an in-app appearance change without a subtree observer.
-  setInterval(() => { if (document.visibilityState === 'visible') evaluate(); }, 2000);
+  const interval = setInterval(() => { if (alive() && document.visibilityState === 'visible') evaluate(); }, 2000);
+  const onVisible = () => { if (document.visibilityState === 'visible') ensureConnection(); };
+
+  function teardown() {
+    observer.disconnect();
+    bodyWatcher.disconnect();
+    clearInterval(interval);
+    document.removeEventListener('visibilitychange', onVisible);
+    window.removeEventListener('focus', ensureConnection);
+    style?.remove();
+    root.removeAttribute(ATTR);
+    delete root.dataset.omarchyMode;
+    adapters.clear();
+  }
 
   ensureConnection();
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') ensureConnection(); });
+  document.addEventListener('visibilitychange', onVisible);
   window.addEventListener('focus', ensureConnection);
 
   globalThis.OmarchyWebappTheme = {

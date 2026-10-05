@@ -59,7 +59,7 @@ Each adapter SHALL declare how it treats the app's own light or dark mode, and t
 - **THEN** the adapter maps the palette onto the app's surfaces, text, borders, menus, dialogs, sidebars and code blocks
 
 ### Requirement: Semantic mapping and preserved meaning
-Adapters SHALL override the apps' semantic colour variables rather than layout selectors. The Notion adapter SHALL NOT change authored block colour families other than neutral grey, or the primary button blue that sits under white labels. While Slack's mode matches the palette's, the Slack adapter SHALL NOT change success, warning, important, education, badge or presence colours, and it SHALL NOT change badge or presence colours in either mode.
+Adapters SHALL override the apps' semantic colour variables rather than layout selectors. The Notion adapter SHALL NOT change authored block colour families other than neutral grey, or the primary button blue that sits under white labels. While Slack's mode matches the palette's, the Slack adapter SHALL NOT change success, warning, important, education, badge or presence colours. It SHALL NOT change badge colours in either mode; when it remaps, success and anything else Slack draws in its success green keep a green hue from the palette.
 
 #### Scenario: Authored Notion colour
 - **WHEN** a Notion block uses a red background colour

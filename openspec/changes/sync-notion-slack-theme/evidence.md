@@ -33,10 +33,10 @@ Hyprland 0.56.2, Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Missing and malformed keep last palette | `background.js` status handling | e2e `missing palette …`, `malformed palette …` | Pass |
 | Independent adapters | `options/`, `disabledAdapters` | e2e `adapters toggle independently and live from the options page` | Pass |
 | Mode gating: Notion mismatch and match | `palette.js` `evaluate`, Notion `appMode` | e2e `notion: mode mismatch …`, `notion: chrome follows the palette …` | Pass |
-| Mode gating: Slack mismatch remaps | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours`; live: user reported Slack correct under light and dark themes after the fix | Pass |
-| Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (incl. search dialog, glass header), `slack: tokens follow …` (incl. backdrop, inverted sidebar, rail, legacy link) | Pass |
+| Mode gating: Slack mismatch remaps | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours` (dark palette, Slack light) and `slack: a light palette over Slack in Dark uses light controls and palette hues` (fails if `color-scheme: light` is wrong); live: user reported Slack correct under light and dark themes | Pass |
+| Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, rail, legacy link, tooltips and who-reacted popovers, shortcut hints, your own reactions) | Pass |
 | Preserved meaning: Notion chromatic families and button blue | Notion CSS exclusions | e2e asserts every chromatic token in the fixture, `--c-palUiBlu600`, opposite-theme container | Pass |
-| Preserved meaning: Slack status colours while modes match | Slack CSS exclusions | e2e asserts error, success (text and background), warning (text and background), education, badge, presence | Pass |
+| Preserved meaning: Slack status colours while modes match; badges always | Slack CSS exclusions | e2e asserts error, success (text and background), warning (text and background), education, badge, presence while modes match, and badges under remap. Which token signed-in Slack uses for presence dots was not captured, so under remap presence may take the palette's green (stated in the spec and README) | Pass |
 | Readable contrast | `colour.js` `derive`, both adapters | `tests/extension` derived values for 22 stock themes; e2e `contrast.test.mjs`: 22 themes × (Notion, Slack same mode, Slack opposite mode with remapped status text on its tint); a deliberately broken mapping was confirmed to fail | Pass |
 
 Fixtures are synthetic. Notion token names and defaults come from Notion's
@@ -57,6 +57,7 @@ the signed-in client. No workspace content is stored.
 | Switch shares a line, is indented or carries whitespace | `occurrences`, `Refuse`, post-write check | `test_refuses_switch_that_is_indented_or_shares_a_line`, `test_switch_with_trailing_whitespace_is_refused` | Pass |
 | Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `remove`, `flags-state.json` | `test_round_trip_is_byte_exact` (7 file shapes), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
 | Entry cannot be removed | `uninstall.sh`, `flags.py mentions` | `test_uninstall_keeps_files_when_entry_cannot_be_removed` | Pass |
+| Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON; `flags.py` ignores lines the launcher skips | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited` | Pass |
 | Reinstall guidance | `install.sh` | `test_reinstall_says_reload_instead_of_restart` | Pass |
 
 ## Colour scheme preference (task 5.2)
@@ -79,8 +80,8 @@ loaded the extension and started the helper for
 as `omarchy-launch-webapp` app windows in `Profile 1`.
 
 - Notion: followed light and dark themes live (user observed). The Ctrl+K
-  search stayed grey; fixed by mapping the frosted and glass tokens, then
-  confirmed by the user.
+  search stayed grey; fixed by mapping the frosted and glass tokens. After
+  reloading the extension the user confirmed it themed ("Yes, themed").
 - Slack: messages followed the palette (screen sample `#071012` against
   palette `#060f12`) but navigation did not. Read-only diagnostics of computed
   styles (no message content) showed `sk-client-theme--dark` on `<body>`, the
@@ -88,7 +89,10 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   backdrop on `.p-theme_background`. After the fix the rail sampled `#060d10`
   and the sidebar `#171c1e`. Under light themes Slack stayed in its Dark mode;
   after adding the remap policy the user reported Slack correct in light and
-  dark themes.
+  dark themes. The who-reacted popover was then reported white: a diagnostic
+  showed tooltips use Slack's inverted tokens, which were mapped to a literal
+  inverse. They now use a raised palette surface, and your own reactions an
+  accent tint; the user confirmed ("Looks right").
 - Not inspected individually in the live apps: code blocks and authored or
   status colours (covered by the automated suites only). Screen captures were
   viewed and deleted immediately; none are kept.
@@ -104,10 +108,15 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   untested load and visibility triggers, incomplete preserved-colour
   assertions, order-dependent transport tests, dry-run file list and stale
   traceability. All fixed.
+- Round 3: manifest ownership for non-ASCII paths, flags lines with
+  unbalanced quotes, Notion translucent borders and washes, a tautological
+  search fixture, presence wording under remap and the untested
+  light-over-dark Slack direction. All fixed. Its Notion search findings
+  repeated the earlier user report, which the user had since resolved.
 
 ## Full check
 
-`./scripts/check` (121 s): helper 17 OK, installer 18 OK, extension unit
-28/28, headless Chromium 40/40, `openspec validate --all --strict` passed.
+`./scripts/check` (124 s): helper 17 OK, installer 20 OK, extension unit
+28/28, headless Chromium 41/41, `openspec validate --all --strict` passed.
 `shellcheck` is not available on this host, so shell scripts are checked with
 `bash -n` and the installer tests.

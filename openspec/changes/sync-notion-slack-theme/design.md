@@ -133,11 +133,15 @@ deliberately opposite-mode elements such as tooltips keep the app's colours.
   palette (`--dt_color-plt-gray-10`). That theme hook gets the palette
   background directly rather than remapping Slack's shared grey palette.
   Slack's inverse pair (`--dt_color-base-inv-*`, `--dt_color-content-inv-*`,
-  `--sk_inverted_*`) is shared by tooltips and by badges, unread dots, menu
-  highlights and danger items on saturated fills, so it stays Slack's
-  globally; only `.c-tooltip__tip` (tooltips and the who-reacted popover)
-  and `.c-reaction--reacted` (your own reactions) override it locally. These
-  three component hooks are the only class selectors in the adapters.
+  `--sk_inverted_*`) is shared by tooltips and by badges, unread dots and
+  danger items on saturated fills, so it stays Slack's globally; only
+  `.c-tooltip__tip` (tooltips and the who-reacted popover) and
+  `.c-reaction--reacted` (your own reactions) override it locally. Menus use
+  the container family `--dt_color-ctr-*`, and the highlighted menu row uses
+  `--sk_menu-item_highlight-*`; both are mapped (accent tint for the
+  highlight). The selected sidebar row uses `--dt_color-theme-base-hgl-1` with
+  `--dt_color-theme-content-hgl-1`, also an accent tint. These three component
+  hooks are the only class selectors in the adapters.
 
 ### Mode policy per adapter, never mode forcing
 

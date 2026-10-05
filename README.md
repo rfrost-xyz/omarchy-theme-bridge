@@ -92,9 +92,9 @@ Running it again is harmless.
 ## How the adapters map colours
 
 Adapters only assign the apps' own CSS variables; they do not restyle layout
-classes. Overrides apply to the page root and to theme containers in the same
-mode, so deliberately opposite-mode elements such as tooltips keep the app's
-styling.
+classes. In Notion, overrides apply to the page root and to theme containers in
+the same mode, so deliberately opposite-mode elements keep Notion's styling.
+Slack's handling of tooltips, reactions and its two modes is described below.
 
 - **Notion**: surfaces (`--c-bac*`, `--c-popBac`), text and icons
   (`--c-tex*`, `--c-ico*`), borders, hover and selection washes, code block
@@ -110,7 +110,7 @@ styling.
   Slack paints it from its shared grey palette. Tooltips (including the
   who-reacted popover, `.c-tooltip__tip`) and your own reactions
   (`.c-reaction--reacted`) get a raised surface and an accent tint locally;
-  Slack's inverse colours elsewhere (badges, unread dots, menu highlights)
+  Slack's inverse colours elsewhere (badges, unread dots, danger items)
   stay Slack's. These three component hooks are the only class selectors. While Slack's mode matches the theme, success and presence
   (`hgl-2`), highlights (`hgl-3`), important and error (`imp`), education and
   badge colours stay Slack's; otherwise the first four take the palette's

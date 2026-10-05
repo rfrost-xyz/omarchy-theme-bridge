@@ -51,11 +51,11 @@ the signed-in client. No workspace content is stored.
 | --- | --- | --- | --- |
 | Dry runs list every file and write nothing | `install.sh`, `uninstall.sh` | `test_dry_run_writes_nothing_and_prints_only_changed_line`, `test_dry_runs_list_every_file_and_write_nothing`, `test_dry_run_never_prints_unrelated_lines` (snapshots include directories) | Pass |
 | Install writes only planned files; manifest allows only the fixed ID | `install.sh`, `host_manifest` (JSON-encoded) | `test_default_install_leaves_flags_untouched` | Pass |
-| Unsafe install path | `path_is_safe`, absolute-path check | `test_unsafe_install_paths_never_reach_the_flags_file` (space, comma, apostrophe), `test_relative_data_home_is_refused` | Pass |
+| Unsafe install path | `path_is_safe`, `require_absolute_dirs` | `test_unsafe_install_paths_never_reach_the_flags_file` (space, comma, apostrophe, double quote, backslash, `#`, tab; manifest and data removed afterwards), `test_relative_data_home_is_refused`, `test_relative_config_home_is_refused`, `test_quoted_list_is_not_edited` | Pass |
 | Default install leaves flags byte-identical | `install.sh` | `test_default_install_leaves_flags_untouched` | Pass |
 | Opt-in merge: single, idempotent, keeps lines, mode, symlink | `scripts/flags.py` `add` | `test_flag_merge_is_single_and_idempotent`, `test_flag_merge_follows_symlink`, `test_flag_added_when_no_load_extension_line`, `test_missing_flags_file_is_not_created`, `test_commented_switch_is_ignored` | Pass |
 | Switch shares a line, is indented or carries whitespace | `occurrences`, `Refuse`, post-write check | `test_refuses_switch_that_is_indented_or_shares_a_line`, `test_switch_with_trailing_whitespace_is_refused` | Pass |
-| Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `remove`, `flags-state.json` | `test_round_trip_is_byte_exact` (7 file shapes), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
+| Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `add` (verbatim append) and `remove` (restores the recorded original), `flags-state.json` | `test_round_trip_is_byte_exact` (10 file shapes, including leading, trailing and middle empty items), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
 | Entry cannot be removed | `uninstall.sh`, `flags.py mentions` | `test_uninstall_keeps_files_when_entry_cannot_be_removed` | Pass |
 | Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON (normalised); `common.sh` `normal_dir`; `flags.py` `tokens` mirrors GLib | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited`, `test_other_spelling_of_data_home_uninstalls_cleanly`, `test_hash_inside_a_word_is_not_a_comment`, `test_flags_tokens.py` (15 GLib-verified lines) | Pass |
 | Uninstall dry run predicts refusal | `flags.py remove` exit 4 | `test_uninstall_dry_run_predicts_refusal` | Pass |
@@ -128,10 +128,15 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   dots and menu highlights; `#` mid-word treated as a comment (now matches
   GLib, with a parity test); different spellings of the install path; uninstall
   dry run not predicting refusal; broader unsafe-path coverage. All fixed.
+- Round 5: empty list items lost on install and uninstall (Omarchy's
+  migrations can create a leading comma), quoted lists duplicating the entry,
+  relative `XDG_CONFIG_HOME`, order-dependent transport tests, missing Slack
+  border and remap-badge assertions, and stale comments and docs. All fixed;
+  the flags record now stores the exact original and written values.
 
 ## Full check
 
-`./scripts/check` (124 s): helper 17 OK, installer 20 OK, extension unit
+`./scripts/check` (125 s): helper 17 OK, installer 26 OK, extension unit
 28/28, headless Chromium 41/41, `openspec validate --all --strict` passed.
 `shellcheck` is not available on this host, so shell scripts are checked with
 `bash -n` and the installer tests.

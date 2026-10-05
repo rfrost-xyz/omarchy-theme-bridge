@@ -167,12 +167,13 @@ The manifest carries a public `key`, giving a stable ID for the helper's
 `~/.local/share/omarchy-webapp-theme/`, writes
 `~/.config/chromium/NativeMessagingHosts/xyz.rfrost.omarchy_webapp_theme.json`
 and, only with `--load-extension-flag`, merges the path into the flags file
-through `scripts/flags.py`. It finds the switch by shell-style tokens as
-Chromium's launcher does, refuses when the last switch is indented or shares a
-line, rewrites only that line on the exact bytes through the resolved path, and
-records in `flags-state.json` whether it appended to a list (and whether the
-list was empty) or added the line, so the uninstaller can restore the original
-byte for byte. The
+through `scripts/flags.py`. It splits lines exactly as Chromium's launcher
+(GLib) does, refuses when the last switch is indented, shares a line, carries
+whitespace, quotes or backslashes, or the file uses CRLF endings, appends to
+the list verbatim (empty items kept) on the exact bytes through the resolved
+path, and records in `flags-state.json` the exact original and written values
+(or that it added the line), so the uninstaller can restore the original byte
+for byte. Install and uninstall refuse relative XDG directories. The
 dry run prints file paths and only the changed flags line. `uninstall.sh`
 reverses each step and is idempotent. Without the flag the README explains
 "Load unpacked" for each profile that opens Notion or Slack.
@@ -197,10 +198,11 @@ reverses each step and is idempotent. Without the flag the README explains
 
 - [Notion or Slack rename tokens] → Adapters only assign variables, so a rename
   degrades to the app's own colours. Token lists are documented per adapter.
-- [Slack client tokens unverified without a session] → Marked as unverified in
-  README limitations until checked live.
-- [Apps pinned to Light or Dark] → Mode gating leaves them untouched and reports
-  the mismatch.
+- [Slack client tokens drift] → The navigation, menu, tooltip and selection
+  tokens were confirmed in the signed-in client on 2026-10-05; a later Slack
+  update can still move them.
+- [Apps pinned to Light or Dark] → Notion is left alone and the mismatch is
+  reported; Slack is themed with its status colours remapped.
 - [Omarchy rewrites the flags file] → The flag merge is optional, mirrors
   Omarchy's own append pattern and is restored by rerunning the installer.
 - [Polling latency] → Up to about 1 s after Omarchy finishes its swap, which is

@@ -32,7 +32,7 @@ Hyprland 0.56.2, Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Transport: browser restart | storage cache | e2e `cached palette applies after a browser restart, then refreshes` | Pass |
 | Missing and malformed keep last palette | `background.js` status handling | e2e `missing palette …`, `malformed palette …` | Pass |
 | Independent adapters | `options/`, `disabledAdapters` | e2e `adapters toggle independently and live from the options page` | Pass |
-| Mode gating: Notion mismatch and match | `palette.js` `evaluate`, Notion `appMode` | e2e `notion: mode mismatch …`, `notion: chrome follows the palette …` | Pass |
+| Mode gating: Notion mismatch and match | `palette.js` `evaluate`, Notion `appMode` | e2e `notion: mode mismatch …`, `notion: chrome follows the palette …`, `notion: switching its appearance on an open page re-evaluates at once` (within 1 s, via the `<body>` observer) | Pass |
 | Mode gating: Slack mismatch remaps | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours` (dark palette, Slack light) and `slack: a light palette over Slack in Dark uses light controls and palette hues` (fails if `color-scheme: light` is wrong); live: user reported Slack correct under light and dark themes | Pass |
 | Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, selected sidebar row, rail, legacy link, `.c-menu` on `--dt_color-ctr-pry` with item, shortcut and highlighted row, tooltips and who-reacted popovers, your own reactions; badges, unread dots, white badge and shortcut hints keep Slack's values) | Pass |
 | Preserved meaning: Notion chromatic families and button blue | Notion CSS exclusions | e2e asserts every chromatic token in the fixture, `--c-palUiBlu600`, opposite-theme container | Pass |
@@ -133,10 +133,16 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   relative `XDG_CONFIG_HOME`, order-dependent transport tests, missing Slack
   border and remap-badge assertions, and stale comments and docs. All fixed;
   the flags record now stores the exact original and written values.
+- Round 6: CRLF flags files (now refused; tokeniser treats CR like GLib),
+  helper parsing an unterminated last line or values Omarchy rejects (now
+  matches `omarchy-theme-color`), an unpinned verbatim append, the
+  two-second deadline, uninstall with a relative data home, mode flips on
+  `<body>` within 1 s, the menu shortcut colour and stale design and README
+  notes. All fixed.
 
 ## Full check
 
-`./scripts/check` (125 s): helper 17 OK, installer 26 OK, extension unit
-28/28, headless Chromium 41/41, `openspec validate --all --strict` passed.
+`./scripts/check` (121 s): helper 17 OK, installer 27 OK, extension unit
+28/28, headless Chromium 42/42, `openspec validate --all --strict` passed.
 `shellcheck` is not available on this host, so shell scripts are checked with
 `bash -n` and the installer tests.

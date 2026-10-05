@@ -39,9 +39,10 @@ It has three parts:
    - `./install.sh --load-extension-flag` also appends the extension to the
      existing `--load-extension=` line in `~/.config/chromium-flags.conf`, the
      same way Omarchy's own migrations add extensions. This covers every
-     profile. Restart Chromium once afterwards. If that switch is indented or
-     shares a line with other flags, the installer leaves the file alone and
-     says so, because adding a second switch would replace Omarchy's list.
+     profile. Restart Chromium once afterwards. If that switch is indented,
+     shares a line with other flags, is quoted or contains backslashes, or the
+     file uses CRLF line endings, the installer leaves the file alone and says
+     so, because adding a second switch would replace Omarchy's list.
 
 3. In Notion (Settings, Appearance), choose **Use system setting**. Omarchy
    sets the desktop colour scheme for each theme, Chromium passes it to pages,
@@ -167,9 +168,10 @@ tests.
 
 - **What was checked live** (2026-10-05, Chromium 153 app windows, signed-in
   apps): Notion followed light and dark Omarchy themes without reloading,
-  including its Ctrl+K search; Slack's messages, sidebar, rail and dialogs
-  followed light and dark themes. Slack's navigation tokens were confirmed by
-  reading its computed styles. Automated tests use synthetic pages built from
+  including its Ctrl+K search. Slack's messages, sidebar, rail, selected row,
+  right-click menu, tooltips and reactions followed light and dark themes; its
+  tokens were confirmed by reading computed styles. Slack dialogs and Notion
+  code blocks were not inspected live. Automated tests use synthetic pages built from
   the apps' public stylesheets, so a future app update can still drift.
 - **Light and dark switching**: Notion follows the desktop only when set to
   use the system setting; until then the Notion adapter leaves it uncoloured.

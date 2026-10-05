@@ -22,6 +22,16 @@ for arg in "$@"; do
 done
 
 changed=0
+# Flags first: the record of how the line was changed lives in $DATA_DIR.
+if [[ -f $FLAGS_FILE ]]; then
+  if plan=$(flags_edit remove) && [[ $plan != unchanged ]]; then
+    echo "Change: $FLAGS_FILE (only the --load-extension line):"
+    echo "$plan"
+    ((DRY_RUN)) || flags_edit remove --write >/dev/null
+    changed=1
+  fi
+fi
+
 if [[ -f $DATA_DIR/$MARKER ]]; then
   echo "Remove: $DATA_DIR/"
   ((DRY_RUN)) || rm -rf "$DATA_DIR"
@@ -36,16 +46,6 @@ if [[ -f $MANIFEST_PATH ]] && grep -qF "\"path\": \"$HOST_PATH\"" "$MANIFEST_PAT
   changed=1
 elif [[ -e $MANIFEST_PATH ]]; then
   echo "Skip: $MANIFEST_PATH does not point at this installation."
-fi
-
-if [[ -f $FLAGS_FILE ]]; then
-  flags_new=$(flags_without_extension "$FLAGS_FILE")
-  if [[ $flags_new != "$(cat "$FLAGS_FILE")" ]]; then
-    echo "Change: $FLAGS_FILE (only the --load-extension line):"
-    show_line_change "$FLAGS_FILE" "$flags_new"
-    ((DRY_RUN)) || write_in_place "$FLAGS_FILE" "$flags_new"
-    changed=1
-  fi
 fi
 
 if ((DRY_RUN)); then

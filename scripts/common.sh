@@ -26,56 +26,10 @@ host_manifest() {
 JSON
 }
 
-# Print the flags file with our extension appended to the last
-# --load-extension= list (Chromium honours only the last one), or a new line
-# when there is none. Other lines are untouched.
-flags_with_extension() {
-  awk -v ext="$EXTENSION_DIR" '
-    { line[NR] = $0 }
-    /^--load-extension=/ { last = NR }
-    END {
-      for (i = 1; i <= NR; i++) {
-        if (i == last) {
-          list = substr(line[i], 18); n = split(list, items, ","); found = 0
-          for (j = 1; j <= n; j++) { sub(/\/+$/, "", items[j]); if (items[j] == ext) found = 1 }
-          print found ? line[i] : (list == "" ? "--load-extension=" ext : line[i] "," ext)
-        } else print line[i]
-      }
-      if (!last) print "--load-extension=" ext
-    }' "$1"
-}
+FLAGS_STATE=$DATA_DIR/flags-state.json
 
-# Print the flags file with our extension removed from every
-# --load-extension= list, dropping a line that only held our entry.
-flags_without_extension() {
-  awk -v ext="$EXTENSION_DIR" '
-    /^--load-extension=/ {
-      n = split(substr($0, 18), items, ","); out = ""; changed = 0
-      for (j = 1; j <= n; j++) {
-        item = items[j]; bare = item; sub(/\/+$/, "", bare)
-        if (bare == ext) { changed = 1; continue }
-        out = out (out == "" ? "" : ",") item
-      }
-      if (!changed) { print; next }
-      if (out != "") print "--load-extension=" out
-      next
-    }
-    { print }' "$1"
-}
-
-flags_loads_extension() {
-  [[ -f $1 ]] && [[ $(flags_with_extension "$1") == "$(cat "$1")" ]] && grep -q '^--load-extension=' "$1"
-}
-
-# Show only the changed lines, never surrounding context: the flags file can
-# hold unrelated settings that should not be echoed.
-show_line_change() {
-  diff --unchanged-line-format= --old-line-format='  - %L' --new-line-format='  + %L' "$1" <(printf '%s\n' "$2") || true
-}
-
-# Rewrite a file's contents in place, so a symlink, owner and mode survive.
-write_in_place() {
-  local target
-  target=$(readlink -f "$1")
-  printf '%s\n' "$2" >"$target"
+# Add or remove our --load-extension entry. Prints only the changed line, or
+# "unchanged"; pass --write to apply. See scripts/flags.py.
+flags_edit() {
+  /usr/bin/python3 "$SOURCE/scripts/flags.py" "$1" "$FLAGS_FILE" "$EXTENSION_DIR" "$FLAGS_STATE" "${@:2}"
 }

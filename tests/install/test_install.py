@@ -126,6 +126,66 @@ class InstallTest(unittest.TestCase):
         self.assertIn("Nothing to remove.", self.run_script("uninstall.sh"))
         self.assertEqual(self.flags_text(), FLAGS)
 
+    def write_flags(self, data):
+        with open(self.flags, "wb") as handle:
+            handle.write(data)
+
+    def read_flags(self):
+        with open(self.flags, "rb") as handle:
+            return handle.read()
+
+    def test_round_trip_is_byte_exact(self):
+        ext = f"{self.data}/extension".encode()
+        cases = {
+            "no final newline": b"--a\n--load-extension=/x,/y",
+            "trailing blank lines": b"--load-extension=/x\n--b\n\n\n",
+            "crlf": b"--a\r\n--load-extension=/x\r\n--b\r\n",
+            "empty list": b"--load-extension=\n--b\n",
+            "no switch, no final newline": b"--a\n--b",
+            "empty file": b"",
+            "trailing slash entry kept": b"--load-extension=/x/\n",
+        }
+        for label, original in cases.items():
+            with self.subTest(label):
+                self.write_flags(original)
+                self.run_script("install.sh", "--load-extension-flag")
+                after_install = self.read_flags()
+                self.assertIn(ext, after_install)
+                self.assertEqual(after_install.count(b"--load-extension="), max(1, original.count(b"--load-extension=")))
+                self.run_script("install.sh", "--load-extension-flag")
+                self.assertEqual(self.read_flags(), after_install, "reinstall is idempotent")
+                self.run_script("uninstall.sh")
+                self.assertEqual(self.read_flags(), original)
+
+    def test_dry_run_never_prints_unrelated_lines(self):
+        self.write_flags(b"--secret=1\n--load-extension=/x\n--other=SECRET")
+        out = self.run_script("install.sh", "--dry-run", "--load-extension-flag")
+        self.assertNotIn("SECRET", out)
+        self.assertNotIn("secret", out)
+        self.assertIn("  - --load-extension=/x\n", out)
+
+    def test_refuses_switch_that_is_indented_or_shares_a_line(self):
+        for original in (
+            f"  --load-extension={OMARCHY_EXTENSIONS}\n".encode(),
+            f"--ozone-platform=wayland --load-extension={OMARCHY_EXTENSIONS}\n".encode(),
+        ):
+            with self.subTest(original=original):
+                self.write_flags(original)
+                env = {"HOME": self.home, "PATH": os.environ["PATH"]}
+                result = subprocess.run([os.path.join(ROOT, "install.sh"), "--load-extension-flag"], env=env, capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("shares a line or is indented", result.stderr)
+                self.assertIn("Load unpacked", result.stdout)
+                self.assertEqual(self.read_flags(), original)
+                self.run_script("uninstall.sh")
+
+    def test_commented_switch_is_ignored(self):
+        self.write_flags(b"# --load-extension=/old\n--a\n")
+        self.run_script("install.sh", "--load-extension-flag")
+        self.assertEqual(self.read_flags(), f"# --load-extension=/old\n--a\n--load-extension={self.data}/extension\n".encode())
+        self.run_script("uninstall.sh")
+        self.assertEqual(self.read_flags(), b"# --load-extension=/old\n--a\n")
+
     def test_foreign_files_are_left_alone(self):
         os.makedirs(self.data)
         with open(os.path.join(self.data, "keep"), "w") as handle:

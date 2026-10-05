@@ -106,7 +106,7 @@ styling.
   `-ctr-*` (menus, including the right-click menu) neutrals, the menu
   highlight, the link and mention colour (`hgl-1`), the legacy `--sk_*`
   triplets, the workspace theme tokens `--dt_color-theme-*` (navigation uses
-  the `-inv-` variants) and the window backdrop `.p-theme_background`, because
+  the `-inv-` variants; the selected row is an accent tint) and the window backdrop `.p-theme_background`, because
   Slack paints it from its shared grey palette. Tooltips (including the
   who-reacted popover, `.c-tooltip__tip`) and your own reactions
   (`.c-reaction--reacted`) get a raised surface and an accent tint locally;

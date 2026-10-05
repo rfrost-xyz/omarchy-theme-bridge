@@ -34,7 +34,7 @@ Hyprland 0.56.2, Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Independent adapters | `options/`, `disabledAdapters` | e2e `adapters toggle independently and live from the options page` | Pass |
 | Mode gating: Notion mismatch and match | `palette.js` `evaluate`, Notion `appMode` | e2e `notion: mode mismatch …`, `notion: chrome follows the palette …` | Pass |
 | Mode gating: Slack mismatch remaps | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours` (dark palette, Slack light) and `slack: a light palette over Slack in Dark uses light controls and palette hues` (fails if `color-scheme: light` is wrong); live: user reported Slack correct under light and dark themes | Pass |
-| Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, rail, legacy link, `.c-menu` on `--dt_color-ctr-pry` with item, shortcut and highlighted row, tooltips and who-reacted popovers, your own reactions; badges, unread dots, white badge and shortcut hints keep Slack's values) | Pass |
+| Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, selected sidebar row, rail, legacy link, `.c-menu` on `--dt_color-ctr-pry` with item, shortcut and highlighted row, tooltips and who-reacted popovers, your own reactions; badges, unread dots, white badge and shortcut hints keep Slack's values) | Pass |
 | Preserved meaning: Notion chromatic families and button blue | Notion CSS exclusions | e2e asserts every chromatic token in the fixture, `--c-palUiBlu600`, opposite-theme container | Pass |
 | Preserved meaning: Slack status colours while modes match; badges always | Slack CSS exclusions | e2e asserts error, success (text and background), warning (text and background), education, badge, presence while modes match, and badges under remap. Which token signed-in Slack uses for presence dots was not captured, so under remap presence may take the palette's green (stated in the spec and README) | Pass |
 | Readable contrast | `colour.js` `derive`, both adapters | `tests/extension` derived values for 22 stock themes; e2e `contrast.test.mjs`: 22 themes × (Notion, Slack same mode, Slack opposite mode with remapped status text on its tint); a deliberately broken mapping was confirmed to fail | Pass |
@@ -101,6 +101,9 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   grey under dark ones. A diagnostic showed `.c-menu` on
   `--dt_color-ctr-pry`; the container family and the menu highlight are now
   mapped, and the user confirmed it in light and dark themes.
+- Slack selected sidebar row: Slack's own selection colour. A diagnostic
+  showed `--dt_color-theme-base-hgl-1` with `--dt_color-theme-content-hgl-1`;
+  now an accent tint with palette text, confirmed by the user.
 - Not inspected individually in the live apps: code blocks and authored or
   status colours (covered by the automated suites only). Screen captures were
   viewed and deleted immediately; none are kept.

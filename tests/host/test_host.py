@@ -109,6 +109,9 @@ class HostTest(unittest.TestCase):
             ('background = "#7f7f7f"\nforeground = "#ffffff"\naccent = "#335599"\n', "dark"),
             ('theme_type = "light"\n' + DARK.replace('mode = "dark"\n', ""), "light"),
             ('mode = "sepia"\n' + LIGHT_NO_MODE, "dark"),
+            ('background = "#fff"\nforeground = "#000000"\naccent = "#335599"\n', "dark"),
+            ('mode\t= "light"\nbackground = "#000000"\nforeground = "#ffffff"\naccent = "#335599"\n', "dark"),
+            ('background = "rgb(255,255,255)"\ncolor0 = "#ffffff"\nforeground = "#000000"\naccent = "#335599"\n', "dark"),
         ]
         for colours, expected in cases:
             with self.subTest(colours=colours):

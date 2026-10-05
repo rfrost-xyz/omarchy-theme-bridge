@@ -112,7 +112,7 @@ def parse_raw(text):
     raw = {}
     for line in text.splitlines():
         key, sep, value = line.partition("=")
-        key = re.sub(r"[\"' \t]", "", key)
+        key = re.sub(r"[\"' ]", "", key)  # Omarchy strips only quotes and spaces
         if not sep or not key or key.startswith("#") or key.startswith("[") or not KEY.match(key):
             continue
         quote = re.search(r"[\"']", value)
@@ -143,8 +143,13 @@ def resolve(raw, light_marker):
     elif light_marker:
         mode = "light"
     else:
-        bg = colours["background"]
-        mode = "light" if sum(int(bg[i : i + 2], 16) for i in (1, 3, 5)) > 382 else "dark"
+        # Like omarchy-theme-color: judge the raw background value, and only
+        # when it is a six-digit hex colour.
+        raw_bg = next((raw[k] for k in ("background", "bg", "color0") if raw.get(k)), "")
+        if re.fullmatch(r"#[0-9A-Fa-f]{6}", raw_bg):
+            mode = "light" if sum(int(raw_bg[i : i + 2], 16) for i in (1, 3, 5)) > 382 else "dark"
+        else:
+            mode = "dark"
     return colours, mode
 
 

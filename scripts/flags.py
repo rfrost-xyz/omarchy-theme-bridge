@@ -35,10 +35,12 @@ def ending(line):
 
 
 def tokens(line):
+    # Chromium's flags launcher skips a line it cannot split (unbalanced
+    # quotes), so such a line carries no switches.
     try:
         return shlex.split(line, comments=True)
     except ValueError:
-        return line.split()
+        return []
 
 
 def occurrences(lines):

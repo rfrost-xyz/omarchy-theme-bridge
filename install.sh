@@ -103,4 +103,4 @@ show which profiles they use:
 Or rerun with --load-extension-flag and restart Chromium once.
 EOF
 fi
-echo "Set Notion and Slack to follow the system appearance so their light or dark mode matches the Omarchy theme."
+echo "Set Notion to use the system appearance so it switches between light and dark with the Omarchy theme. Slack is themed in either of its modes."

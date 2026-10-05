@@ -245,6 +245,25 @@ class InstallTest(unittest.TestCase):
         out = self.run_script("install.sh", "--load-extension-flag")
         self.assertIn("reload Omarchy Webapp Theme in chrome://extensions", out)
 
+    def test_non_ascii_install_path_uninstalls_cleanly(self):
+        data_home = os.path.join(self.home, "zoë")
+        self.assertEqual(self.run_env({"XDG_DATA_HOME": data_home}, "install.sh").returncode, 0)
+        self.assertTrue(os.path.exists(self.manifest))
+        result = self.run_env({"XDG_DATA_HOME": data_home}, "uninstall.sh")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(os.path.exists(self.manifest))
+        self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-webapp-theme")))
+
+    def test_line_with_unbalanced_quotes_is_not_edited(self):
+        original = b"--load-extension=/a\n--load-extension=/b'\n"
+        self.write_flags(original)
+        self.run_script("install.sh", "--load-extension-flag")
+        lines = self.read_flags().splitlines()
+        self.assertEqual(lines[1], b"--load-extension=/b'")
+        self.assertEqual(lines[0], f"--load-extension=/a,{self.data}/extension".encode())
+        self.run_script("uninstall.sh")
+        self.assertEqual(self.read_flags(), original)
+
     def test_foreign_files_are_left_alone(self):
         os.makedirs(self.data)
         with open(os.path.join(self.data, "keep"), "w") as handle:

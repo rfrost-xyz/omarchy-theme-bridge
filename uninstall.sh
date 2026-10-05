@@ -49,7 +49,7 @@ elif [[ -e $DATA_DIR ]]; then
   echo "Skip: $DATA_DIR was not created by the installer."
 fi
 
-if [[ -f $MANIFEST_PATH ]] && grep -qF "\"path\": \"$HOST_PATH\"" "$MANIFEST_PATH"; then
+if [[ -f $MANIFEST_PATH ]] && /usr/bin/python3 -c 'import json, sys; sys.exit(0 if json.load(open(sys.argv[1])).get("path") == sys.argv[2] else 1)' "$MANIFEST_PATH" "$HOST_PATH" 2>/dev/null; then
   echo "Remove: $MANIFEST_PATH"
   ((DRY_RUN)) || rm -f "$MANIFEST_PATH"
   changed=1

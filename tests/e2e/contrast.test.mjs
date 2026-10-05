@@ -60,6 +60,9 @@ const CHECKS = {
     ['#sidebar', 4.5, 'sidebar text'],
     ['#rail', 4.5, 'rail text on backdrop'],
     ['#legacy-link', 4.5, 'legacy link'],
+    ['#tooltip', 4.5, 'tooltip and reaction popover text'],
+    ['#shortcut-hint', 4.5, 'shortcut hint text'],
+    ['#reacted', 4.5, 'text on your own reaction'],
   ],
 };
 // Slack's own status colours on our surfaces. Only Slack's light values were

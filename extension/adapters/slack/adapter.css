@@ -22,14 +22,21 @@ html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
   --dt_color-content-pry: var(--omarchy-text) !important;
   --dt_color-content-sec: var(--omarchy-text-secondary) !important;
   --dt_color-content-ter: var(--omarchy-text-tertiary) !important;
-  --dt_color-content-inv-pry: var(--omarchy-background) !important;
+  /* Inverted surfaces (tooltips, who-reacted popovers, shortcut hints) are a
+     raised palette surface with normal text rather than a literal inverse. */
+  --dt_color-content-inv-pry: var(--omarchy-text) !important;
+  --dt_color-content-inv-sec: var(--omarchy-text-secondary) !important;
   --dt_color-content-hgl-1: var(--omarchy-accent-text) !important;
 
   /* Base surfaces: messages, panes, menus and dialogs */
   --dt_color-base-pry: var(--omarchy-background) !important;
   --dt_color-base-sec: var(--omarchy-mix-3) !important;
   --dt_color-base-ter: var(--omarchy-mix-8) !important;
-  --dt_color-base-inv-pry: var(--omarchy-text) !important;
+  --dt_color-base-inv-pry: var(--omarchy-mix-12) !important;
+
+  /* Highlight 1 (links, your own reactions, selection) follows the accent */
+  --dt_color-base-hgl-1: rgba(var(--omarchy-accent-rgb), 0.16) !important;
+  --dt_color-base-inv-hgl-1: rgba(var(--omarchy-accent-rgb), 0.2) !important;
 
   /* Hover and press washes */
   --dt_color-surf-pry: rgba(var(--omarchy-foreground-rgb), 0.06) !important;
@@ -51,8 +58,8 @@ html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
   --sk_primary_background: var(--omarchy-background-rgb) !important;
   --sk_primary_foreground: var(--omarchy-text-rgb) !important;
   --sk_secondary_background: var(--omarchy-mix-4-rgb) !important;
-  --sk_inverted_background: var(--omarchy-text-rgb) !important;
-  --sk_inverted_foreground: var(--omarchy-background-rgb) !important;
+  --sk_inverted_background: var(--omarchy-mix-12-rgb) !important;
+  --sk_inverted_foreground: var(--omarchy-text-rgb) !important;
   --sk_foreground_max: var(--omarchy-foreground-rgb) !important;
   --sk_foreground_high: var(--omarchy-foreground-rgb) !important;
   --sk_foreground_mid: var(--omarchy-foreground-rgb) !important;

@@ -83,6 +83,11 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.equal(await page.style('#sidebar', 'color'), css(derived['text-secondary']));
   assert.equal(await page.style('#rail', 'color'), css(derived.text));
   assert.equal(await page.style('#legacy-link', 'color'), css(derived['accent-text']));
+  // Tooltips, who-reacted popovers and shortcut hints: raised surface, not a literal inverse.
+  assert.equal(await page.style('#tooltip', 'backgroundColor'), css(derived.ramp[12]));
+  assert.equal(await page.style('#tooltip', 'color'), css(derived.text));
+  assert.equal(await page.style('#shortcut-hint', 'backgroundColor'), css(derived.ramp[12]));
+  assert.match(await page.style('#reacted', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.2\)$/);
   // Triplet tokens still resolve inside rgba().
   assert.equal(await page.style('#triplet', 'backgroundColor'), css('#1a1b26'));
   assert.match(await page.style('#triplet', 'color'), /^rgba\(169, 177, 214, 0\.7/);

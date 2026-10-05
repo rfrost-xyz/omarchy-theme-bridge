@@ -12,7 +12,7 @@ Hyprland 0.56.2, Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Read-only source: unsupported requests ignored | `main` request handling | `test_get_resends_and_other_requests_are_ignored` | Pass |
 | Read-only source: no writes | whole helper | `test_never_writes_to_state_dir` | Pass |
 | Validation and mode: valid palette | `resolve`, `normalise_hex` | `test_initial_palette_is_validated_and_normalised` | Pass |
-| Mode fallback matches Omarchy | `resolve` (raw background, six-digit hex, R+G+B > 382; `theme_type`; `light.mode`) | `test_mode_falls_back_to_marker_then_luminance`, `test_mode_matches_omarchy_resolution` (8 cases, each cross-checked with `omarchy-theme-color --file … mode`) | Pass |
+| Mode fallback matches Omarchy | `resolve` (raw background, six-digit hex, R+G+B > 382; `theme_type`; `light.mode`) | `test_mode_falls_back_to_marker_then_luminance`, `test_mode_matches_omarchy_resolution` (10 cases; the test itself cross-checks each with `omarchy-theme-color --file … mode` when it is installed) | Pass |
 | Hand-written theme | `parse_raw` (skips unreadable lines, quoted or unquoted values), `ALIASES` | `test_accepts_the_forms_omarchy_accepts`, `test_ansi_slots_fill_background_and_foreground` | Pass |
 | Missing reporting with grace, keep running | `Watcher.tick` | `test_missing_is_reported_after_grace_then_recovers`, `test_missing_at_start_is_reported_immediately` | Pass |
 | Malformed then fixed | `load`, `Watcher.tick` | `test_malformed_then_fixed` | Pass |
@@ -33,7 +33,7 @@ Hyprland 0.56.2, Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Missing and malformed keep last palette | `background.js` status handling | e2e `missing palette …`, `malformed palette …` | Pass |
 | Independent adapters | `options/`, `disabledAdapters` | e2e `adapters toggle independently and live from the options page` | Pass |
 | Mode gating: Notion mismatch and match | `palette.js` `evaluate`, Notion `appMode` | e2e `notion: mode mismatch …`, `notion: chrome follows the palette …`, `notion: switching its appearance on an open page re-evaluates at once` (within 1 s, via the `<body>` observer) | Pass |
-| Mode gating: Slack mismatch remaps | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours` (dark palette, Slack light) and `slack: a light palette over Slack in Dark uses light controls and palette hues` (fails if `color-scheme: light` is wrong); live: user reported Slack correct under light and dark themes | Pass |
+| Mode gating: Slack mismatch remaps (observer and fallback poll) | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours` (dark palette, Slack light; mode flipped on `<body>`, 1 s), `slack: a mode marker below <body> is still picked up by the fallback poll` and `slack: a light palette over Slack in Dark uses light controls and palette hues` (fails if `color-scheme: light` is wrong); live: user reported Slack correct under light and dark themes | Pass |
 | Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, selected sidebar row, rail, legacy link, `.c-menu` on `--dt_color-ctr-pry` with item, shortcut and highlighted row, tooltips and who-reacted popovers, your own reactions; badges, unread dots, white badge and shortcut hints keep Slack's values) | Pass |
 | Preserved meaning: Notion chromatic families and button blue | Notion CSS exclusions | e2e asserts every chromatic token in the fixture, `--c-palUiBlu600`, opposite-theme container | Pass |
 | Preserved meaning: Slack status colours while modes match; badges always | Slack CSS exclusions | e2e asserts error, success (text and background), warning (text and background), education, badge, presence while modes match, and badges under remap. Which token signed-in Slack uses for presence dots was not captured, so under remap presence may take the palette's green (stated in the spec and README) | Pass |
@@ -54,10 +54,10 @@ the signed-in client. No workspace content is stored.
 | Unsafe install path | `path_is_safe`, `require_absolute_dirs` | `test_unsafe_install_paths_never_reach_the_flags_file` (space, comma, apostrophe, double quote, backslash, `#`, tab; manifest and data removed afterwards), `test_relative_data_home_is_refused`, `test_relative_config_home_is_refused`, `test_quoted_list_is_not_edited` | Pass |
 | Default install leaves flags byte-identical | `install.sh` | `test_default_install_leaves_flags_untouched` | Pass |
 | Opt-in merge: single, idempotent, keeps lines, mode, symlink | `scripts/flags.py` `add` | `test_flag_merge_is_single_and_idempotent`, `test_flag_merge_follows_symlink`, `test_flag_added_when_no_load_extension_line`, `test_missing_flags_file_is_not_created`, `test_commented_switch_is_ignored` | Pass |
-| Switch shares a line, is indented or carries whitespace | `occurrences`, `Refuse`, post-write check | `test_refuses_switch_that_is_indented_or_shares_a_line`, `test_switch_with_trailing_whitespace_is_refused` | Pass |
-| Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `add` (verbatim append) and `remove` (restores the recorded original), `flags-state.json` | `test_round_trip_is_byte_exact` (10 file shapes, including leading, trailing and middle empty items), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
+| Switch shares a line, is indented, quoted or carries whitespace; CRLF file | `occurrences`, `Refuse`, post-write check | `test_refuses_switch_that_is_indented_or_shares_a_line`, `test_switch_with_trailing_whitespace_is_refused`, `test_quoted_list_is_not_edited`, `test_crlf_flags_file_is_refused` (with and without a switch) | Pass |
+| Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `add` (verbatim append) and `remove` (restores the recorded original), `flags-state.json` | `test_round_trip_is_byte_exact` (9 file shapes, including leading, trailing and middle empty items; exact appended line pinned), `test_uninstall_after_an_omarchy_migration_keeps_its_extension` (4 shapes plus a look-alike path), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
 | Entry cannot be removed | `uninstall.sh`, `flags.py mentions` | `test_uninstall_keeps_files_when_entry_cannot_be_removed` | Pass |
-| Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON (normalised); `common.sh` `normal_dir`; `flags.py` `tokens` mirrors GLib | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited`, `test_other_spelling_of_data_home_uninstalls_cleanly`, `test_hash_inside_a_word_is_not_a_comment`, `test_flags_tokens.py` (15 GLib-verified lines) | Pass |
+| Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON (normalised); `common.sh` `normal_dir`; `flags.py` `tokens` mirrors GLib | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited`, `test_other_spelling_of_data_home_uninstalls_cleanly`, `test_hash_inside_a_word_is_not_a_comment`, `test_flags_tokens.py` (16 GLib-verified lines) | Pass |
 | Uninstall dry run predicts refusal | `flags.py remove` exit 4 | `test_uninstall_dry_run_predicts_refusal` | Pass |
 | Reinstall guidance | `install.sh` | `test_reinstall_says_reload_instead_of_restart` | Pass |
 
@@ -139,10 +139,14 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   two-second deadline, uninstall with a relative data home, mode flips on
   `<body>` within 1 s, the menu shortcut colour and stale design and README
   notes. All fixed.
+- Round 7: CRLF refusal narrower than documented (now any CRLF file), the
+  fallback poll no longer tested, uninstall after a later Omarchy migration
+  untested (now tested; the recorded original plus anything appended after
+  it is restored), and stale traceability counts. All fixed.
 
 ## Full check
 
-`./scripts/check` (121 s): helper 17 OK, installer 27 OK, extension unit
-28/28, headless Chromium 42/42, `openspec validate --all --strict` passed.
+`./scripts/check` (140 s): helper 17 OK, installer 28 OK, extension unit
+28/28, headless Chromium 43/43, `openspec validate --all --strict` passed.
 `shellcheck` is not available on this host, so shell scripts are checked with
 `bash -n` and the installer tests.

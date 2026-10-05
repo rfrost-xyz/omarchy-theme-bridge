@@ -32,6 +32,10 @@ The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, 
 - **WHEN** the last `--load-extension` switch is indented or shares a line with other flags
 - **THEN** the installer leaves the flags file unchanged, explains why and prints instructions for loading the extension unpacked
 
+#### Scenario: CRLF flags file
+- **WHEN** the flags file uses CRLF line endings
+- **THEN** the installer leaves it unchanged, explains why and prints instructions for loading the extension unpacked
+
 #### Scenario: Default install leaves flags alone
 - **WHEN** the installer runs without `--load-extension-flag`
 - **THEN** the flags file is byte-for-byte unchanged and setup instructions for loading the unpacked extension are printed
@@ -42,6 +46,10 @@ The uninstaller SHALL remove only what the installer added, including its flags 
 #### Scenario: Uninstall after flag merge
 - **WHEN** the uninstaller runs after an install with the flag merge
 - **THEN** the flags file matches its pre-install content and the installed directory and manifest are gone
+
+#### Scenario: Omarchy appended an extension after install
+- **WHEN** an Omarchy migration appended another extension to the `--load-extension=` line after installation
+- **THEN** the uninstaller removes only this extension's entry and the line matches what the migration would have produced without it
 
 #### Scenario: Entry cannot be removed
 - **WHEN** the flags file still names the installed extension on a line the uninstaller cannot edit safely

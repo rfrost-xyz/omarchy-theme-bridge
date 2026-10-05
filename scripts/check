@@ -4,7 +4,9 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 echo "== shell syntax"
-bash -n install.sh uninstall.sh scripts/common.sh scripts/check
+for script in install.sh uninstall.sh scripts/common.sh scripts/check; do
+  bash -n "$script"
+done
 echo "== helper"
 python3 -m unittest discover -s tests/host
 echo "== installer"

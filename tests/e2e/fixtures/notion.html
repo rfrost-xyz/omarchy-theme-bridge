@@ -7,6 +7,9 @@
 <meta charset="utf-8">
 <style>
 :root, .notion-light-theme {
+  --ca-popWaxPapBac: rgba(255,255,255,.9);
+  --ca-glaWas: rgba(249,249,248,.8);
+  --ca-palTraGra200: rgba(0,0,0,.07);
   --c-bacEle: #fff;
   --c-bacInt: #f4f3f3;
   --c-bacPri: #fff;
@@ -57,6 +60,9 @@
   --c-greTexPri: #2a533c;
 }
 .notion-dark-theme {
+  --ca-popWaxPapBac: rgba(32,32,32,.9);
+  --ca-glaWas: rgba(32,32,32,.8);
+  --ca-palTraGra200: rgba(255,255,255,.055);
   --c-bacEle: #202020;
   --c-bacInt: #262626;
   --c-bacPri: #191919;
@@ -110,6 +116,9 @@ body { margin: 0; background: var(--c-bacPri); color: var(--c-texPri); font: 14p
 #muted { color: var(--c-texTer); }
 #link { color: var(--c-palUiBlu700, var(--c-palUiBlu600)); }
 #menu, #dialog { background: var(--c-popBac); color: var(--c-texPri); border: 1px solid var(--c-borPri); }
+#search { background: var(--ca-popWaxPapBac); color: var(--c-texPri); }
+#search-hover { background: var(--ca-palTraGra200); }
+#glass-header { background: var(--ca-glaWas); color: var(--c-texSec); }
 #code { background: var(--cd-codBloBac); color: var(--c-texPri); }
 #red-block { background: var(--c-redBacPri); color: var(--c-redTexPri); }
 #blue-text { color: var(--c-bluTexPri); }
@@ -130,6 +139,8 @@ body { margin: 0; background: var(--c-bacPri); color: var(--c-texPri); font: 14p
   <a id="link" href="#">Link</a>
   <div id="menu" role="menu">Menu</div>
   <div id="dialog" role="dialog">Dialog</div>
+  <div id="search" role="dialog">Search <div id="search-hover">Recent page</div></div>
+  <div id="glass-header">Floating header</div>
   <pre id="code">const x = 1;</pre>
   <div id="red-block">Authored red block</div>
   <span id="blue-text">Authored blue text</span>

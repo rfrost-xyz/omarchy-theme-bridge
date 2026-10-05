@@ -28,7 +28,10 @@ changed=0
 if [[ -f $FLAGS_FILE ]]; then
   status=0
   plan=$(flags_edit remove) || status=$?
-  if ((status == 4)); then
+  if ((status == 3)); then
+    echo "Remove this extension's --load-extension entry by hand, then rerun ./uninstall.sh. Installed files were kept." >&2
+    exit 1
+  elif ((status == 4)); then
     echo "Remove that entry by hand, then rerun ./uninstall.sh. Installed files were kept so Chromium does not fail to load them." >&2
     exit 1
   elif ((status != 0)); then

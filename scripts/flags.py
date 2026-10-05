@@ -204,10 +204,13 @@ def main(argv):
     if new == lines:
         print("unchanged")
         return 0
+    if not os.access(os.path.realpath(path), os.W_OK):
+        print("Flags: not changed: the flags file is not writable; load the extension unpacked or make it writable.", file=sys.stderr)
+        return 3
     if action == "add":
-        # The new line must be a clean single token naming ext exactly once.
-        changed = [line for line in new if line not in lines and SWITCH in line]
-        if len(changed) != 1 or any(not body(line).startswith(SWITCH) or any(c.isspace() for c in body(line)) or [same(i, ext) for i in entries(line)].count(True) != 1 for line in changed):
+        # The line we write must be a clean single token naming ext exactly once.
+        text = body(new_line)
+        if not text.startswith(SWITCH) or any(c.isspace() or c in "\"'\\" for c in text) or [same(i, ext) for i in entries(new_line)].count(True) != 1:
             print("Flags: not changed: the extension path cannot be written safely.", file=sys.stderr)
             return 3
     show(old_line, new_line)

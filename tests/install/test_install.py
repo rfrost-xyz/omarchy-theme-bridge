@@ -360,6 +360,41 @@ class InstallTest(unittest.TestCase):
         self.assertIn("shares a line, is indented or is quoted", result.stderr)
         self.assertEqual(self.read_flags(), original)
 
+    def test_read_only_flags_file_is_refused_cleanly(self):
+        os.chmod(self.flags, 0o444)
+        try:
+            dry = self.run_env({}, "install.sh", "--dry-run", "--load-extension-flag")
+            self.assertIn("not writable", dry.stderr)
+            self.assertNotIn("+ --load-extension", dry.stdout)
+            result = self.run_env({}, "install.sh", "--load-extension-flag")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertIn("Load unpacked", result.stdout)
+            self.assertEqual(self.flags_text(), FLAGS)
+        finally:
+            os.chmod(self.flags, 0o640)
+
+    def test_uninstall_with_read_only_flags_keeps_files_and_explains(self):
+        self.run_script("install.sh", "--load-extension-flag")
+        os.chmod(self.flags, 0o444)
+        try:
+            result = self.run_env({}, "uninstall.sh")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertIn("by hand", result.stderr)
+            self.assertTrue(os.path.isdir(self.data))
+        finally:
+            os.chmod(self.flags, 0o640)
+
+    def test_commented_switch_on_unterminated_last_line(self):
+        original = b"--a\n# --load-extension=/old"
+        self.write_flags(original)
+        result = self.run_env({}, "install.sh", "--load-extension-flag")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(f"--load-extension={self.data}/extension".encode(), self.read_flags())
+        self.run_script("uninstall.sh")
+        self.assertEqual(self.read_flags(), original)
+
     def test_foreign_files_are_left_alone(self):
         os.makedirs(self.data)
         with open(os.path.join(self.data, "keep"), "w") as handle:

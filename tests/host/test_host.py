@@ -112,6 +112,8 @@ class HostTest(unittest.TestCase):
             ('background = "#fff"\nforeground = "#000000"\naccent = "#335599"\n', "dark"),
             ('mode\t= "light"\nbackground = "#000000"\nforeground = "#ffffff"\naccent = "#335599"\n', "dark"),
             ('background = "rgb(255,255,255)"\ncolor0 = "#ffffff"\nforeground = "#000000"\naccent = "#335599"\n', "dark"),
+            ('background = "#ffffff"\nforeground = "#000000"\naccent = "#335599"\nmode = "dark"', "light"),
+            ('mode = "dark&light"\nbackground = "#ffffff"\nforeground = "#000000"\naccent = "#335599"\n', "light"),
         ]
         for colours, expected in cases:
             with self.subTest(colours=colours):
@@ -205,7 +207,8 @@ class HostTest(unittest.TestCase):
         os.rename(staged, theme)
         with open(os.path.join(self.state, "theme.name"), "w") as handle:
             handle.write("latte\n")
-        message = host.read()
+        message = host.read(timeout=2.5)  # spec: within about two seconds
+        self.assertIsNotNone(message)
         self.assertEqual(message["type"], "palette")
         self.assertEqual(message["name"], "latte")
         self.assertIsNone(host.quiet(2.5))

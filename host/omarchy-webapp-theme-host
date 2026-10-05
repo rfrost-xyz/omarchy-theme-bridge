@@ -59,6 +59,7 @@ ALIASES = {
     "bright_cyan": ("color14",),
 }
 KEY = re.compile(r"^[A-Za-z0-9_-]+$")
+VALUE = re.compile(r"[A-Za-z0-9#(),._+/% -]*")
 HEX = re.compile(r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
 NAME = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 
@@ -110,7 +111,9 @@ def parse_raw(text):
     Lines it cannot read are skipped rather than failing the whole file.
     """
     raw = {}
-    for line in text.splitlines():
+    # Like bash `read`: split on newlines only, and an unterminated last line
+    # is never read.
+    for line in text.split("\n")[:-1]:
         key, sep, value = line.partition("=")
         key = re.sub(r"[\"' ]", "", key)  # Omarchy strips only quotes and spaces
         if not sep or not key or key.startswith("#") or key.startswith("[") or not KEY.match(key):
@@ -120,6 +123,8 @@ def parse_raw(text):
             value = re.split(r"[\"']", value[quote.end():], maxsplit=1)[0]
         else:
             value = value.strip()
+        if not VALUE.fullmatch(value):
+            continue  # omarchy-theme-color skips values outside its charset
         raw[key] = value
     return raw
 

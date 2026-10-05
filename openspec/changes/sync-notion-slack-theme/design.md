@@ -89,11 +89,13 @@ which wakes the worker and reconnects. This avoids the `alarms` permission.
 
 ### Palette properties
 
-`content/palette.js` writes one `<style id="omarchy-palette">` under
+`content/palette.js` writes one `<style id="omarchy-webapp-theme-palette">` under
 `documentElement` with `--omarchy-<key>` for each colour, `--omarchy-<key>-rgb`
 triplets for the core colours, a neutral ramp `--omarchy-mix-<n>`
-(background towards foreground) and `--omarchy-accent-text` (accent adjusted to
-4.5:1 on the background). These are generic palette helpers, not app styling.
+(background towards foreground), `--omarchy-accent-text` (accent adjusted to
+4.5:1 on the background) and `--omarchy-<hue>-text` for red, green, yellow,
+blue, magenta, cyan and orange (4.5:1 on the surfaces and on an 18% tint of
+the hue). These are generic palette helpers, not app styling.
 It also sets `data-omarchy-mode` on `<html>`.
 
 ### Adapters
@@ -116,21 +118,34 @@ deliberately opposite-mode elements such as tooltips keep the app's colours.
 - Notion: `appMode()` reads `notion-dark-theme` on `<body>`. CSS assigns
   surfaces, text, icons, borders, popovers, sidebar selection, neutral `gra`
   family, UI blue and code block backgrounds with `!important`. Chromatic block
-  families are untouched.
+  families are untouched. The frosted "wax paper" and glass washes (Ctrl+K
+  search, floating headers) and the translucent grey ramp are mapped too;
+  scrims are not.
 - Slack: `appMode()` reads the first `sk-client-theme--dark|light` class in
   the document. Without one the mode is unknown and the adapter stays off,
   rather than guessing from colours. CSS assigns
   `--dt_color-content-pry|sec|ter`, `-base-pry|sec|ter`, `-otl-*` neutrals,
   `-hgl-1` link accent, and the `--sk_*` foreground and background triplets.
-  `hgl-2`, `hgl-3`, `imp`, `education` and presence tokens are untouched.
+  `hgl-2`, `hgl-3`, `imp`, `education` and presence tokens are untouched
+  while modes match. Live inspection of the signed-in client showed that
+  navigation uses the `--dt_color-theme-*-inv-*` variants and a translucent
+  sidebar over `.p-theme_background`, which Slack paints from its raw grey
+  palette (`--dt_color-plt-gray-10`). That one theme hook gets the palette
+  background directly rather than remapping Slack's shared grey palette; it is
+  the only class selector in the adapters.
 
-### Mode gating, not mode forcing
+### Mode policy per adapter, never mode forcing
 
-The adapter applies only when modes agree. Users set each app to follow the
-system appearance once. The chain gsettings, then Chromium, then
-`prefers-color-scheme`, then the app does the switching. If an app does not
-follow, the options page reports a mismatch instead of producing a light
-palette over dark authored colours.
+The chain gsettings, then Chromium, then `prefers-color-scheme`, then the app
+does the light and dark switching where the app can follow the system. Notion
+can, so its adapter (default `match` policy) applies only when modes agree; a
+mismatch is reported instead of a light palette over dark authored block
+colours. Slack in the browser offers only Light and Dark (its "follow system"
+option exists only in the desktop app, confirmed live), so its adapter
+registers `modePolicy: 'any'`. When modes differ the core adds
+`data-omarchy-remap~="slack"` and the Slack CSS moves its meaning colours onto
+the palette's readable hues and sets `color-scheme` to the palette's mode.
+Clicking Slack's own Light/Dark control was rejected as brittle.
 
 ### Fixed extension ID
 

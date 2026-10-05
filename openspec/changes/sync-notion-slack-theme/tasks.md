@@ -32,4 +32,4 @@
 
 ## 7. Live verification (requires user approval)
 
-- [ ] 7.1 With approval, install into the live Chromium and check Notion and Slack app-mode windows in light and dark themes, live switching, menus, dialogs, sidebars, code blocks and preserved colours, reading only computed styles; record results or record that live checks were not performed
+- [x] 7.1 With approval, install into the live Chromium and check Notion and Slack app-mode windows under light and dark Omarchy themes with live switching, sidebars, navigation, menus and dialogs, fixing what the live apps reveal; record results, what was not inspected live, and read only computed styles or transient captures

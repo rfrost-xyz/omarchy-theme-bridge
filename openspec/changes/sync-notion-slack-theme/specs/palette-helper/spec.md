@@ -18,7 +18,7 @@ The helper SHALL read only `theme/colors.toml` and `theme.name` beneath the Omar
 - **THEN** the helper performs no action and sends nothing in reply
 
 ### Requirement: Palette validation and mode
-The helper SHALL read `colors.toml` as Omarchy's own resolver does, skipping lines it cannot read and accepting quoted or unquoted values and the legacy `bg`, `fg` and ANSI `colorN` names. It SHALL send a palette message containing the theme name, a mode of `light` or `dark`, and colours normalised to lower-case `#rrggbb`. `background`, `foreground` and `accent` (falling back to `blue`) SHALL be required. Mode SHALL match Omarchy's desktop colour scheme: the `mode` key, else `theme_type`, else a `light.mode` marker, else light when the background's red, green and blue sum to more than 382; any declared value other than `light` means dark.
+The helper SHALL read `colors.toml` as Omarchy's own resolver does, skipping lines it cannot read and accepting quoted or unquoted values and the legacy `bg`, `fg` and ANSI `colorN` names. It SHALL send a palette message containing the theme name, a mode of `light` or `dark`, and colours normalised to lower-case `#rrggbb`. `background`, `foreground` and `accent` (falling back to `blue`) SHALL be required. Mode SHALL match Omarchy's desktop colour scheme: the `mode` key, else `theme_type`, else a `light.mode` marker, else light when the raw background value (then `bg`, then `color0`) is a six-digit hex colour whose red, green and blue sum to more than 382, else dark; any declared value other than `light` means dark. Keys are read with only spaces and quotes stripped, as Omarchy reads them.
 
 #### Scenario: Valid palette
 - **WHEN** the active theme has a valid `colors.toml`

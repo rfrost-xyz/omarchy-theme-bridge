@@ -44,18 +44,22 @@ Notion and Slack adapters SHALL be enabled and disabled independently from the e
 - **THEN** Slack pages revert to Slack's own colours and Notion pages remain themed
 
 ### Requirement: Mode gating
-An adapter SHALL apply only while the app's own light or dark mode matches the palette mode, and SHALL re-evaluate when either changes. The extension SHALL NOT fake the page's colour scheme preference.
+Each adapter SHALL declare how it treats the app's own light or dark mode, and the extension SHALL re-evaluate when either mode changes. The Notion adapter, whose app follows the system appearance, SHALL apply only while Notion's mode matches the palette mode. The Slack adapter, whose browser app cannot follow the system appearance, SHALL apply in either mode and, when Slack's mode differs from the palette's, SHALL move Slack's meaning colours onto readable versions of the palette's hues. The extension SHALL NOT fake the page's colour scheme preference or operate the apps' settings.
 
-#### Scenario: Mismatched mode
+#### Scenario: Mismatched mode in Notion
 - **WHEN** the palette is light and Notion is showing its dark theme
 - **THEN** the Notion adapter stays inactive and the options page reports the mismatch
+
+#### Scenario: Mismatched mode in Slack
+- **WHEN** the palette is light and Slack is set to Dark
+- **THEN** Slack is themed with the palette, its error, success, warning and education colours use the palette's red, green, yellow and blue adjusted for contrast, native controls follow the palette's mode, and the options page says the status colours were remapped
 
 #### Scenario: Matching mode
 - **WHEN** the app's mode and the palette mode agree
 - **THEN** the adapter maps the palette onto the app's surfaces, text, borders, menus, dialogs, sidebars and code blocks
 
 ### Requirement: Semantic mapping and preserved meaning
-Adapters SHALL override the apps' semantic colour variables rather than layout selectors. The Notion adapter SHALL NOT change authored block colour families other than neutral grey, or the primary button blue that sits under white labels. The Slack adapter SHALL NOT change success, warning, important, education or presence colours.
+Adapters SHALL override the apps' semantic colour variables rather than layout selectors. The Notion adapter SHALL NOT change authored block colour families other than neutral grey, or the primary button blue that sits under white labels. While Slack's mode matches the palette's, the Slack adapter SHALL NOT change success, warning, important, education, badge or presence colours, and it SHALL NOT change badge or presence colours in either mode.
 
 #### Scenario: Authored Notion colour
 - **WHEN** a Notion block uses a red background colour
@@ -66,7 +70,7 @@ Adapters SHALL override the apps' semantic colour variables rather than layout s
 - **THEN** it keeps Slack's own colour for the current mode
 
 ### Requirement: Readable contrast
-For every stock Omarchy theme, mapped primary text SHALL reach at least 4.5:1 against mapped primary, secondary and popover surfaces, secondary text and accent text at least 4.5:1 against the primary surface, and tertiary text at least 3:1.
+For every stock Omarchy theme, mapped primary text SHALL reach at least 4.5:1 against mapped primary, secondary and popover surfaces (including Notion's search dialog and Slack's navigation), secondary text and accent text at least 4.5:1 against the primary surface, tertiary text at least 3:1, and remapped Slack status text at least 4.5:1 against its own tinted background.
 
 #### Scenario: Contrast matrix
 - **WHEN** the adapters are rendered against each stock Omarchy palette

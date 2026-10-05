@@ -11,11 +11,15 @@ The installer SHALL support a dry run that lists every file it would write and e
 
 #### Scenario: Dry run
 - **WHEN** the installer runs with `--dry-run`
-- **THEN** it prints the planned files and changed lines and writes nothing
+- **THEN** it prints every planned file (including the ownership marker and the flags record) and changed line, and writes nothing; the uninstaller's dry run also writes nothing
 
 #### Scenario: Install
 - **WHEN** the installer runs
 - **THEN** it writes only the planned files and the manifest allows only this extension's fixed ID
+
+#### Scenario: Unsafe install path
+- **WHEN** the install directory is relative, or contains whitespace, commas, quotes, backslashes, `#` or control characters
+- **THEN** a relative directory is refused, and otherwise the flags file is left unchanged with instructions to load the extension unpacked
 
 ### Requirement: Omarchy configuration preserved
 The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, hooks or other browsers. Editing `~/.config/chromium-flags.conf` SHALL be opt-in, SHALL append this extension's path to the existing single `--load-extension=` list (or add the line when absent), SHALL keep every other line, symlink and file mode, and SHALL NOT duplicate the entry.
@@ -38,6 +42,10 @@ The uninstaller SHALL remove only what the installer added, including its flags 
 #### Scenario: Uninstall after flag merge
 - **WHEN** the uninstaller runs after an install with the flag merge
 - **THEN** the flags file matches its pre-install content and the installed directory and manifest are gone
+
+#### Scenario: Entry cannot be removed
+- **WHEN** the flags file still names the installed extension on a line the uninstaller cannot edit safely
+- **THEN** the uninstaller keeps the installed files, explains how to remove the entry and exits with an error
 
 #### Scenario: Repeated uninstall
 - **WHEN** the uninstaller runs when nothing is installed

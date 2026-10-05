@@ -28,6 +28,10 @@ The extension SHALL keep a connection to the helper, store the last good palette
 - **WHEN** the helper exits or the extension service worker is stopped
 - **THEN** the extension reconnects with backoff, or when a matching page loads, regains focus or becomes visible, and later theme changes still reach open pages
 
+#### Scenario: Extension reloaded
+- **WHEN** the extension is reloaded or removed while Notion or Slack pages are open
+- **THEN** those pages drop every palette property, attribute and adapter style rather than keeping a stale palette
+
 #### Scenario: Browser restart
 - **WHEN** Chromium starts with matching pages restored
 - **THEN** the cached palette is applied immediately and refreshed once the helper reconnects
@@ -51,7 +55,7 @@ An adapter SHALL apply only while the app's own light or dark mode matches the p
 - **THEN** the adapter maps the palette onto the app's surfaces, text, borders, menus, dialogs, sidebars and code blocks
 
 ### Requirement: Semantic mapping and preserved meaning
-Adapters SHALL override the apps' semantic colour variables rather than layout selectors. The Notion adapter SHALL NOT change authored block colour families other than neutral grey. The Slack adapter SHALL NOT change success, warning, important, education or presence colours.
+Adapters SHALL override the apps' semantic colour variables rather than layout selectors. The Notion adapter SHALL NOT change authored block colour families other than neutral grey, or the primary button blue that sits under white labels. The Slack adapter SHALL NOT change success, warning, important, education or presence colours.
 
 #### Scenario: Authored Notion colour
 - **WHEN** a Notion block uses a red background colour

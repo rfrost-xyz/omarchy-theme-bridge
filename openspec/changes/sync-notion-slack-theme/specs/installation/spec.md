@@ -24,12 +24,16 @@ The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, 
 - **WHEN** the installer runs with `--load-extension-flag` twice
 - **THEN** the flags file contains one `--load-extension=` line with the original entries followed by this extension once, and all other lines unchanged
 
+#### Scenario: Switch shares a line
+- **WHEN** the last `--load-extension` switch is indented or shares a line with other flags
+- **THEN** the installer leaves the flags file unchanged, explains why and prints instructions for loading the extension unpacked
+
 #### Scenario: Default install leaves flags alone
 - **WHEN** the installer runs without `--load-extension-flag`
 - **THEN** the flags file is byte-for-byte unchanged and setup instructions for loading the unpacked extension are printed
 
 ### Requirement: Clean removal
-The uninstaller SHALL remove only what the installer added, including its flags entry, and SHALL leave the flags file otherwise unchanged.
+The uninstaller SHALL remove only what the installer added, including its flags entry, and SHALL restore the flags file byte for byte, including line endings, the final newline and an originally empty `--load-extension=` list.
 
 #### Scenario: Uninstall after flag merge
 - **WHEN** the uninstaller runs after an install with the flag merge

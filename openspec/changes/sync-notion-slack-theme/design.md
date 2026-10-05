@@ -65,8 +65,13 @@ so it may be removed) and ctypes inotify (more code for a negligible gain).
 Polling a few `stat` calls twice a second is cheap and survives directory
 replacement by construction.
 
-Parsing accepts only `key = "value"` lines, reads at most 64 KiB, whitelists the
-Omarchy colour keys and requires `#rgb` or `#rrggbb`. The theme name must match
+Parsing follows `omarchy-theme-color`: lines it cannot read are skipped,
+quoted and unquoted values and legacy `bg`, `fg` and `colorN` names are
+accepted, and mode is resolved with the same precedence and threshold
+(`mode`, `theme_type`, `light.mode`, R+G+B > 382) so the palette mode always
+agrees with the desktop colour scheme that drives the apps. It reads at most
+64 KiB of a regular file, whitelists the Omarchy colour keys and requires
+`#rgb` or `#rrggbb`. The theme name must match
 `[a-z0-9][a-z0-9-]{0,63}`. `OMARCHY_PALETTE_STATE_DIR` overrides the state
 directory for tests only.
 
@@ -105,6 +110,9 @@ a subtree observer. Overrides apply to `<html>`, `<body>` and nested theme
 containers whose mode matches the palette (guarded by `data-omarchy-mode`), so
 deliberately opposite-mode elements such as tooltips keep the app's colours.
 
+- Content scripts tear themselves down (observers, interval, style element and
+  attributes) once the extension context is invalidated, because Chromium does
+  not re-inject them into open tabs after a reload.
 - Notion: `appMode()` reads `notion-dark-theme` on `<body>`. CSS assigns
   surfaces, text, icons, borders, popovers, sidebar selection, neutral `gra`
   family, UI blue and code block backgrounds with `!important`. Chromatic block
@@ -134,8 +142,13 @@ The manifest carries a public `key`, giving a stable ID for the helper's
 `install.sh` copies `extension/` and the helper into
 `~/.local/share/omarchy-webapp-theme/`, writes
 `~/.config/chromium/NativeMessagingHosts/xyz.rfrost.omarchy_webapp_theme.json`
-and, only with `--load-extension-flag`, merges the path into the flags file by
-rewriting that one line in place (following symlinks, keeping the mode). The
+and, only with `--load-extension-flag`, merges the path into the flags file
+through `scripts/flags.py`. It finds the switch by shell-style tokens as
+Chromium's launcher does, refuses when the last switch is indented or shares a
+line, rewrites only that line on the exact bytes through the resolved path, and
+records in `flags-state.json` whether it appended to a list (and whether the
+list was empty) or added the line, so the uninstaller can restore the original
+byte for byte. The
 dry run prints file paths and only the changed flags line. `uninstall.sh`
 reverses each step and is idempotent. Without the flag the README explains
 "Load unpacked" for each profile that opens Notion or Slack.

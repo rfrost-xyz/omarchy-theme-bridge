@@ -18,15 +18,19 @@ The helper SHALL read only `theme/colors.toml` and `theme.name` beneath the Omar
 - **THEN** the helper performs no action and sends nothing in reply
 
 ### Requirement: Palette validation and mode
-The helper SHALL send a palette message containing the theme name, a mode of `light` or `dark`, and colours normalised to lower-case `#rrggbb`. `background`, `foreground` and `accent` SHALL be required. Mode SHALL come from the `mode` key, else a `light.mode` marker in the theme directory, else background luminance.
+The helper SHALL read `colors.toml` as Omarchy's own resolver does, skipping lines it cannot read and accepting quoted or unquoted values and the legacy `bg`, `fg` and ANSI `colorN` names. It SHALL send a palette message containing the theme name, a mode of `light` or `dark`, and colours normalised to lower-case `#rrggbb`. `background`, `foreground` and `accent` (falling back to `blue`) SHALL be required. Mode SHALL match Omarchy's desktop colour scheme: the `mode` key, else `theme_type`, else a `light.mode` marker, else light when the background's red, green and blue sum to more than 382; any declared value other than `light` means dark.
 
 #### Scenario: Valid palette
 - **WHEN** the active theme has a valid `colors.toml`
 - **THEN** the helper sends `{"type":"palette", "name", "mode", "colors"}` with only valid colours
 
 #### Scenario: Mode fallback
-- **WHEN** `colors.toml` has no `mode` key and a light background
-- **THEN** the palette mode is `light`
+- **WHEN** `colors.toml` has no `mode` or `theme_type` key and a mid-tone background such as `#c8b89a`
+- **THEN** the palette mode is `light`, as `omarchy-theme-color` reports
+
+#### Scenario: Hand-written theme
+- **WHEN** `colors.toml` uses single-quoted or unquoted values, `bg` and `fg` names, a section header or a line that is not `key = value`
+- **THEN** the helper still sends the palette it can resolve
 
 ### Requirement: Missing and malformed palette reporting
 The helper SHALL report `{"type":"status","state":"missing"}` when the palette has been absent for longer than a short grace period, and `{"type":"status","state":"malformed"}` when it cannot be parsed or lacks a required colour. It SHALL keep running and recover when a valid palette returns.

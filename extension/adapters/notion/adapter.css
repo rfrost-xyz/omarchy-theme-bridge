@@ -1,0 +1,100 @@
+/*
+ * Notion: map Omarchy palette properties onto Notion's semantic colour tokens
+ * (observed on app.notion.com, version 23.13.20261005). Applies to the root,
+ * <body> and nested theme containers of the same mode only.
+ *
+ * Deliberately untouched: the chromatic block families (blu, bro, gre, ora,
+ * pin, pur, red, tea, yel and their --ca/--cd/--cl twins), the primary
+ * button blue, shadows, scrims and error rings. Those are authored content or carry meaning.
+ */
+html[data-omarchy-adapters~="notion"],
+html[data-omarchy-adapters~="notion"] > body,
+html[data-omarchy-adapters~="notion"][data-omarchy-mode="dark"] .notion-dark-theme,
+html[data-omarchy-adapters~="notion"][data-omarchy-mode="light"] .notion-light-theme {
+  /* Surfaces: page, sidebar, raised, interactive, popovers and menus */
+  --c-bacPri: var(--omarchy-background) !important;
+  --c-bacSec: var(--omarchy-mix-4) !important;
+  --c-bacEle: var(--omarchy-mix-4) !important;
+  --c-bacInt: var(--omarchy-mix-6) !important;
+  --c-bacTer: var(--omarchy-mix-12) !important;
+  --c-popBac: var(--omarchy-mix-3) !important;
+  --c-whiButBac: var(--omarchy-mix-3) !important;
+  --c-whiButHovBac: var(--omarchy-mix-8) !important;
+  --c-whiButPreBac: var(--omarchy-mix-5) !important;
+
+  /* Text and icons */
+  --c-texPri: var(--omarchy-text) !important;
+  --c-texSec: var(--omarchy-text-secondary) !important;
+  --c-texTer: var(--omarchy-text-tertiary) !important;
+  --c-texDis: var(--omarchy-text-disabled) !important;
+  --c-texAccPri: var(--omarchy-text-secondary) !important;
+  --c-icoPri: var(--omarchy-text) !important;
+  --c-icoSec: var(--omarchy-text-secondary) !important;
+  --c-icoTer: var(--omarchy-text-tertiary) !important;
+  --c-icoDis: var(--omarchy-text-disabled) !important;
+  --c-icoAccPri: var(--omarchy-text-secondary) !important;
+  --c-sidSecCol: var(--omarchy-text-tertiary) !important;
+
+  /* Borders and dividers */
+  --c-borSec: var(--omarchy-mix-8) !important;
+  --c-borPri: var(--omarchy-mix-12) !important;
+  --c-borStr: var(--omarchy-mix-28) !important;
+
+  /* Hover, press and the selected sidebar page */
+  --ca-bacIntTra: rgba(var(--omarchy-foreground-rgb), 0.06) !important;
+  --ca-butHovBac: rgba(var(--omarchy-foreground-rgb), 0.06) !important;
+  --ca-butPreBac: rgba(var(--omarchy-foreground-rgb), 0.1) !important;
+  --ca-butPreBacLig: rgba(var(--omarchy-foreground-rgb), 0.1) !important;
+  --ca-sidIteSelBac: rgba(var(--omarchy-accent-rgb), 0.16) !important;
+
+  /* Frosted surfaces: the Ctrl+K search and other "wax paper" popovers, and
+     the glass washes behind floating headers. Scrims stay Notion's. */
+  --ca-popWaxPapBac: rgba(var(--omarchy-mix-3-rgb), 0.94) !important;
+  --ca-glaWas: rgba(var(--omarchy-mix-4-rgb), 0.85) !important;
+  --ca-palWasGla0: rgba(var(--omarchy-mix-4-rgb), 0.85) !important;
+  --ca-glaPag: rgba(var(--omarchy-background-rgb), 0.85) !important;
+  --ca-palPagGla0: rgba(var(--omarchy-background-rgb), 0.85) !important;
+
+  /* Translucent washes and borders (dialogs, side panels, callouts) */
+  --ca-bacSecTra: rgba(var(--omarchy-foreground-rgb), 0.03) !important;
+  --ca-bacTerTra: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
+  --ca-borSecTra: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
+  --ca-borPriTra: rgba(var(--omarchy-foreground-rgb), 0.1) !important;
+  --ca-graBacPriTra: rgba(var(--omarchy-foreground-rgb), 0.03) !important;
+  --ca-graBacSecTra: rgba(var(--omarchy-foreground-rgb), 0.1) !important;
+  --ca-graBacTerTra: rgba(var(--omarchy-foreground-rgb), 0.3) !important;
+  --ca-sidSecBac: rgba(var(--omarchy-foreground-rgb), 0.025) !important;
+
+  /* Translucent grey ramp used for hovers, chips and dividers */
+  --ca-palTraGra75: rgba(var(--omarchy-foreground-rgb), 0.016) !important;
+  --ca-palTraGra100: rgba(var(--omarchy-foreground-rgb), 0.03) !important;
+  --ca-palTraGra200: rgba(var(--omarchy-foreground-rgb), 0.055) !important;
+  --ca-palTraGra300: rgba(var(--omarchy-foreground-rgb), 0.094) !important;
+  --ca-palTraGra400: rgba(var(--omarchy-foreground-rgb), 0.13) !important;
+  --ca-palTraGra500: rgba(var(--omarchy-foreground-rgb), 0.282) !important;
+  --ca-palTraGra600: rgba(var(--omarchy-foreground-rgb), 0.46) !important;
+  --ca-palTraGra700: rgba(var(--omarchy-foreground-rgb), 0.565) !important;
+  --ca-palTraGra800: rgba(var(--omarchy-foreground-rgb), 0.81) !important;
+  --ca-palTraGra850: rgba(var(--omarchy-foreground-rgb), 0.87) !important;
+  --ca-palTraGra900: rgba(var(--omarchy-foreground-rgb), 0.96) !important;
+
+  /* Code blocks: background only; syntax colours stay Notion's */
+  --cd-codBloBac: var(--omarchy-mix-5) !important;
+  --c-codStiBloBac: var(--omarchy-mix-6) !important;
+
+  /* Neutral grey family, which follows the theme like the chrome */
+  --c-graBacPri: var(--omarchy-mix-6) !important;
+  --c-graBacInt: var(--omarchy-mix-8) !important;
+  --c-graBacEle: var(--omarchy-mix-10) !important;
+  --c-graBacSec: var(--omarchy-mix-12) !important;
+  --c-graBacTer: var(--omarchy-mix-28) !important;
+  --c-graTexPri: var(--omarchy-text) !important;
+  --c-graTexTer: var(--omarchy-text-tertiary) !important;
+  --c-graTexDis: var(--omarchy-text-disabled) !important;
+
+  /* Interface blue: link text and the selection tint. --c-palUiBlu600 also
+     fills primary buttons under white labels, so it stays Notion's to keep
+     those labels readable with bright accents. */
+  --c-palUiBlu700: var(--omarchy-accent-text) !important;
+  --ca-palUiBlu300: rgba(var(--omarchy-accent-rgb), 0.2) !important;
+}

@@ -1,0 +1,26 @@
+#!/bin/bash
+# Run every check: syntax, helper, installer, extension unit and headless browser tests.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+echo "== shell syntax"
+for script in install.sh uninstall.sh scripts/common.sh scripts/check; do
+  bash -n "$script"
+done
+echo "== helper"
+python3 -m unittest discover -s tests/host
+echo "== installer"
+python3 -m unittest discover -s tests/install
+echo "== extension unit"
+node --test tests/extension/
+echo "== headless Chromium"
+node --test --test-concurrency=1 --test-timeout=60000 tests/e2e/
+echo "== openspec"
+if command -v openspec >/dev/null; then
+  openspec validate --all --strict
+elif [[ ${SKIP_OPENSPEC:-} == 1 ]]; then
+  echo "openspec not found: skipped (SKIP_OPENSPEC=1)"
+else
+  echo "openspec not found; install it or set SKIP_OPENSPEC=1" >&2
+  exit 1
+fi

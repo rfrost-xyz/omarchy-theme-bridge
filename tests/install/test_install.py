@@ -204,7 +204,7 @@ class InstallTest(unittest.TestCase):
         self.assertEqual(self.snapshot(), installed)
 
     def test_unsafe_install_paths_never_reach_the_flags_file(self):
-        for name in ("my data", "a,b", "o'brien"):
+        for name in ("my data", "a,b", "o'brien", 'say"hi', "back\\slash", "hash#tag", "tab\there"):
             with self.subTest(name=name):
                 data_home = os.path.join(self.home, name)
                 result = self.run_env({"XDG_DATA_HOME": data_home}, "install.sh", "--load-extension-flag")
@@ -214,6 +214,8 @@ class InstallTest(unittest.TestCase):
                 with open(self.manifest) as handle:
                     self.assertEqual(json.load(handle)["path"], os.path.join(data_home, "omarchy-webapp-theme", "bin", "omarchy-webapp-theme-host"))
                 self.assertEqual(self.run_env({"XDG_DATA_HOME": data_home}, "uninstall.sh").returncode, 0)
+                self.assertFalse(os.path.exists(self.manifest))
+                self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-webapp-theme")))
 
     def test_relative_data_home_is_refused(self):
         result = self.run_env({"XDG_DATA_HOME": "relative/share"}, "install.sh")
@@ -263,6 +265,32 @@ class InstallTest(unittest.TestCase):
         self.assertEqual(lines[0], f"--load-extension=/a,{self.data}/extension".encode())
         self.run_script("uninstall.sh")
         self.assertEqual(self.read_flags(), original)
+
+    def test_hash_inside_a_word_is_not_a_comment(self):
+        original = b"--load-extension=/a\n--homepage=https://x/#/ --load-extension=/b\n"
+        self.write_flags(original)
+        result = self.run_env({}, "install.sh", "--load-extension-flag")
+        self.assertIn("shares a line or is indented", result.stderr)
+        self.assertEqual(self.read_flags(), original)
+
+    def test_other_spelling_of_data_home_uninstalls_cleanly(self):
+        share = os.path.join(self.home, ".local", "share")
+        self.assertEqual(self.run_env({"XDG_DATA_HOME": share + "//"}, "install.sh", "--load-extension-flag").returncode, 0)
+        self.assertIn(f"{self.data}/extension", self.flags_text())
+        result = self.run_env({}, "uninstall.sh")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.flags_text(), FLAGS)
+        self.assertFalse(os.path.exists(self.manifest))
+
+    def test_uninstall_dry_run_predicts_refusal(self):
+        self.run_script("install.sh", "--load-extension-flag")
+        text = self.flags_text().replace("--load-extension=", "--ozone-platform=wayland --load-extension=")
+        with open(self.flags, "w") as handle:
+            handle.write(text)
+        result = self.run_env({}, "uninstall.sh", "--dry-run")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Remove that entry by hand", result.stderr)
+        self.assertNotIn("Remove:", result.stdout)
 
     def test_foreign_files_are_left_alone(self):
         os.makedirs(self.data)

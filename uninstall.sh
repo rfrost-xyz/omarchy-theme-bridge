@@ -24,7 +24,12 @@ done
 changed=0
 # Flags first: the record of how the line was changed lives in $DATA_DIR.
 if [[ -f $FLAGS_FILE ]]; then
-  if ! plan=$(flags_edit remove); then
+  status=0
+  plan=$(flags_edit remove) || status=$?
+  if ((status == 4)); then
+    echo "Remove that entry by hand, then rerun ./uninstall.sh. Installed files were kept so Chromium does not fail to load them." >&2
+    exit 1
+  elif ((status != 0)); then
     echo "Could not read $FLAGS_FILE; nothing was removed." >&2
     exit 1
   fi
@@ -33,11 +38,6 @@ if [[ -f $FLAGS_FILE ]]; then
     echo "$plan"
     ((DRY_RUN)) || flags_edit remove --write >/dev/null
     changed=1
-  fi
-  if ! ((DRY_RUN)) && flags_edit mentions; then
-    echo "$FLAGS_FILE still loads $EXTENSION_DIR on a line this script cannot edit safely." >&2
-    echo "Remove that entry by hand, then rerun ./uninstall.sh. Installed files were kept so Chromium does not fail to load them." >&2
-    exit 1
   fi
 fi
 
@@ -49,7 +49,7 @@ elif [[ -e $DATA_DIR ]]; then
   echo "Skip: $DATA_DIR was not created by the installer."
 fi
 
-if [[ -f $MANIFEST_PATH ]] && /usr/bin/python3 -c 'import json, sys; sys.exit(0 if json.load(open(sys.argv[1])).get("path") == sys.argv[2] else 1)' "$MANIFEST_PATH" "$HOST_PATH" 2>/dev/null; then
+if [[ -f $MANIFEST_PATH ]] && /usr/bin/python3 -c 'import json, os, sys; sys.exit(0 if os.path.normpath(json.load(open(sys.argv[1])).get("path", "")) == os.path.normpath(sys.argv[2]) else 1)' "$MANIFEST_PATH" "$HOST_PATH" 2>/dev/null; then
   echo "Remove: $MANIFEST_PATH"
   ((DRY_RUN)) || rm -f "$MANIFEST_PATH"
   changed=1

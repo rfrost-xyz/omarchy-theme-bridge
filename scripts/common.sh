@@ -7,8 +7,14 @@ HOST_FILE=omarchy-webapp-theme-host
 EXTENSION_ID=pinjcoeajnkogbmcjjgkgjafpiiebheg
 MARKER=.installed-by-omarchy-webapp-theme
 
-CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}
-DATA_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/$NAME
+# Normalise absolute bases (trailing or doubled slashes, dot segments) so every
+# spelling of a directory produces the same paths; relative ones are refused
+# by install.sh.
+normal_dir() {
+  if [[ $1 == /* ]]; then realpath -ms -- "$1"; else printf '%s\n' "$1"; fi
+}
+CONFIG_DIR=$(normal_dir "${XDG_CONFIG_HOME:-$HOME/.config}")
+DATA_DIR=$(normal_dir "${XDG_DATA_HOME:-$HOME/.local/share}")/$NAME
 EXTENSION_DIR=$DATA_DIR/extension
 HOST_PATH=$DATA_DIR/bin/$HOST_FILE
 MANIFEST_PATH=$CONFIG_DIR/chromium/NativeMessagingHosts/$HOST_NAME.json

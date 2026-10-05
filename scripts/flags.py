@@ -35,10 +35,33 @@ def ending(line):
 
 
 def tokens(line):
-    # Chromium's flags launcher skips a line it cannot split (unbalanced
-    # quotes), so such a line carries no switches.
+    """Split a line the way Chromium's launcher (GLib g_shell_parse_argv) does.
+
+    A '#' starts a comment only at the start of a word, and a line that
+    cannot be split (unbalanced quotes) is skipped, so it carries no switches.
+    """
+    quote = None
+    escaped = False
+    word_start = True
+    for index, char in enumerate(line):
+        if escaped:
+            escaped = False
+        elif quote:
+            if char == quote:
+                quote = None
+            elif char == "\\" and quote == '"':
+                escaped = True
+        elif char == "\\":
+            escaped = True
+        elif char in "\"'":
+            quote = char
+        elif char == "#" and word_start:
+            line = line[:index]
+            break
+        # GLib only starts a comment after a space or newline, not a tab.
+        word_start = char in " \n" and not quote and not escaped
     try:
-        return shlex.split(line, comments=True)
+        return shlex.split(line, comments=False)
     except ValueError:
         return []
 
@@ -57,7 +80,7 @@ def entries(line):
 
 
 def same(a, b):
-    return a.rstrip("/") == b.rstrip("/")
+    return os.path.normpath(a) == os.path.normpath(b)
 
 
 def add(lines, ext):
@@ -146,6 +169,9 @@ def main(argv):
             except (OSError, ValueError):
                 state = None
             new, old_line, new_line = remove(lines, ext, state)
+            if mentions(new, ext):
+                print(f"Flags: {path} still loads {ext} on a line this script cannot edit safely.", file=sys.stderr)
+                return 4
     except Refuse as error:
         print(f"Flags: not changed: {error}.", file=sys.stderr)
         return 3

@@ -43,12 +43,18 @@ It has three parts:
      shares a line with other flags, the installer leaves the file alone and
      says so, because adding a second switch would replace Omarchy's list.
 
-3. In Notion (Settings, Appearance) and Slack (Preferences, Themes), choose to
-   follow the system setting. Omarchy sets the desktop colour scheme for each
-   theme, Chromium passes it to pages, and the apps then switch between light
-   and dark themselves. The extension only recolours an app while the app's own
-   mode matches the Omarchy theme. If they differ, it leaves the app alone and
-   the options page says so.
+3. In Notion (Settings, Appearance), choose **Use system setting**. Omarchy
+   sets the desktop colour scheme for each theme, Chromium passes it to pages,
+   and Notion switches between light and dark itself. The Notion adapter only
+   recolours Notion while its mode matches the Omarchy theme, because Notion's
+   authored block colours are tuned per mode; if they differ, the options page
+   says so.
+
+   Slack in the browser only offers Light or Dark (following the system is a
+   desktop-app feature), so the Slack adapter themes Slack in either mode. When
+   Slack's mode differs from the Omarchy theme, its error, success, warning and
+   tip colours switch to the theme's own red, green, yellow and blue, adjusted
+   to stay readable.
 
 ### What the installer changes
 
@@ -92,27 +98,35 @@ styling.
 
 - **Notion**: surfaces (`--c-bac*`, `--c-popBac`), text and icons
   (`--c-tex*`, `--c-ico*`), borders, hover and selection washes, code block
-  backgrounds, the neutral grey block family, link blue and the selection
-  tint. Authored block colours (red, blue, yellow and the other chromatic
+  backgrounds, the Ctrl+K search and other frosted popovers, the translucent
+  grey ramp, the neutral grey block family, link blue and the selection tint. Authored block colours (red, blue, yellow and the other chromatic
   families), the primary button blue (it sits under white labels), shadows and
   error rings are left as Notion draws them.
 - **Slack**: `--dt_color-content-*`, `-base-*`, `-surf-*` and `-otl-*`
   neutrals, the link and mention colour (`hgl-1`), the legacy `--sk_*`
-  triplets and the sidebar `--dt_color-theme-*` tokens. Success and presence
+  triplets, the workspace theme tokens `--dt_color-theme-*` (navigation uses
+  the `-inv-` variants) and the window backdrop `.p-theme_background`, the
+  one class selector in the adapters, because Slack paints it from its shared
+  grey palette. While Slack's mode matches the theme, success and presence
   (`hgl-2`), highlights (`hgl-3`), important and error (`imp`), education and
-  badge colours stay Slack's.
+  badge colours stay Slack's; otherwise the first four take the palette's
+  hues. Badges and presence dots always stay Slack's.
 
 The transport also provides generic helpers every adapter can use:
 `--omarchy-mix-<n>` (background blended n% towards foreground),
-`--omarchy-text`, `-text-secondary`, `-text-tertiary` and `-accent-text`
-(adjusted to 4.5:1 or 3:1 against the main surfaces), `--omarchy-accent-ink`
+`--omarchy-text`, `-text-secondary`, `-text-tertiary`, `-accent-text` and
+`-<hue>-text` for red, green, yellow, blue, magenta, cyan and orange (adjusted
+to 4.5:1, or 3:1 for tertiary, against the main surfaces), `--omarchy-accent-ink`
 and an `-rgb` triplet for each.
 
 ## Adding another web app
 
 1. Create `extension/adapters/<id>/adapter.js` that registers
    `{ id, appMode() }`, returning `'light'`, `'dark'` or `null` from the app's
-   own theme marker.
+   own theme marker. Add `modePolicy: 'any'` only if the app cannot follow the
+   system appearance; the page then also gets `data-omarchy-remap~="<id>"`
+   while the modes differ, for CSS that moves meaning colours onto the
+   palette.
 2. Create `extension/adapters/<id>/adapter.css` scoped to
    `html[data-omarchy-adapters~="<id>"]`, assigning the app's colour variables.
 3. Add one `content_scripts` entry for the app's origin to `manifest.json`
@@ -146,17 +160,19 @@ tests.
 
 ## Known limitations
 
-- **Live behaviour in the signed-in apps is not yet verified.** Tests use
-  synthetic pages. Notion's token names and defaults were taken from Notion's
-  public stylesheet (version 23.13.20261005). Slack's `--dt_color-*` tokens were
-  seen on its public sign-in page, but `--sk_*` and `--dt_color-theme-*` (the
-  sidebar) exist only in the signed-in client and come from
-  omarchy-webapp-theme's reference mappings.
-- **Light and dark switching depends on the apps.** In a throwaway Chromium app
-  window, `prefers-color-scheme` matched the desktop's `prefer-dark` setting.
-  Whether Notion and Slack follow a live change depends on each app's "follow
-  system" setting, which has not been checked in the signed-in apps. Until an
-  app matches, the extension leaves it uncoloured instead of forcing a mode.
+- **What was checked live** (2026-10-05, Chromium 153 app windows, signed-in
+  apps): Notion followed light and dark Omarchy themes without reloading,
+  including its Ctrl+K search; Slack's messages, sidebar, rail and dialogs
+  followed light and dark themes. Slack's navigation tokens were confirmed by
+  reading its computed styles. Automated tests use synthetic pages built from
+  the apps' public stylesheets, so a future app update can still drift.
+- **Light and dark switching**: Notion follows the desktop only when set to
+  use the system setting; until then the Notion adapter leaves it uncoloured.
+  Slack in the browser cannot follow the desktop, so it stays in its chosen
+  mode with the palette applied and status colours remapped.
+- **Slack's own colours**: a few things Slack draws with fixed colours (some
+  icons, images and illustrations) keep their Slack look, especially when
+  Slack's mode differs from the theme's.
 - **App changes**: if Notion or Slack rename their colour variables, the
   affected areas fall back to the app's own colours rather than breaking.
 - **Origins**: only `app.notion.com` and `app.slack.com`. Public `notion.site`

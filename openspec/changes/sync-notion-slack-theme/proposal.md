@@ -19,8 +19,11 @@ web apps one adapter at a time.
   and fans it out through extension storage. A generic content script exposes
   the palette as CSS custom properties.
 - Add independent Notion and Slack adapters that map those properties onto each
-  app's own semantic colour tokens, only while the app's own light or dark mode
-  matches the palette, preserving authored and status colours.
+  app's own semantic colour tokens. Notion is themed only while its own light
+  or dark mode matches the palette, preserving authored block colours. Slack
+  cannot follow the system appearance, so it is themed in either mode, keeping
+  its status colours while modes match and moving them to readable palette
+  hues when they differ.
 - Add a per-user, Chromium-only installer and uninstaller with a dry run that
   shows every file and configuration change. Editing the Omarchy-managed
   Chromium flags file is opt-in.

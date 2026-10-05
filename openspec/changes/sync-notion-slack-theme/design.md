@@ -105,7 +105,8 @@ list from the manifest's `content_scripts`, so adding one does not touch the
 transport. Each adapter registers `{ id, appMode() }` and ships `adapter.css` whose rules
 are scoped to `html[data-omarchy-adapters~="<id>"]`. The core adds the id when
 the adapter is enabled, a palette exists and `appMode()` equals the palette
-mode. It removes the id otherwise. A `MutationObserver` on the `class`
+mode, or, for an adapter with `modePolicy: 'any'` (Slack), whenever its mode is
+known; see "Mode policy per adapter" below. It removes the id otherwise. A `MutationObserver` on the `class`
 attribute of `<html>` and `<body>` re-runs the check, and a two-second re-check
 while the page is visible catches theme classes set deeper in the tree without
 a subtree observer. Overrides apply to `<html>`, `<body>` and nested theme

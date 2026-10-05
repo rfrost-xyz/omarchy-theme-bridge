@@ -27,8 +27,10 @@ limitations.
   adapter directory, one `content_scripts` entry and its tests, with no
   transport changes. Adapters map Omarchy variables onto each app's own
   semantic colour tokens; avoid layout or generated class selectors.
-- Preserve meaning: leave Notion's authored block colour families and Slack's
-  status, highlight and error colours to the app.
+- Preserve meaning: leave Notion's authored block colour families to the app.
+  Keep Slack's status, highlight and error colours while Slack's mode matches
+  the palette; when it differs (Slack in the browser cannot follow the system),
+  move them to readable palette hues. Always keep Slack's badge colours.
 - No runtime dependencies beyond system `python3` and Chromium. Tests use
   Node's built-in test runner, Python's `unittest` and a throwaway headless
   Chromium profile. Never read or write the live browser profile, live theme

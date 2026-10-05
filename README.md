@@ -78,7 +78,8 @@ would change, never the rest of the file.
 
 This removes the installed directory, the helper registration and this
 extension's flags entry, leaving the flags file byte for byte as it was before
-installing.
+installing. If an Omarchy update has since added another extension to that
+line, only this extension's entry is removed.
 Restart Chromium, or remove an unpacked copy from `chrome://extensions`.
 Running it again is harmless.
 

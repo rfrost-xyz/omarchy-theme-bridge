@@ -102,6 +102,42 @@ class HostTest(unittest.TestCase):
         self.host = Host(self.state)
         self.assertEqual(self.host.read()["mode"], "light")
 
+    def test_mode_matches_omarchy_resolution(self):
+        cases = [
+            ('background = "#c8b89a"\nforeground = "#222222"\naccent = "#335599"\n', "light"),
+            ('background = "#a0a0a0"\nforeground = "#000000"\naccent = "#335599"\n', "light"),
+            ('background = "#7f7f7f"\nforeground = "#ffffff"\naccent = "#335599"\n', "dark"),
+            ('theme_type = "light"\n' + DARK.replace('mode = "dark"\n', ""), "light"),
+            ('mode = "sepia"\n' + LIGHT_NO_MODE, "dark"),
+        ]
+        for colours, expected in cases:
+            with self.subTest(colours=colours):
+                self.write_theme("x", colours)
+                host = Host(self.state)
+                try:
+                    self.assertEqual(host.read()["mode"], expected)
+                finally:
+                    host.close()
+
+    def test_accepts_the_forms_omarchy_accepts(self):
+        self.write_theme(
+            "hand-written",
+            "# hand-written theme\n[colors]\nbg = '#101010'\nfg = #eeeeee\ncolor4 = \"#3366ff\" # blue\n"
+            "not a key value line\nmode = light\n",
+        )
+        message = self.start().read()
+        self.assertEqual(message["type"], "palette")
+        self.assertEqual(message["mode"], "light")
+        self.assertEqual(message["colors"]["background"], "#101010")
+        self.assertEqual(message["colors"]["foreground"], "#eeeeee")
+        self.assertEqual(message["colors"]["accent"], "#3366ff")
+        self.assertEqual(message["colors"]["blue"], "#3366ff")
+
+    def test_ansi_slots_fill_background_and_foreground(self):
+        self.write_theme("ansi", 'color0 = "#000000"\ncolor7 = "#cccccc"\naccent = "#ff8800"\n')
+        colours = self.start().read()["colors"]
+        self.assertEqual((colours["background"], colours["foreground"]), ("#000000", "#cccccc"))
+
     def test_unknown_keys_and_invalid_values_are_dropped(self):
         self.write_theme(
             "x",

@@ -7,18 +7,18 @@
 
 ## 2. Extension transport
 
-- [ ] 2.1 Add `extension/manifest.json` with fixed `key`, `nativeMessaging` and `storage` only, and the two origin matches; verify with a `node --test` manifest audit that also derives the extension ID from the key
-- [ ] 2.2 Implement the service worker (native port, storage of palette and status, backoff, `ensure` handling) and `content/palette.js` (palette properties, derived helpers, `ensure` on load, visibility and focus); verify palette maths with `node --test tests/extension`
-- [ ] 2.3 Build the headless Chromium harness in `tests/e2e/` (temporary profile, helper registration, CDP Fetch fixtures, fixture state directory); verify initial load, live change, directory replacement, helper kill and worker stop recovery, missing and malformed palettes
+- [x] 2.1 Add `extension/manifest.json` with fixed `key`, `nativeMessaging` and `storage` only, and the two origin matches; verify with a `node --test` manifest audit that also derives the extension ID from the key
+- [x] 2.2 Implement the service worker (native port, storage of palette and status, backoff, `ensure` handling) and `content/palette.js` (palette properties, derived helpers, `ensure` on load, visibility and focus); verify palette maths with `node --test tests/extension`
+- [x] 2.3 Build the headless Chromium harness in `tests/e2e/` (temporary profile, helper registration, CDP Fetch fixtures, fixture state directory); verify initial load, live change, directory replacement, helper kill and worker stop recovery, missing and malformed palettes
 
 ## 3. Adapter core and Notion adapter
 
-- [ ] 3.1 Implement the adapter registry, mode gating and options page toggles with status; verify in e2e that toggling an adapter adds and removes it live and that a mode mismatch leaves it inactive and is reported
-- [ ] 3.2 Implement `adapters/notion/` (mode detection and token CSS); verify in e2e against a synthetic Notion fixture using Notion's token names: mapped surfaces, text, menus, dialogs, sidebar and code blocks follow the palette, and authored red block colours stay unchanged
+- [x] 3.1 Implement the adapter registry, mode gating and options page toggles with status; verify in e2e that toggling an adapter adds and removes it live and that a mode mismatch leaves it inactive and is reported
+- [x] 3.2 Implement `adapters/notion/` (mode detection and token CSS); verify in e2e against a synthetic Notion fixture using Notion's token names: mapped surfaces, text, menus, dialogs, sidebar and code blocks follow the palette, and authored red block colours stay unchanged
 
 ## 4. Slack adapter
 
-- [ ] 4.1 Implement `adapters/slack/` (mode detection and token CSS); verify in e2e against a synthetic Slack fixture: mapped content, base, outline and link tokens follow the palette, triplet tokens stay valid in `rgba()`, and important, success, warning and presence colours stay unchanged
+- [x] 4.1 Implement `adapters/slack/` (mode detection and token CSS); verify in e2e against a synthetic Slack fixture: mapped content, base, outline and link tokens follow the palette, triplet tokens stay valid in `rgba()`, and important, success, warning and presence colours stay unchanged
 
 ## 5. Contrast and colour scheme checks
 
@@ -27,7 +27,7 @@
 
 ## 6. Installation
 
-- [ ] 6.1 Implement `install.sh` (dry run, copy, manifest, opt-in flags merge) and `uninstall.sh`; verify with `tests/install/` against a temporary `HOME`: dry run writes nothing, default install leaves the flags file byte-identical, repeated flag merges add one entry, symlink and mode are kept, uninstall restores the original and is idempotent
+- [x] 6.1 Implement `install.sh` (dry run, copy, manifest, opt-in flags merge) and `uninstall.sh`; verify with `tests/install/` against a temporary `HOME`: dry run writes nothing, default install leaves the flags file byte-identical, repeated flag merges add one entry, symlink and mode are kept, uninstall restores the original and is idempotent
 - [ ] 6.2 Write the README (setup, removal, permissions explained, exact files changed, adding an adapter, known limitations, credits) and `scripts/check`; verify `./scripts/check` passes end to end
 
 ## 7. Live verification (requires user approval)

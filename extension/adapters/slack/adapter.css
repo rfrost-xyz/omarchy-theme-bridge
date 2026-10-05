@@ -1,0 +1,75 @@
+/*
+ * Slack: map Omarchy palette properties onto Slack's design tokens.
+ * --dt_color-content/base/surf/otl were observed on app.slack.com. The --sk_*
+ * triplets and --dt_color-theme-* sidebar tokens are only defined in the
+ * signed-in client and are unverified until checked live. --sk_* values are
+ * "r, g, b" triplets because Slack uses them inside rgba().
+ *
+ * Deliberately untouched: hgl-2 (success, presence), hgl-3 (highlights,
+ * warnings), imp (errors, important), education, and theme base hgl/imp
+ * (badges). Those carry meaning.
+ */
+html[data-omarchy-adapters~="slack"],
+html[data-omarchy-adapters~="slack"] > body,
+html[data-omarchy-adapters~="slack"][data-omarchy-mode="dark"] .sk-client-theme--dark,
+html[data-omarchy-adapters~="slack"][data-omarchy-mode="light"] .sk-client-theme--light {
+  /* Content (text) */
+  --dt_color-content-pry: var(--omarchy-text) !important;
+  --dt_color-content-sec: var(--omarchy-text-secondary) !important;
+  --dt_color-content-ter: var(--omarchy-text-tertiary) !important;
+  --dt_color-content-inv-pry: var(--omarchy-background) !important;
+  --dt_color-content-hgl-1: var(--omarchy-accent-text) !important;
+
+  /* Base surfaces: messages, panes, menus and dialogs */
+  --dt_color-base-pry: var(--omarchy-background) !important;
+  --dt_color-base-sec: var(--omarchy-mix-3) !important;
+  --dt_color-base-ter: var(--omarchy-mix-8) !important;
+  --dt_color-base-inv-pry: var(--omarchy-text) !important;
+
+  /* Hover and press washes */
+  --dt_color-surf-pry: rgba(var(--omarchy-foreground-rgb), 0.06) !important;
+  --dt_color-surf-pry-hover: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
+  --dt_color-surf-pry-pressed: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-surf-sec: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
+  --dt_color-surf-sec-hover: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-surf-sec-pressed: rgba(var(--omarchy-foreground-rgb), 0.2) !important;
+
+  /* Outlines */
+  --dt_color-otl-pry: var(--omarchy-mix-40) !important;
+  --dt_color-otl-sec: rgba(var(--omarchy-foreground-rgb), 0.4) !important;
+  --dt_color-otl-ter: rgba(var(--omarchy-foreground-rgb), 0.13) !important;
+  --dt_color-otl-hgl-1: var(--omarchy-accent) !important;
+
+  /* Legacy triplets (unverified) */
+  --sk_primary_background: var(--omarchy-background-rgb) !important;
+  --sk_primary_foreground: var(--omarchy-text-rgb) !important;
+  --sk_secondary_background: var(--omarchy-mix-4-rgb) !important;
+  --sk_inverted_background: var(--omarchy-text-rgb) !important;
+  --sk_inverted_foreground: var(--omarchy-background-rgb) !important;
+  --sk_foreground_max: var(--omarchy-foreground-rgb) !important;
+  --sk_foreground_high: var(--omarchy-foreground-rgb) !important;
+  --sk_foreground_mid: var(--omarchy-foreground-rgb) !important;
+  --sk_foreground_low: var(--omarchy-foreground-rgb) !important;
+  --sk_foreground_soft: var(--omarchy-foreground-rgb) !important;
+  --sk_foreground_min: var(--omarchy-foreground-rgb) !important;
+  --sk_foreground_max_solid: var(--omarchy-mix-60-rgb) !important;
+  --sk_foreground_high_solid: var(--omarchy-mix-40-rgb) !important;
+  --sk_foreground_mid_solid: var(--omarchy-mix-28-rgb) !important;
+  --sk_foreground_low_solid: var(--omarchy-mix-12-rgb) !important;
+  --sk_foreground_soft_solid: var(--omarchy-mix-5-rgb) !important;
+  --sk_foreground_min_solid: var(--omarchy-mix-4-rgb) !important;
+  --sk_highlight: var(--omarchy-accent-rgb) !important;
+  --sk_highlight_hover: var(--omarchy-accent-rgb) !important;
+  --sk_highlight_accent: var(--omarchy-accent-rgb) !important;
+
+  /* Sidebar theme tokens (unverified) */
+  --dt_color-theme-base-pry: var(--omarchy-mix-4) !important;
+  --dt_color-theme-base-sec: var(--omarchy-mix-8) !important;
+  --dt_color-theme-content-pry: var(--omarchy-text) !important;
+  --dt_color-theme-content-sec: var(--omarchy-text-secondary) !important;
+  --dt_color-theme-content-ter: var(--omarchy-text-tertiary) !important;
+  --dt_color-theme-surf-pry: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
+  --dt_color-theme-surf-pry-hover: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
+  --dt_color-theme-surf-pry-pressed: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-theme-otl-pry: var(--omarchy-mix-28) !important;
+}

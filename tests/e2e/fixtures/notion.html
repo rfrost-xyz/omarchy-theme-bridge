@@ -1,0 +1,145 @@
+<!doctype html>
+<!-- Synthetic Notion page. Token names and default values are copied from
+     Notion's public stylesheet (app.notion.com logged out, version
+     23.13.20261005); the markup is invented and holds no workspace content. -->
+<html class="notion-html" lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+:root, .notion-light-theme {
+  --c-bacEle: #fff;
+  --c-bacInt: #f4f3f3;
+  --c-bacPri: #fff;
+  --c-bacSec: #f9f8f7;
+  --c-bacTer: #f0efed;
+  --c-borPri: #e6e5e3;
+  --c-borSec: #f0efed;
+  --c-borStr: #d4d3cf;
+  --c-codStiBloBac: #f7f6f3;
+  --c-graBacEle: #fff;
+  --c-graBacInt: #f4f3f3;
+  --c-graBacPri: #f9f8f7;
+  --c-graBacSec: #f0efed;
+  --c-graBacTer: #e6e5e3;
+  --c-graTexDis: #bcbab6;
+  --c-graTexPri: #494846;
+  --c-graTexTer: #ada9a3;
+  --c-icoAccPri: #7d7a75;
+  --c-icoDis: #bcbab6;
+  --c-icoPri: #383836;
+  --c-icoSec: #8e8b86;
+  --c-icoTer: #ada9a3;
+  --c-palUiBlu600: #2383e2;
+  --c-palUiBlu700: #105fad;
+  --c-popBac: #fff;
+  --c-sidSecCol: #91918e;
+  --c-texAccPri: #5f5e59;
+  --c-texDis: #bcbab6;
+  --c-texPri: #2c2c2b;
+  --c-texSec: #7d7a75;
+  --c-texTer: #a19e99;
+  --c-whiButBac: #fff;
+  --c-whiButHovBac: #efefee;
+  --c-whiButPreBac: #dfdfde;
+  --ca-bacIntTra: rgba(33,27,23,.05);
+  --ca-butHovBac: rgba(55,53,47,.06);
+  --ca-butPreBac: rgba(55,53,47,.16);
+  --ca-butPreBacLig: rgba(55,53,47,.1);
+  --ca-palUiBlu300: rgba(35,131,226,.21);
+  --ca-sidIteSelBac: rgba(0,0,0,.03);
+  --cd-codBloBac: #f7f6f3;
+  --c-redBacPri: #fdf6f6;
+  --c-redTexPri: #6d3531;
+  --c-redTexSec: #cf5148;
+  --c-bluBacPri: #f3f9fd;
+  --c-bluTexPri: #264a72;
+  --c-yelBacPri: #fcfaef;
+  --c-greTexPri: #2a533c;
+}
+.notion-dark-theme {
+  --c-bacEle: #202020;
+  --c-bacInt: #262626;
+  --c-bacPri: #191919;
+  --c-bacSec: #202020;
+  --c-bacTer: #383836;
+  --c-borPri: #383836;
+  --c-borSec: #2c2c2b;
+  --c-borStr: #5f5e59;
+  --c-codStiBloBac: #272727;
+  --c-graBacEle: #2c2c2b;
+  --c-graBacInt: #262626;
+  --c-graBacPri: #202020;
+  --c-graBacSec: #383836;
+  --c-graBacTer: #5f5e59;
+  --c-graTexDis: #494846;
+  --c-graTexPri: #f0efed;
+  --c-graTexTer: #5f5e59;
+  --c-icoAccPri: #bcbab6;
+  --c-icoDis: #5f5e59;
+  --c-icoPri: #e6e5e3;
+  --c-icoSec: #ada9a3;
+  --c-icoTer: #7d7a75;
+  --c-palUiBlu700: #4fa7ff;
+  --c-popBac: #252525;
+  --c-sidSecCol: #9b9b9b;
+  --c-texAccPri: #bcbab6;
+  --c-texDis: #5f5e59;
+  --c-texPri: #f0efed;
+  --c-texSec: #ada9a3;
+  --c-texTer: #7d7a75;
+  --c-whiButBac: #252525;
+  --c-whiButHovBac: #2f2f2f;
+  --c-whiButPreBac: #252525;
+  --ca-bacIntTra: rgba(255,255,255,.055);
+  --ca-butHovBac: rgba(255,255,255,.055);
+  --ca-butPreBac: rgba(255,255,255,.03);
+  --ca-butPreBacLig: rgba(255,255,255,.03);
+  --ca-palUiBlu300: rgba(35,131,226,.2);
+  --ca-sidIteSelBac: rgba(255,255,255,.055);
+  --cd-codBloBac: rgba(255,255,255,.03);
+  --c-redBacPri: #241d1d;
+  --c-redTexPri: #fce9e7;
+  --c-bluBacPri: #1a2027;
+  --c-bluTexPri: #e5f2fc;
+  --c-yelBacPri: #23221a;
+  --c-greTexPri: #e8f1ec;
+}
+body { margin: 0; background: var(--c-bacPri); color: var(--c-texPri); font: 14px sans-serif; }
+#sidebar { background: var(--c-bacSec); color: var(--c-texSec); }
+#sidebar .selected { background: var(--ca-sidIteSelBac); }
+#muted { color: var(--c-texTer); }
+#link { color: var(--c-palUiBlu700, var(--c-palUiBlu600)); }
+#menu, #dialog { background: var(--c-popBac); color: var(--c-texPri); border: 1px solid var(--c-borPri); }
+#code { background: var(--cd-codBloBac); color: var(--c-texPri); }
+#red-block { background: var(--c-redBacPri); color: var(--c-redTexPri); }
+#blue-text { color: var(--c-bluTexPri); }
+#grey-block { background: var(--c-graBacPri); color: var(--c-graTexPri); }
+#opposite { background: var(--c-bacPri); color: var(--c-texPri); }
+</style>
+</head>
+<body class="notion-body {{MODE}}-mode">
+<script>
+  if (document.body.classList.contains('dark-mode')) document.body.classList.add('dark', 'notion-dark-theme');
+</script>
+<nav id="sidebar"><div class="selected">Page</div><div>Other page</div></nav>
+<main>
+  <p id="muted">Muted text</p>
+  <a id="link" href="#">Link</a>
+  <div id="menu" role="menu">Menu</div>
+  <div id="dialog" role="dialog">Dialog</div>
+  <pre id="code">const x = 1;</pre>
+  <div id="red-block">Authored red block</div>
+  <span id="blue-text">Authored blue text</span>
+  <div id="grey-block">Authored grey block</div>
+  <div id="opposite-holder"></div>
+</main>
+<script>
+  // A container in the opposite theme, such as a tooltip, keeps Notion's colours.
+  const opposite = document.createElement('div');
+  opposite.id = 'opposite';
+  opposite.className = document.body.classList.contains('notion-dark-theme') ? 'notion-light-theme' : 'notion-dark-theme';
+  opposite.textContent = 'Opposite theme tooltip';
+  document.getElementById('opposite-holder').append(opposite);
+</script>
+</body>
+</html>

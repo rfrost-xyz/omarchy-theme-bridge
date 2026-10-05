@@ -93,20 +93,25 @@ It also sets `data-omarchy-mode` on `<html>`.
 
 ### Adapters
 
-Adapters live in `extension/adapters/<id>/` and the options page lists them
-from a small registry, so adding one does not touch the transport. Each adapter registers `{ id, appMode() }` and ships `adapter.css` whose rules
+Adapters live in `extension/adapters/<id>/` and the options page derives its
+list from the manifest's `content_scripts`, so adding one does not touch the
+transport. Each adapter registers `{ id, appMode() }` and ships `adapter.css` whose rules
 are scoped to `html[data-omarchy-adapters~="<id>"]`. The core adds the id when
 the adapter is enabled, a palette exists and `appMode()` equals the palette
 mode. It removes the id otherwise. A `MutationObserver` on the `class`
-attribute of `<html>` and `<body>` re-runs the check.
+attribute of `<html>` and `<body>` re-runs the check, and a two-second re-check
+while the page is visible catches theme classes set deeper in the tree without
+a subtree observer. Overrides apply to `<html>`, `<body>` and nested theme
+containers whose mode matches the palette (guarded by `data-omarchy-mode`), so
+deliberately opposite-mode elements such as tooltips keep the app's colours.
 
 - Notion: `appMode()` reads `notion-dark-theme` on `<body>`. CSS assigns
   surfaces, text, icons, borders, popovers, sidebar selection, neutral `gra`
-  family, UI blue and code block backgrounds with `!important` on the scoped
-  root and nested `.notion-*-theme` containers. Chromatic block families are
-  untouched.
-- Slack: `appMode()` reads `sk-client-theme--dark|light` on any element of the
-  root chain, falling back to the page's background luminance. CSS assigns
+  family, UI blue and code block backgrounds with `!important`. Chromatic block
+  families are untouched.
+- Slack: `appMode()` reads the first `sk-client-theme--dark|light` class in
+  the document. Without one the mode is unknown and the adapter stays off,
+  rather than guessing from colours. CSS assigns
   `--dt_color-content-pry|sec|ter`, `-base-pry|sec|ter`, `-otl-*` neutrals,
   `-hgl-1` link accent, and the `--sk_*` foreground and background triplets.
   `hgl-2`, `hgl-3`, `imp`, `education` and presence tokens are untouched.

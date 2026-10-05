@@ -1,0 +1,69 @@
+<!doctype html>
+<!-- Synthetic Slack page. Light --dt_color-* values are copied from Slack's
+     public sign-in stylesheet; dark values and the --sk_* and
+     --dt_color-theme-* values are invented stand-ins. The markup is invented
+     and holds no workspace content. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+:root, .sk-client-theme--light {
+  --dt_color-content-pry: #1d1c1d; --dt_color-content-sec: #454447; --dt_color-content-ter: #5e5d60;
+  --dt_color-content-hgl-1: #1264a3; --dt_color-content-hgl-2: #007a5a; --dt_color-content-hgl-3: #6b5000;
+  --dt_color-content-imp: #c01343; --dt_color-content-inv-pry: #fff;
+  --dt_color-base-pry: #fff; --dt_color-base-sec: #f8f8f8; --dt_color-base-ter: #eaeaea;
+  --dt_color-base-hgl-2: #e3fff3; --dt_color-base-hgl-3: #fffae0; --dt_color-base-imp: #ffe8ef;
+  --dt_color-otl-pry: #7c7a7f; --dt_color-otl-ter: #5e5d6021; --dt_color-otl-hgl-1: #1264a3;
+  --dt_color-surf-pry: #1d1c1d0f;
+  --sk_primary_background: 255, 255, 255; --sk_primary_foreground: 29, 28, 29;
+  --sk_foreground_max: 29, 28, 29; --sk_foreground_low_solid: 221, 221, 221; --sk_highlight: 18, 100, 163;
+  --dt_color-theme-base-pry: #3f0e40; --dt_color-theme-content-pry: #ffffff; --dt_color-theme-base-imp: #cd2553;
+  --sidebar-presence-online: #2bac76;
+}
+.sk-client-theme--dark {
+  --dt_color-content-pry: #d1d2d3; --dt_color-content-sec: #ababad; --dt_color-content-ter: #9a9b9e;
+  --dt_color-content-hgl-1: #1d9bd1; --dt_color-content-hgl-2: #2bac76; --dt_color-content-hgl-3: #e8b13b;
+  --dt_color-content-imp: #e46e8f; --dt_color-content-inv-pry: #1a1d21;
+  --dt_color-base-pry: #1a1d21; --dt_color-base-sec: #222529; --dt_color-base-ter: #2c2d30;
+  --dt_color-base-hgl-2: #10372c; --dt_color-base-hgl-3: #3e3218; --dt_color-base-imp: #451a26;
+  --dt_color-otl-pry: #9a9b9e; --dt_color-otl-ter: #d1d2d321; --dt_color-otl-hgl-1: #1d9bd1;
+  --dt_color-surf-pry: #d1d2d30f;
+  --sk_primary_background: 26, 29, 33; --sk_primary_foreground: 209, 210, 211;
+  --sk_foreground_max: 209, 210, 211; --sk_foreground_low_solid: 60, 60, 60; --sk_highlight: 29, 155, 209;
+  --dt_color-theme-base-pry: #19171d; --dt_color-theme-content-pry: #d1d2d3; --dt_color-theme-base-imp: #cd2553;
+  --sidebar-presence-online: #2bac76;
+}
+body { margin: 0; font: 14px sans-serif; }
+#client { background: var(--dt_color-base-pry); color: var(--dt_color-content-pry); }
+#sidebar { background: var(--dt_color-theme-base-pry); color: var(--dt_color-theme-content-pry); }
+#secondary { color: var(--dt_color-content-sec); }
+#muted { color: var(--dt_color-content-ter); }
+#link { color: var(--dt_color-content-hgl-1); }
+#menu, #dialog { background: var(--dt_color-base-sec); color: var(--dt_color-content-pry); border: 1px solid var(--dt_color-otl-ter); }
+#code { background: var(--dt_color-base-ter); color: var(--dt_color-content-pry); }
+#triplet { background: rgba(var(--sk_primary_background), 1); color: rgba(var(--sk_foreground_max), 0.7); }
+#error { color: var(--dt_color-content-imp); background: var(--dt_color-base-imp); }
+#success { color: var(--dt_color-content-hgl-2); background: var(--dt_color-base-hgl-2); }
+#warning { background: var(--dt_color-base-hgl-3); color: var(--dt_color-content-hgl-3); }
+#badge { background: var(--dt_color-theme-base-imp); }
+#presence { background: var(--sidebar-presence-online); }
+</style>
+</head>
+<body>
+<div id="client" class="p-client sk-client-theme--{{MODE}}">
+  <nav id="sidebar">Channels <span id="presence"></span> <span id="badge">3</span></nav>
+  <main>
+    <p id="secondary">Secondary text</p>
+    <p id="muted">Timestamp</p>
+    <a id="link" href="#">@someone</a>
+    <div id="menu" role="menu">Menu</div>
+    <div id="dialog" role="dialog">Dialog</div>
+    <pre id="code">code block</pre>
+    <div id="triplet">Legacy triplet surface</div>
+    <div id="error">Failed to send</div>
+    <div id="success">Saved</div>
+    <div id="warning">Highlighted message</div>
+  </main>
+</div>
+</body>
+</html>

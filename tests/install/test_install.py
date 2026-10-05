@@ -141,7 +141,6 @@ class InstallTest(unittest.TestCase):
         cases = {
             "no final newline": b"--a\n--load-extension=/x,/y",
             "trailing blank lines": b"--load-extension=/x\n--b\n\n\n",
-            "crlf": b"--a\r\n--load-extension=/x\r\n--b\r\n",
             "empty list": b"--load-extension=\n--b\n",
             "no switch, no final newline": b"--a\n--b",
             "empty file": b"",
@@ -156,6 +155,12 @@ class InstallTest(unittest.TestCase):
                 self.run_script("install.sh", "--load-extension-flag")
                 after_install = self.read_flags()
                 self.assertIn(ext, after_install)
+                # The existing list is extended verbatim, empty items included.
+                values = [l[len(b"--load-extension="):] for l in original.split(b"\n") if l.startswith(b"--load-extension=")]
+                if values:
+                    value = values[-1]
+                    expected = b"--load-extension=" + value + (b"" if value in (b"", ) or value.endswith(b",") else b",") + ext
+                    self.assertIn(expected, after_install.split(b"\n"))
                 self.assertEqual(after_install.count(b"--load-extension="), max(1, original.count(b"--load-extension=")))
                 self.run_script("install.sh", "--load-extension-flag")
                 self.assertEqual(self.read_flags(), after_install, "reinstall is idempotent")
@@ -221,9 +226,19 @@ class InstallTest(unittest.TestCase):
                 self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-webapp-theme")))
 
     def test_relative_data_home_is_refused(self):
-        result = self.run_env({"XDG_DATA_HOME": "relative/share"}, "install.sh")
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("absolute path", result.stderr)
+        for script in ("install.sh", "uninstall.sh"):
+            with self.subTest(script=script):
+                result = self.run_env({"XDG_DATA_HOME": "relative/share"}, script)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("absolute path", result.stderr)
+                self.assertEqual(self.flags_text(), FLAGS)
+
+    def test_crlf_flags_file_is_refused(self):
+        original = b"--a\r\n--load-extension=/x\r\n--b\r\n"
+        self.write_flags(original)
+        result = self.run_env({}, "install.sh", "--load-extension-flag")
+        self.assertIn("CRLF", result.stderr)
+        self.assertEqual(self.read_flags(), original)
 
     def test_switch_with_trailing_whitespace_is_refused(self):
         for original in (b"--load-extension=/a\t\n", b"--load-extension=/a\t#note\n", b"--load-extension=/a \n"):

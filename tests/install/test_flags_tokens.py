@@ -28,6 +28,7 @@ GLIB = {
     '"x"#y': ["x#y"],
     "'a' #b": ["a"],
     "--l=1 \\#x": ["--l=1", "#x"],
+    "--load-extension=/x\r": ["--load-extension=/x\r"],
 }
 
 

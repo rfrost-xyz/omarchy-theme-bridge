@@ -60,8 +60,12 @@ def tokens(line):
             break
         # GLib only starts a comment after a space or newline, not a tab.
         word_start = char in " \n" and not quote and not escaped
+    lexer = shlex.shlex(line, posix=True)
+    lexer.whitespace = " \t\n"  # GLib does not treat CR as whitespace
+    lexer.whitespace_split = True
+    lexer.commenters = ""
     try:
-        return shlex.split(line, comments=False)
+        return list(lexer)
     except ValueError:
         return []
 
@@ -95,6 +99,11 @@ def add(lines, ext):
         new.append(SWITCH + ext + "\n")
         return new, state, None, new[-1]
     index, standalone = found[-1]
+    if "\r" in lines[index]:
+        raise Refuse(
+            "the flags file uses CRLF line endings, which Chromium's launcher passes "
+            "through; convert it to LF or load the extension unpacked"
+        )
     if not standalone:
         raise Refuse(
             "the last --load-extension switch shares a line, is indented or is quoted; "

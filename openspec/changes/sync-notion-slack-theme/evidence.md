@@ -34,6 +34,7 @@ Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Semantic mapping: menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows the palette ...`, `slack: tokens follow the palette ...` | Pass |
 | Preserved meaning: Notion authored colours, Slack status colours | adapter CSS exclusions | same e2e tests (red and blue families, opposite-theme container; error, success, highlight, badge, presence) | Pass |
 | Readable contrast (derived values) | `colour.js` `derive` | `tests/extension` derived text for each of 22 stock themes | Pass |
+| Readable contrast: matrix | adapters plus `derive` | e2e `tests/e2e/contrast.test.mjs`: 22 stock themes, both adapters, primary, secondary, tertiary, link, menu, dialog, code, sidebar, grey block, default text on Notion's authored red, blue and yellow backgrounds, and Slack important and success text on light surfaces. A deliberately broken mapping was confirmed to fail (1.17:1). | Pass |
 
 Fixtures are synthetic. Notion token names and default values come from Notion's
 public logged-out stylesheet (version 23.13.20261005). Slack light values come
@@ -52,3 +53,18 @@ observable without an account session.
 | Uninstall restores original, repeated uninstall is a no-op, foreign files kept | `uninstall.sh`, `flags_without_extension` | `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
 
 `python3 -m unittest discover -s tests/install`: 8 tests, OK.
+
+## Colour scheme preference (task 5.2)
+
+Throwaway headful Chromium 153 `--app` window, temporary profile, desktop
+`org.gnome.desktop.interface color-scheme` = `prefer-dark`:
+`matchMedia('(prefers-color-scheme: dark)')` = true, light = false. Managed
+policy on this machine sets `BrowserColorScheme: device`. Live switching and the
+signed-in apps' response were not tested (would change the desktop setting).
+
+## Full check
+
+`./scripts/check` (49 s): helper 14 OK, installer 8 OK, extension unit 28/28,
+headless Chromium 36/36, `openspec validate --all --strict` passed.
+`shellcheck` is not available on this host (mise shim without a version), so
+shell scripts are checked with `bash -n` and the installer tests only.

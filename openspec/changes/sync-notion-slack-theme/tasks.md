@@ -22,13 +22,13 @@
 
 ## 5. Contrast and colour scheme checks
 
-- [ ] 5.1 Add an e2e contrast matrix over every stock Omarchy theme for both adapters; verify all thresholds in the `app-adapters` spec pass
-- [ ] 5.2 Check in a throwaway headful Chromium profile that `prefers-color-scheme` reflects the current desktop colour scheme, and record the result and the live-switch limitation in the README
+- [x] 5.1 Add an e2e contrast matrix over every stock Omarchy theme for both adapters; verify all thresholds in the `app-adapters` spec pass
+- [x] 5.2 Check in a throwaway headful Chromium profile that `prefers-color-scheme` reflects the current desktop colour scheme, and record the result and the live-switch limitation in the README
 
 ## 6. Installation
 
 - [x] 6.1 Implement `install.sh` (dry run, copy, manifest, opt-in flags merge) and `uninstall.sh`; verify with `tests/install/` against a temporary `HOME`: dry run writes nothing, default install leaves the flags file byte-identical, repeated flag merges add one entry, symlink and mode are kept, uninstall restores the original and is idempotent
-- [ ] 6.2 Write the README (setup, removal, permissions explained, exact files changed, adding an adapter, known limitations, credits) and `scripts/check`; verify `./scripts/check` passes end to end
+- [x] 6.2 Write the README (setup, removal, permissions explained, exact files changed, adding an adapter, known limitations, credits) and `scripts/check`; verify `./scripts/check` passes end to end
 
 ## 7. Live verification (requires user approval)
 

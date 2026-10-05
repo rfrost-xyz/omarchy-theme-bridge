@@ -38,12 +38,18 @@ export class Browser {
   }
 
   async launchChromium() {
-    this.port = 9400 + Math.floor(Math.random() * 400);
+    // Let Chromium choose a free port and read it back, so concurrent runs
+    // never share one.
+    const activePort = join(this.dir, 'profile', 'DevToolsActivePort');
+    rmSync(activePort, { force: true });
     this.proc = spawn(process.env.CHROMIUM || 'chromium', [
-      '--headless=new', `--user-data-dir=${join(this.dir, 'profile')}`, `--remote-debugging-port=${this.port}`,
+      '--headless=new', `--user-data-dir=${join(this.dir, 'profile')}`, '--remote-debugging-port=0',
       '--no-first-run', '--no-default-browser-check', '--disable-sync', '--window-size=1280,800',
       `--load-extension=${join(ROOT, 'extension')}`, 'about:blank',
     ], { stdio: 'ignore', env: { ...process.env, OMARCHY_PALETTE_STATE_DIR: this.state } });
+    for (let i = 0; i < 100 && !existsSync(activePort); i++) await sleep(100);
+    if (!existsSync(activePort)) throw new Error('Chromium did not start');
+    this.port = Number(readFileSync(activePort, 'utf8').split('\n')[0]);
     let version;
     for (let i = 0; i < 100 && !version; i++) {
       try { version = await (await fetch(`http://127.0.0.1:${this.port}/json/version`)).json(); } catch { await sleep(100); }

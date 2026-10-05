@@ -24,11 +24,20 @@ done
 changed=0
 # Flags first: the record of how the line was changed lives in $DATA_DIR.
 if [[ -f $FLAGS_FILE ]]; then
-  if plan=$(flags_edit remove) && [[ $plan != unchanged ]]; then
+  if ! plan=$(flags_edit remove); then
+    echo "Could not read $FLAGS_FILE; nothing was removed." >&2
+    exit 1
+  fi
+  if [[ $plan != unchanged ]]; then
     echo "Change: $FLAGS_FILE (only the --load-extension line):"
     echo "$plan"
     ((DRY_RUN)) || flags_edit remove --write >/dev/null
     changed=1
+  fi
+  if ! ((DRY_RUN)) && flags_edit mentions; then
+    echo "$FLAGS_FILE still loads $EXTENSION_DIR on a line this script cannot edit safely." >&2
+    echo "Remove that entry by hand, then rerun ./uninstall.sh. Installed files were kept so Chromium does not fail to load them." >&2
+    exit 1
   fi
 fi
 

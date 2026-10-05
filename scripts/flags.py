@@ -45,7 +45,8 @@ def occurrences(lines):
     """Yield (index, standalone) for each line carrying the switch."""
     for index, line in enumerate(lines):
         if any(token.startswith(SWITCH) for token in tokens(line)):
-            yield index, body(line).startswith(SWITCH) and len(tokens(line)) == 1 and " " not in body(line)
+            text = body(line)
+            yield index, text.startswith(SWITCH) and not any(c.isspace() for c in text)
 
 
 def entries(line):
@@ -113,8 +114,17 @@ def show(old_line, new_line):
         print("  + " + body(new_line))
 
 
+def mentions(lines, ext):
+    """True when any --load-extension token still names ext."""
+    for line in lines:
+        for token in tokens(line):
+            if token.startswith(SWITCH) and any(same(item, ext) for item in token[len(SWITCH):].split(",")):
+                return True
+    return False
+
+
 def main(argv):
-    if len(argv) < 5 or argv[1] not in ("add", "remove"):
+    if len(argv) < 5 or argv[1] not in ("add", "remove", "mentions"):
         print(__doc__.strip(), file=sys.stderr)
         return 2
     action, path, ext, state_path = argv[1:5]
@@ -122,6 +132,8 @@ def main(argv):
     with open(path, "rb") as handle:
         data = handle.read().decode("utf-8", "surrogateescape")
     lines = split_lines(data)
+    if action == "mentions":
+        return 0 if mentions(lines, ext) else 1
     try:
         if action == "add":
             new, state, old_line, new_line = add(lines, ext)
@@ -138,6 +150,12 @@ def main(argv):
     if new == lines:
         print("unchanged")
         return 0
+    if action == "add":
+        # The new line must be a clean single token naming ext exactly once.
+        changed = [line for line in new if line not in lines and SWITCH in line]
+        if len(changed) != 1 or any(not body(line).startswith(SWITCH) or any(c.isspace() for c in body(line)) or [same(i, ext) for i in entries(line)].count(True) != 1 for line in changed):
+            print("Flags: not changed: the extension path cannot be written safely.", file=sys.stderr)
+            return 3
     show(old_line, new_line)
     if write:
         with open(os.path.realpath(path), "r+b") as handle:

@@ -29,10 +29,20 @@ if [[ -e $DATA_DIR && ! -f $DATA_DIR/$MARKER ]]; then
   exit 1
 fi
 
+if [[ $DATA_DIR != /* ]]; then
+  echo "The install directory must be an absolute path (check XDG_DATA_HOME): $DATA_DIR" >&2
+  exit 1
+fi
+if ((FLAG)) && ! path_is_safe "$EXTENSION_DIR"; then
+  echo "Flags: $EXTENSION_DIR contains spaces, commas, quotes or other characters the flags file cannot hold; load the extension unpacked instead." >&2
+  FLAG=0
+fi
+
 file_count=$(find "$SOURCE/extension" -type f | wc -l)
 echo "Files:"
 echo "  $DATA_DIR/extension/ ($file_count files, copied from extension/)"
 echo "  $HOST_PATH"
+echo "  $DATA_DIR/$MARKER (marks the directory as this installer's)"
 echo "  $MANIFEST_PATH (allows only chrome-extension://$EXTENSION_ID/)"
 
 if ((FLAG)); then
@@ -47,6 +57,7 @@ if ((FLAG)); then
   else
     echo "Flags: $FLAGS_FILE (only the --load-extension line changes):"
     echo "$plan"
+    echo "  $FLAGS_STATE (records the change so uninstall can restore the line exactly)"
   fi
 else
   echo "Flags: $FLAGS_FILE is not changed."
@@ -78,8 +89,10 @@ if ((FLAG)); then
 fi
 
 echo "Installed."
-if [[ -f $FLAGS_FILE ]] && [[ $(flags_edit add 2>/dev/null) == unchanged ]]; then
+if ((FLAG)); then
   echo "Restart Chromium once so it reads the new flag. Later theme changes need no restart."
+elif [[ -f $FLAGS_FILE ]] && flags_edit mentions 2>/dev/null; then
+  echo "Chromium already loads it: reload Omarchy Webapp Theme in chrome://extensions (or restart Chromium) to pick up updated files."
 else
   cat <<EOF
 Load the extension once in each Chromium profile that opens Notion or Slack.

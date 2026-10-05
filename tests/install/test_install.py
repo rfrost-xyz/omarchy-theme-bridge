@@ -41,7 +41,9 @@ class InstallTest(unittest.TestCase):
 
     def snapshot(self):
         files = {}
-        for base, _, names in os.walk(self.home):
+        for base, dirs, names in os.walk(self.home):
+            for name in dirs:
+                files[os.path.relpath(os.path.join(base, name), self.home) + "/"] = None
             for name in names:
                 path = os.path.join(base, name)
                 with open(path, "rb") as handle:
@@ -73,7 +75,7 @@ class InstallTest(unittest.TestCase):
         self.assertTrue(os.access(manifest["path"], os.X_OK))
         self.assertTrue(os.path.isfile(os.path.join(self.data, "extension", "manifest.json")))
         written = sorted(self.snapshot())
-        outside = [p for p in written if not p.startswith(".local/share/omarchy-webapp-theme/")]
+        outside = [p for p in written if not p.startswith(".local/share/omarchy-webapp-theme/") and not p.endswith("/")]
         self.assertEqual(outside, [".config/chromium-flags.conf", os.path.relpath(self.manifest, self.home)])
 
     def test_flag_merge_is_single_and_idempotent(self):
@@ -118,9 +120,9 @@ class InstallTest(unittest.TestCase):
         self.run_script("install.sh", "--load-extension-flag")
         self.assertIn("Remove:", self.run_script("uninstall.sh", "--dry-run"))
         self.run_script("uninstall.sh")
-        after = self.snapshot()
+        after = {k: v for k, v in self.snapshot().items() if not k.endswith("/")}
         after.pop(os.path.relpath(self.manifest, self.home), None)
-        self.assertEqual(after, before)
+        self.assertEqual(after, {k: v for k, v in before.items() if not k.endswith("/")})
         self.assertFalse(os.path.exists(self.data))
         self.assertFalse(os.path.exists(self.manifest))
         self.assertIn("Nothing to remove.", self.run_script("uninstall.sh"))
@@ -185,6 +187,63 @@ class InstallTest(unittest.TestCase):
         self.assertEqual(self.read_flags(), f"# --load-extension=/old\n--a\n--load-extension={self.data}/extension\n".encode())
         self.run_script("uninstall.sh")
         self.assertEqual(self.read_flags(), b"# --load-extension=/old\n--a\n")
+
+    def run_env(self, extra, *args):
+        env = {"HOME": self.home, "PATH": os.environ["PATH"], **extra}
+        return subprocess.run([os.path.join(ROOT, args[0]), *args[1:]], env=env, capture_output=True, text=True)
+
+    def test_dry_runs_list_every_file_and_write_nothing(self):
+        before = self.snapshot()
+        out = self.run_script("install.sh", "--dry-run", "--load-extension-flag")
+        self.assertIn(".installed-by-omarchy-webapp-theme", out)
+        self.assertIn("flags-state.json", out)
+        self.assertEqual(self.snapshot(), before)
+        self.run_script("install.sh", "--load-extension-flag")
+        installed = self.snapshot()
+        self.run_script("uninstall.sh", "--dry-run")
+        self.assertEqual(self.snapshot(), installed)
+
+    def test_unsafe_install_paths_never_reach_the_flags_file(self):
+        for name in ("my data", "a,b", "o'brien"):
+            with self.subTest(name=name):
+                data_home = os.path.join(self.home, name)
+                result = self.run_env({"XDG_DATA_HOME": data_home}, "install.sh", "--load-extension-flag")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("load the extension unpacked", result.stderr)
+                self.assertEqual(self.flags_text(), FLAGS)
+                with open(self.manifest) as handle:
+                    self.assertEqual(json.load(handle)["path"], os.path.join(data_home, "omarchy-webapp-theme", "bin", "omarchy-webapp-theme-host"))
+                self.assertEqual(self.run_env({"XDG_DATA_HOME": data_home}, "uninstall.sh").returncode, 0)
+
+    def test_relative_data_home_is_refused(self):
+        result = self.run_env({"XDG_DATA_HOME": "relative/share"}, "install.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("absolute path", result.stderr)
+
+    def test_switch_with_trailing_whitespace_is_refused(self):
+        for original in (b"--load-extension=/a\t\n", b"--load-extension=/a\t#note\n", b"--load-extension=/a \n"):
+            with self.subTest(original=original):
+                self.write_flags(original)
+                result = self.run_env({}, "install.sh", "--load-extension-flag")
+                self.assertIn("shares a line or is indented", result.stderr)
+                self.assertEqual(self.read_flags(), original)
+                self.run_script("uninstall.sh")
+
+    def test_uninstall_keeps_files_when_entry_cannot_be_removed(self):
+        self.run_script("install.sh", "--load-extension-flag")
+        text = self.flags_text().replace("--load-extension=", "  --load-extension=")
+        with open(self.flags, "w") as handle:
+            handle.write(text)
+        result = self.run_env({}, "uninstall.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Remove that entry by hand", result.stderr)
+        self.assertTrue(os.path.isdir(self.data))
+        self.assertEqual(self.flags_text(), text)
+
+    def test_reinstall_says_reload_instead_of_restart(self):
+        self.run_script("install.sh", "--load-extension-flag")
+        out = self.run_script("install.sh", "--load-extension-flag")
+        self.assertIn("reload Omarchy Webapp Theme in chrome://extensions", out)
 
     def test_foreign_files_are_left_alone(self):
         os.makedirs(self.data)

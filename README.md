@@ -110,7 +110,8 @@ styling.
   grey palette. While Slack's mode matches the theme, success and presence
   (`hgl-2`), highlights (`hgl-3`), important and error (`imp`), education and
   badge colours stay Slack's; otherwise the first four take the palette's
-  hues. Badges and presence dots always stay Slack's.
+  hues (so anything Slack draws in its success green, possibly including
+  presence, takes the palette's green). Badges always stay Slack's.
 
 The transport also provides generic helpers every adapter can use:
 `--omarchy-mix-<n>` (background blended n% towards foreground),

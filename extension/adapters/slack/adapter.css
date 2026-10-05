@@ -7,7 +7,7 @@
  * inside rgba().
  *
  * Deliberately untouched while Slack's own mode matches the palette: hgl-2
- * (success, presence), hgl-3 (highlights, warnings), imp (errors, important),
+ * (success, and possibly presence), hgl-3 (highlights, warnings), imp (errors, important),
  * education, and theme base hgl/imp (badges). Those carry meaning. Slack in
  * the browser cannot follow the system appearance, so when its mode differs
  * the remap block below moves the meaning colours onto the palette's readable
@@ -125,8 +125,9 @@ html[data-omarchy-adapters~="slack"] .p-theme_background {
 }
 
 /* Slack's own mode differs from the palette's: keep each meaning colour's hue
-   but take it from the palette, adjusted for contrast. Badges and presence
-   dots read on either background and stay Slack's. */
+   but take it from the palette, adjusted for contrast. Badges read on either
+   background and stay Slack's; anything Slack draws from hgl-2 (success, and
+   presence if it uses it) takes the palette's green. */
 html[data-omarchy-remap~="slack"],
 html[data-omarchy-remap~="slack"] > body,
 html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {

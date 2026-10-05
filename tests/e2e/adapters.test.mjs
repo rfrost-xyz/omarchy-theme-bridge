@@ -36,6 +36,7 @@ test('notion: chrome follows the palette and authored colours stay', async () =>
   assert.equal(await page.style('#code', 'backgroundColor'), css(derived.ramp[5]));
   assert.match(await page.style('#search', 'backgroundColor'), new RegExp(`^rgba\\(${C.triplet(derived.ramp[3])}, 0\\.94\\)$`));
   assert.match(await page.style('#search-hover', 'backgroundColor'), /^rgba\(169, 177, 214, 0\.055\)$/);
+  assert.match(await page.style('#search', 'borderTopColor'), /^rgba\(169, 177, 214, 0\.1\)$/);
   assert.match(await page.style('#glass-header', 'backgroundColor'), new RegExp(`^rgba\\(${C.triplet(derived.ramp[4])}, 0\\.85\\)$`));
   assert.equal(await page.style('#grey-block', 'backgroundColor'), css(derived.ramp[6]));
   assert.match(await page.style('#sidebar .selected', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.16/);
@@ -128,6 +129,27 @@ test('slack: a different app mode keeps theming and remaps status colours', asyn
   await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-remap')", 4000);
   assert.equal(await page.style('#error-inline', 'color'), css('#e46e8f'));
   await page.close();
+});
+
+test('slack: a light palette over Slack in Dark uses light controls and palette hues', async () => {
+  const LIGHT = { mode: 'light', colors: { background: '#eff1f5', foreground: '#4c4f69', accent: '#1e66f5', red: '#d20f39', green: '#40a02b', yellow: '#df8e1d', blue: '#1e66f5' } };
+  const light = C.derive(LIGHT);
+  browser.setTheme('latte', toml(LIGHT));
+  try {
+    const page = await browser.open('https://app.slack.com/?mode=dark');
+    await page.waitFor("document.documentElement.getAttribute('data-omarchy-remap') === 'slack' && document.documentElement.dataset.omarchyMode === 'light'", 8000);
+    assert.equal(await page.style('#client', 'backgroundColor'), css('#eff1f5'));
+    assert.equal(await page.style('body', 'colorScheme'), 'light');
+    assert.equal(await page.style('#error-inline', 'color'), css(light['red-text']));
+    assert.equal(await page.style('#warning', 'color'), css(light['yellow-text']));
+    assert.equal(await page.style('#badge', 'backgroundColor'), css('#cd2553'));
+    const options = await browser.options();
+    await options.waitFor("document.body.textContent.includes('status colours use the palette')");
+    await options.close();
+    await page.close();
+  } finally {
+    browser.setTheme('tokyo-night', toml(DARK));
+  }
 });
 
 test('adapters toggle independently and live from the options page', async () => {

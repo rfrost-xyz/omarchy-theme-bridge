@@ -144,6 +144,11 @@ class HostTest(unittest.TestCase):
         self.assertEqual(message["colors"]["accent"], "#3366ff")
         self.assertEqual(message["colors"]["blue"], "#3366ff")
 
+    def test_short_hex_is_normalised(self):
+        self.write_theme("short", 'background = "#FFF"\nforeground = "#0A0"\naccent = "#36F"\n')
+        colours = self.start().read()["colors"]
+        self.assertEqual((colours["background"], colours["foreground"], colours["accent"]), ("#ffffff", "#00aa00", "#3366ff"))
+
     def test_ansi_slots_fill_background_and_foreground(self):
         self.write_theme("ansi", 'color0 = "#000000"\ncolor7 = "#cccccc"\naccent = "#ff8800"\n')
         colours = self.start().read()["colors"]
@@ -249,14 +254,25 @@ class HostTest(unittest.TestCase):
         self.assertEqual(host.proc.wait(timeout=3), 0)
 
     def test_never_writes_to_state_dir(self):
-        before = sorted(os.walk(self.state))
+        def snapshot():
+            out = {}
+            for base, dirs, files in os.walk(self.state):
+                for name in files:
+                    path = os.path.join(base, name)
+                    st = os.stat(path)
+                    with open(path, "rb") as handle:
+                        out[path] = (st.st_mtime_ns, handle.read())
+                out[base] = sorted(dirs)
+            return out
+
+        before = snapshot()
         host = self.start()
         host.read()
         host.write({"type": "get"})
         host.read()
         host.proc.stdin.close()
         host.proc.wait(timeout=3)
-        self.assertEqual(sorted(os.walk(self.state)), before)
+        self.assertEqual(snapshot(), before)
 
 
 if __name__ == "__main__":

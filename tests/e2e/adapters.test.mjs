@@ -161,6 +161,18 @@ test('slack: a different app mode keeps theming and remaps status colours', asyn
   await page.close();
 });
 
+test('slack: a mode marker below <body> is still picked up by the fallback poll', async () => {
+  const page = await browser.open('https://app.slack.com/?mode=dark');
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
+  // The fixture marks its mode on #client only, which no observer watches.
+  assert.equal(await page.eval("document.body.className"), '');
+  await page.eval("document.getElementById('client').className = 'p-client sk-client-theme--light'");
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-remap') === 'slack'", 4000);
+  await page.eval("document.getElementById('client').className = 'p-client sk-client-theme--dark'");
+  await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-remap')", 4000);
+  await page.close();
+});
+
 test('slack: a light palette over Slack in Dark uses light controls and palette hues', async () => {
   const LIGHT = { mode: 'light', colors: { background: '#eff1f5', foreground: '#4c4f69', accent: '#1e66f5', red: '#d20f39', green: '#40a02b', yellow: '#df8e1d', blue: '#1e66f5' } };
   const light = C.derive(LIGHT);

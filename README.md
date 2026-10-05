@@ -33,12 +33,15 @@ It has three parts:
    - `./install.sh` leaves Omarchy's Chromium flags alone. Then, in each Chromium
      profile that opens Notion or Slack, open `chrome://extensions`, turn on
      Developer mode, choose **Load unpacked** and select
-     `~/.local/share/omarchy-webapp-theme/extension`. Omarchy's Slack launcher
-     uses `Profile 1`, so do this there as well as in the default profile.
+     `~/.local/share/omarchy-webapp-theme/extension`. Web app launchers can
+     name a profile with `--profile-directory` (see
+     `~/.local/share/applications/*.desktop`); load it in each profile they use.
    - `./install.sh --load-extension-flag` also appends the extension to the
      existing `--load-extension=` line in `~/.config/chromium-flags.conf`, the
      same way Omarchy's own migrations add extensions. This covers every
-     profile. Restart Chromium once afterwards.
+     profile. Restart Chromium once afterwards. If that switch is indented or
+     shares a line with other flags, the installer leaves the file alone and
+     says so, because adding a second switch would replace Omarchy's list.
 
 3. In Notion (Settings, Appearance) and Slack (Preferences, Themes), choose to
    follow the system setting. Omarchy sets the desktop colour scheme for each
@@ -51,9 +54,9 @@ It has three parts:
 
 | Path | Change |
 | --- | --- |
-| `~/.local/share/omarchy-webapp-theme/` | New: `extension/`, `bin/omarchy-webapp-theme-host` and an ownership marker |
+| `~/.local/share/omarchy-webapp-theme/` | New: `extension/`, `bin/omarchy-webapp-theme-host`, an ownership marker and, after a flags edit, `flags-state.json` recording how the line was changed |
 | `~/.config/chromium/NativeMessagingHosts/xyz.rfrost.omarchy_webapp_theme.json` | New: registers the helper for this extension's ID only |
-| `~/.config/chromium-flags.conf` | Only with `--load-extension-flag`: this extension's path is appended to the last `--load-extension=` line (or one line is added). The file is edited in place, so symlinks and permissions are kept. Rerunning never adds a duplicate. |
+| `~/.config/chromium-flags.conf` | Only with `--load-extension-flag`: this extension's path is appended to the last `--load-extension=` line (or one line is added). Only that line changes; line endings, the final newline, symlinks and permissions are kept. Rerunning never adds a duplicate. |
 
 Nothing else is touched: no `sudo`, no Omarchy files, themes, hooks or browser
 policies, and no other browsers. The dry run prints only the flags line that
@@ -67,7 +70,8 @@ would change, never the rest of the file.
 ```
 
 This removes the installed directory, the helper registration and this
-extension's flags entry (dropping the line only if nothing else was on it).
+extension's flags entry, leaving the flags file byte for byte as it was before
+installing.
 Restart Chromium, or remove an unpacked copy from `chrome://extensions`.
 Running it again is harmless.
 
@@ -88,9 +92,10 @@ styling.
 
 - **Notion**: surfaces (`--c-bac*`, `--c-popBac`), text and icons
   (`--c-tex*`, `--c-ico*`), borders, hover and selection washes, code block
-  backgrounds, the neutral grey block family and the interface blue. Authored
-  block colours (red, blue, yellow and the other chromatic families), shadows
-  and error rings are left as Notion draws them.
+  backgrounds, the neutral grey block family, link blue and the selection
+  tint. Authored block colours (red, blue, yellow and the other chromatic
+  families), the primary button blue (it sits under white labels), shadows and
+  error rings are left as Notion draws them.
 - **Slack**: `--dt_color-content-*`, `-base-*`, `-surf-*` and `-otl-*`
   neutrals, the link and mention colour (`hgl-1`), the legacy `--sk_*`
   triplets and the sidebar `--dt_color-theme-*` tokens. Success and presence
@@ -110,8 +115,10 @@ and an `-rgb` triplet for each.
    own theme marker.
 2. Create `extension/adapters/<id>/adapter.css` scoped to
    `html[data-omarchy-adapters~="<id>"]`, assigning the app's colour variables.
-3. Add one `content_scripts` entry for the app's origin to `manifest.json`,
-   loading `content/colour.js`, `content/palette.js` and the adapter.
+3. Add one `content_scripts` entry for the app's origin to `manifest.json`
+   with `"js": ["content/colour.js", "content/palette.js",
+   "adapters/<id>/adapter.js"]`, `"css": ["adapters/<id>/adapter.css"]` and
+   `"run_at": "document_start"`.
 4. Add a synthetic fixture and tests under `tests/e2e/`.
 
 The helper, service worker and options page need no changes. The options page
@@ -125,7 +132,8 @@ lists adapters from the manifest.
 
 This runs shell syntax checks, the helper tests (Python `unittest`), the
 installer tests (temporary `HOME`), the extension unit tests and the headless
-Chromium tests (`node --test`), and strict OpenSpec validation. The browser
+Chromium tests (`node --test`), and strict OpenSpec validation (set `SKIP_OPENSPEC=1` where OpenSpec is not
+installed). The browser
 tests use a throwaway profile, the real extension and helper, a temporary
 Omarchy state directory and synthetic pages served on the real origins through
 the DevTools protocol. They cover theme changes, directory replacement, helper
@@ -156,6 +164,13 @@ tests.
   `app.notion.com` are not coloured.
 - **Flags file**: if an Omarchy update rewrites `~/.config/chromium-flags.conf`
   and drops the entry, rerun `./install.sh --load-extension-flag`.
+- **Extension reloads**: Chromium does not re-inject content scripts into tabs
+  that are already open. After reinstalling or reloading the extension, open
+  Notion and Slack windows drop back to the apps' own colours until reloaded.
+- **Hand-written themes**: the helper reads `colors.toml` the way
+  `omarchy-theme-color` does, including legacy `bg`, `fg` and `colorN` names
+  and the same light or dark rule, so it agrees with the desktop's colour
+  scheme. If no accent is set it uses `blue`.
 - **Latency**: the helper checks the theme twice a second and waits for it to
   settle, so pages update about a second after Omarchy finishes switching.
 

@@ -53,10 +53,10 @@ the signed-in client. No workspace content is stored.
 | Install writes only planned files; manifest allows only the fixed ID | `install.sh`, `host_manifest` (JSON-encoded) | `test_default_install_leaves_flags_untouched` | Pass |
 | Unsafe install path | `path_is_safe`, `require_absolute_dirs` | `test_unsafe_install_paths_never_reach_the_flags_file` (space, comma, apostrophe, double quote, backslash, `#`, tab; manifest and data removed afterwards), `test_relative_data_home_is_refused`, `test_relative_config_home_is_refused`, `test_quoted_list_is_not_edited` | Pass |
 | Default install leaves flags byte-identical | `install.sh` | `test_default_install_leaves_flags_untouched` | Pass |
-| Opt-in merge: single, idempotent, keeps lines, mode, symlink | `scripts/flags.py` `add` | `test_flag_merge_is_single_and_idempotent`, `test_flag_merge_follows_symlink`, `test_flag_added_when_no_load_extension_line`, `test_missing_flags_file_is_not_created`, `test_commented_switch_is_ignored` | Pass |
+| Opt-in merge: single, idempotent, keeps lines, mode, symlink | `scripts/flags.py` `add` | `test_flag_merge_is_single_and_idempotent`, `test_flag_merge_follows_symlink`, `test_flag_added_when_no_load_extension_line`, `test_missing_flags_file_is_not_created`, `test_commented_switch_is_ignored`, `test_commented_switch_on_unterminated_last_line` | Pass |
 | Switch shares a line, is indented, quoted or carries whitespace; CRLF file | `occurrences`, `Refuse`, post-write check | `test_refuses_switch_that_is_indented_or_shares_a_line`, `test_switch_with_trailing_whitespace_is_refused`, `test_quoted_list_is_not_edited`, `test_crlf_flags_file_is_refused` (with and without a switch) | Pass |
 | Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `add` (verbatim append) and `remove` (restores the recorded original), `flags-state.json` | `test_round_trip_is_byte_exact` (9 file shapes, including leading, trailing and middle empty items; exact appended line pinned), `test_uninstall_after_an_omarchy_migration_keeps_its_extension` (4 shapes, plus a look-alike path placed just before our entry; fails if the boundary check after the recorded prefix is removed), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
-| Entry cannot be removed; flags file not writable | `uninstall.sh`, `flags.py` (exit 3 and 4) | `test_uninstall_keeps_files_when_entry_cannot_be_removed`, `test_read_only_flags_file_is_refused_cleanly`, `test_uninstall_with_read_only_flags_keeps_files_and_explains`, `test_commented_switch_on_unterminated_last_line` | Pass |
+| Entry cannot be removed; flags file not writable | `uninstall.sh`, `flags.py` (exit 3 and 4) | `test_uninstall_keeps_files_when_entry_cannot_be_removed`, `test_read_only_flags_file_is_refused_cleanly`, `test_uninstall_with_read_only_flags_keeps_files_and_explains` | Pass |
 | Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON (normalised); `common.sh` `normal_dir`; `flags.py` `tokens` mirrors GLib | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited`, `test_other_spelling_of_data_home_uninstalls_cleanly`, `test_hash_inside_a_word_is_not_a_comment`, `test_flags_tokens.py` (16 GLib-verified lines) | Pass |
 | Uninstall dry run predicts refusal | `flags.py remove` exit 4 | `test_uninstall_dry_run_predicts_refusal` | Pass |
 | Reinstall guidance | `install.sh` | `test_reinstall_says_reload_instead_of_restart` | Pass |
@@ -152,6 +152,9 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   commented switch on an unterminated last line, a shared random DevTools port
   in the e2e harness, and stale Slack wording in AGENTS.md, the proposal and
   the design. All fixed.
+- Round 10 (final): low-severity findings only, filed as follow-up issues
+  (see the PR); its one traceability correction is applied here. Review was
+  capped at this round at the user's request.
 
 ## Full check
 

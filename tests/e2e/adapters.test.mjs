@@ -6,7 +6,7 @@ import { Browser } from './browser.mjs';
 
 const require = createRequire(import.meta.url);
 const C = require('../../extension/content/colour.js');
-const DARK = { mode: 'dark', colors: { background: '#1a1b26', foreground: '#a9b1d6', accent: '#7aa2f7' } };
+const DARK = { mode: 'dark', colors: { background: '#1a1b26', foreground: '#a9b1d6', accent: '#7aa2f7', red: '#f7768e', green: '#9ece6a', yellow: '#e0af68', blue: '#7aa2f7' } };
 const toml = (p) => `mode = "${p.mode}"\n` + Object.entries(p.colors).map(([k, v]) => `${k} = "${v}"`).join('\n') + '\n';
 const css = (hex) => `rgb(${C.triplet(hex)})`;
 const derived = C.derive(DARK);
@@ -34,6 +34,9 @@ test('notion: chrome follows the palette and authored colours stay', async () =>
   assert.equal(await page.style('#dialog', 'backgroundColor'), css(derived.ramp[3]));
   assert.equal(await page.style('#menu', 'borderTopColor'), css(derived.ramp[12]));
   assert.equal(await page.style('#code', 'backgroundColor'), css(derived.ramp[5]));
+  assert.match(await page.style('#search', 'backgroundColor'), new RegExp(`^rgba\\(${C.triplet(derived.ramp[3])}, 0\\.94\\)$`));
+  assert.match(await page.style('#search-hover', 'backgroundColor'), /^rgba\(169, 177, 214, 0\.055\)$/);
+  assert.match(await page.style('#glass-header', 'backgroundColor'), new RegExp(`^rgba\\(${C.triplet(derived.ramp[4])}, 0\\.85\\)$`));
   assert.equal(await page.style('#grey-block', 'backgroundColor'), css(derived.ramp[6]));
   assert.match(await page.style('#sidebar .selected', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.16/);
   // Authored block colours keep Notion's dark values.
@@ -43,6 +46,10 @@ test('notion: chrome follows the palette and authored colours stay', async () =>
   assert.equal(await page.token('#red-block', '--c-redTexPri'), NOTION_DARK['--c-redTexPri']);
   // Primary buttons draw white labels on this blue, so it stays Notion's.
   assert.equal(await page.token('body', '--c-palUiBlu600'), '#2383e2');
+  // Every chromatic block family keeps Notion's value.
+  const chromatic = Object.keys(NOTION_DARK).filter((k) => /^--c-(blu|bro|gre|ora|pin|pur|red|tea|yel)/.test(k));
+  assert.ok(chromatic.length >= 5);
+  for (const token of chromatic) assert.equal(await page.token('body', token), NOTION_DARK[token], token);
   // A light-theme container inside the dark page keeps Notion's light surface.
   assert.equal(await page.style('#opposite', 'backgroundColor'), 'rgb(255, 255, 255)');
   await page.close();
@@ -71,7 +78,11 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.equal(await page.style('#menu', 'backgroundColor'), css(derived.ramp[3]));
   assert.equal(await page.style('#dialog', 'backgroundColor'), css(derived.ramp[3]));
   assert.equal(await page.style('#code', 'backgroundColor'), css(derived.ramp[8]));
-  assert.equal(await page.style('#sidebar', 'backgroundColor'), css(derived.ramp[4]));
+  assert.equal(await page.style('#backdrop', 'backgroundColor'), css('#1a1b26'));
+  assert.match(await page.style('#sidebar', 'backgroundColor'), /^rgba\(169, 177, 214, 0\.05/);
+  assert.equal(await page.style('#sidebar', 'color'), css(derived['text-secondary']));
+  assert.equal(await page.style('#rail', 'color'), css(derived.text));
+  assert.equal(await page.style('#legacy-link', 'color'), css(derived['accent-text']));
   // Triplet tokens still resolve inside rgba().
   assert.equal(await page.style('#triplet', 'backgroundColor'), css('#1a1b26'));
   assert.match(await page.style('#triplet', 'color'), /^rgba\(169, 177, 214, 0\.7/);
@@ -79,20 +90,38 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.equal(await page.style('#error', 'color'), css('#e46e8f'));
   assert.equal(await page.style('#error', 'backgroundColor'), css('#451a26'));
   assert.equal(await page.style('#success', 'color'), css('#2bac76'));
+  assert.equal(await page.style('#success', 'backgroundColor'), css('#10372c'));
   assert.equal(await page.style('#warning', 'backgroundColor'), css('#3e3218'));
+  assert.equal(await page.style('#warning', 'color'), css('#e8b13b'));
+  assert.equal(await page.style('#education', 'color'), css('#a9b9f5'));
+  assert.equal(await page.style('#education', 'backgroundColor'), css('#1c2340'));
+  assert.equal(await page.eval("document.documentElement.hasAttribute('data-omarchy-remap')"), false);
   assert.equal(await page.style('#badge', 'backgroundColor'), css('#cd2553'));
   assert.equal(await page.style('#presence', 'backgroundColor'), css('#2bac76'));
   await page.close();
 });
 
-test('slack: switching the app appearance re-evaluates gating', async () => {
+test('slack: a different app mode keeps theming and remaps status colours', async () => {
   const page = await browser.open('https://app.slack.com/?mode=dark');
   await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
   await page.eval("document.getElementById('client').className = 'p-client sk-client-theme--light'");
-  await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-adapters')", 4000);
-  assert.equal(await page.style('#client', 'backgroundColor'), 'rgb(255, 255, 255)');
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-remap') === 'slack'", 4000);
+  assert.equal(await active(page), 'slack');
+  assert.equal(await page.style('#client', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#client', 'color'), css(derived.text));
+  assert.equal(await page.style('#error-inline', 'color'), css(derived['red-text']));
+  assert.equal(await page.style('#success-inline', 'color'), css(derived['green-text']));
+  assert.equal(await page.style('#warning', 'color'), css(derived['yellow-text']));
+  assert.equal(await page.style('#education', 'color'), css(derived['blue-text']));
+  assert.equal(await page.style('#badge', 'backgroundColor'), css('#cd2553'));
+  assert.equal(await page.style('#presence', 'backgroundColor'), css('#2bac76'));
+  assert.equal(await page.style('body', 'colorScheme'), 'dark');
+  const options = await browser.options();
+  await options.waitFor("document.body.textContent.includes('status colours use the palette')");
+  await options.close();
   await page.eval("document.getElementById('client').className = 'p-client sk-client-theme--dark'");
-  await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'", 4000);
+  await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-remap')", 4000);
+  assert.equal(await page.style('#error-inline', 'color'), css('#e46e8f'));
   await page.close();
 });
 

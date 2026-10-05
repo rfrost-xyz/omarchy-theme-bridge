@@ -6,6 +6,7 @@ const adapterIds = chrome.runtime.getManifest().content_scripts
 
 const REASONS = {
   active: 'Applied',
+  'active-remapped': "Applied; the app's own mode differs, so its status colours use the palette",
   disabled: 'Turned off',
   'no-palette': 'Waiting for the Omarchy palette',
   'app-mode-unknown': 'Waiting for the app to load',

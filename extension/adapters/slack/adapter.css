@@ -1,18 +1,23 @@
 /*
  * Slack: map Omarchy palette properties onto Slack's design tokens.
- * --dt_color-content/base/surf/otl were observed on app.slack.com. The --sk_*
- * triplets and --dt_color-theme-* sidebar tokens are only defined in the
- * signed-in client and are unverified until checked live. --sk_* values are
- * "r, g, b" triplets because Slack uses them inside rgba().
+ * --dt_color-content/base/surf/otl were observed on Slack's public pages; the
+ * --dt_color-theme-* navigation tokens, --sk_foreground_max and the
+ * .p-theme_background backdrop were confirmed in the signed-in client
+ * (2026-10-05). --sk_* values are "r, g, b" triplets because Slack uses them
+ * inside rgba().
  *
- * Deliberately untouched: hgl-2 (success, presence), hgl-3 (highlights,
- * warnings), imp (errors, important), education, and theme base hgl/imp
- * (badges). Those carry meaning.
+ * Deliberately untouched while Slack's own mode matches the palette: hgl-2
+ * (success, presence), hgl-3 (highlights, warnings), imp (errors, important),
+ * education, and theme base hgl/imp (badges). Those carry meaning. Slack in
+ * the browser cannot follow the system appearance, so when its mode differs
+ * the remap block below moves the meaning colours onto the palette's readable
+ * hues instead of leaving colours tuned for the other background.
  */
 html[data-omarchy-adapters~="slack"],
 html[data-omarchy-adapters~="slack"] > body,
 html[data-omarchy-adapters~="slack"][data-omarchy-mode="dark"] .sk-client-theme--dark,
-html[data-omarchy-adapters~="slack"][data-omarchy-mode="light"] .sk-client-theme--light {
+html[data-omarchy-adapters~="slack"][data-omarchy-mode="light"] .sk-client-theme--light,
+html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
   /* Content (text) */
   --dt_color-content-pry: var(--omarchy-text) !important;
   --dt_color-content-sec: var(--omarchy-text-secondary) !important;
@@ -40,7 +45,9 @@ html[data-omarchy-adapters~="slack"][data-omarchy-mode="light"] .sk-client-theme
   --dt_color-otl-ter: rgba(var(--omarchy-foreground-rgb), 0.13) !important;
   --dt_color-otl-hgl-1: var(--omarchy-accent) !important;
 
-  /* Legacy triplets (unverified) */
+  /* Legacy triplets (--sk_primary_background and --sk_foreground_max seen in
+     the signed-in client). --sk_highlight is link text, so it gets the
+     contrast-adjusted accent. */
   --sk_primary_background: var(--omarchy-background-rgb) !important;
   --sk_primary_foreground: var(--omarchy-text-rgb) !important;
   --sk_secondary_background: var(--omarchy-mix-4-rgb) !important;
@@ -58,18 +65,83 @@ html[data-omarchy-adapters~="slack"][data-omarchy-mode="light"] .sk-client-theme
   --sk_foreground_low_solid: var(--omarchy-mix-12-rgb) !important;
   --sk_foreground_soft_solid: var(--omarchy-mix-5-rgb) !important;
   --sk_foreground_min_solid: var(--omarchy-mix-4-rgb) !important;
-  --sk_highlight: var(--omarchy-accent-rgb) !important;
-  --sk_highlight_hover: var(--omarchy-accent-rgb) !important;
-  --sk_highlight_accent: var(--omarchy-accent-rgb) !important;
+  --sk_highlight: var(--omarchy-accent-text-rgb) !important;
+  --sk_highlight_hover: var(--omarchy-accent-text-rgb) !important;
 
-  /* Sidebar theme tokens (unverified) */
+  /* Workspace theme tokens: sidebar, tab rail and navigation (observed in the
+     signed-in client, which uses the -inv- variants for navigation) */
   --dt_color-theme-base-pry: var(--omarchy-mix-4) !important;
+  --dt_color-theme-base-pry-hover: var(--omarchy-mix-8) !important;
+  --dt_color-theme-base-pry-pressed: var(--omarchy-mix-10) !important;
   --dt_color-theme-base-sec: var(--omarchy-mix-8) !important;
+  --dt_color-theme-base-sec-hover: var(--omarchy-mix-10) !important;
+  --dt_color-theme-base-sec-pressed: var(--omarchy-mix-12) !important;
   --dt_color-theme-content-pry: var(--omarchy-text) !important;
   --dt_color-theme-content-sec: var(--omarchy-text-secondary) !important;
   --dt_color-theme-content-ter: var(--omarchy-text-tertiary) !important;
   --dt_color-theme-surf-pry: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
   --dt_color-theme-surf-pry-hover: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
   --dt_color-theme-surf-pry-pressed: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-theme-surf-sec: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
+  --dt_color-theme-surf-sec-hover: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-theme-surf-sec-pressed: rgba(var(--omarchy-foreground-rgb), 0.20) !important;
+  --dt_color-theme-surf-ter: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-theme-surf-ter-hover: rgba(var(--omarchy-foreground-rgb), 0.20) !important;
+  --dt_color-theme-surf-ter-pressed: rgba(var(--omarchy-foreground-rgb), 0.24) !important;
   --dt_color-theme-otl-pry: var(--omarchy-mix-28) !important;
+  --dt_color-theme-base-inv-pry: var(--omarchy-mix-4) !important;
+  --dt_color-theme-base-inv-pry-hover: var(--omarchy-mix-8) !important;
+  --dt_color-theme-base-inv-pry-pressed: var(--omarchy-mix-10) !important;
+  --dt_color-theme-base-inv-sec: var(--omarchy-mix-8) !important;
+  --dt_color-theme-base-inv-sec-hover: var(--omarchy-mix-10) !important;
+  --dt_color-theme-base-inv-sec-pressed: var(--omarchy-mix-12) !important;
+  --dt_color-theme-content-inv-pry: var(--omarchy-text) !important;
+  --dt_color-theme-content-inv-sec: var(--omarchy-text-secondary) !important;
+  --dt_color-theme-content-inv-ter: var(--omarchy-text-tertiary) !important;
+  --dt_color-theme-surf-inv-pry: rgba(var(--omarchy-foreground-rgb), 0.05) !important;
+  --dt_color-theme-surf-inv-pry-hover: rgba(var(--omarchy-foreground-rgb), 0.09) !important;
+  --dt_color-theme-surf-inv-pry-pressed: rgba(var(--omarchy-foreground-rgb), 0.13) !important;
+  --dt_color-theme-surf-inv-sec: rgba(var(--omarchy-foreground-rgb), 0.05) !important;
+  --dt_color-theme-surf-inv-sec-hover: rgba(var(--omarchy-foreground-rgb), 0.09) !important;
+  --dt_color-theme-surf-inv-sec-pressed: rgba(var(--omarchy-foreground-rgb), 0.13) !important;
+  --dt_color-theme-surf-inv-ter: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
+  --dt_color-theme-surf-inv-ter-hover: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
+  --dt_color-theme-surf-inv-ter-pressed: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
+  --dt_color-theme-otl-inv-pry: var(--omarchy-mix-28) !important;
+}
+
+/* The window backdrop behind the tab rail, top bar and translucent sidebar is
+   painted from Slack's raw grey palette (--dt_color-plt-gray-10), which is
+   also used elsewhere, so this one theme hook is set directly instead. */
+html[data-omarchy-adapters~="slack"] .p-theme_background {
+  background-color: var(--omarchy-background) !important;
+}
+
+/* Slack's own mode differs from the palette's: keep each meaning colour's hue
+   but take it from the palette, adjusted for contrast. Badges and presence
+   dots read on either background and stay Slack's. */
+html[data-omarchy-remap~="slack"],
+html[data-omarchy-remap~="slack"] > body,
+html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
+  --dt_color-content-imp: var(--omarchy-red-text, var(--omarchy-text)) !important;
+  --dt_color-base-imp: rgba(var(--omarchy-red-rgb, var(--omarchy-foreground-rgb)), 0.14) !important;
+  --dt_color-otl-imp: var(--omarchy-red-text, var(--omarchy-text)) !important;
+  --dt_color-content-hgl-2: var(--omarchy-green-text, var(--omarchy-text)) !important;
+  --dt_color-base-hgl-2: rgba(var(--omarchy-green-rgb, var(--omarchy-foreground-rgb)), 0.14) !important;
+  --dt_color-otl-hgl-2: var(--omarchy-green-text, var(--omarchy-text)) !important;
+  --dt_color-content-hgl-3: var(--omarchy-yellow-text, var(--omarchy-text)) !important;
+  --dt_color-base-hgl-3: rgba(var(--omarchy-yellow-rgb, var(--omarchy-foreground-rgb)), 0.18) !important;
+  --dt_color-otl-hgl-3: var(--omarchy-yellow-text, var(--omarchy-text)) !important;
+  --dt_color-content-education: var(--omarchy-blue-text, var(--omarchy-accent-text)) !important;
+  --dt_color-base-education: rgba(var(--omarchy-blue-rgb, var(--omarchy-accent-rgb)), 0.14) !important;
+}
+
+/* Native scrollbars and form controls follow the palette, not Slack. */
+html[data-omarchy-remap~="slack"][data-omarchy-mode="light"],
+html[data-omarchy-remap~="slack"][data-omarchy-mode="light"] > body {
+  color-scheme: light !important;
+}
+html[data-omarchy-remap~="slack"][data-omarchy-mode="dark"],
+html[data-omarchy-remap~="slack"][data-omarchy-mode="dark"] > body {
+  color-scheme: dark !important;
 }

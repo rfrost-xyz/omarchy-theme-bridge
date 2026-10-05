@@ -42,6 +42,8 @@ const CHECKS = {
     ['#menu', 4.5, 'text on menu'],
     ['#dialog', 4.5, 'text on dialog'],
     ['#code', 4.5, 'text on code block'],
+    ['#search', 4.5, 'text on Ctrl+K search'],
+    ['#glass-header', 4.5, 'secondary text on glass header'],
     ['#grey-block', 4.5, 'grey block text'],
     ['#red-bg', 4.5, 'text on authored red background'],
     ['#blue-bg', 4.5, 'text on authored blue background'],
@@ -56,6 +58,8 @@ const CHECKS = {
     ['#dialog', 4.5, 'text on dialog'],
     ['#code', 4.5, 'text on code block'],
     ['#sidebar', 4.5, 'sidebar text'],
+    ['#rail', 4.5, 'rail text on backdrop'],
+    ['#legacy-link', 4.5, 'legacy link'],
   ],
 };
 // Slack's own status colours on our surfaces. Only Slack's light values were
@@ -64,6 +68,18 @@ const PRESERVED_LIGHT = {
   slack: [
     ['#error-inline', 4.5, 'Slack important text on messages'],
     ['#success-inline', 3, 'Slack success text on messages'],
+  ],
+};
+
+// Slack's status colours after remapping onto the palette's hues.
+const REMAPPED = {
+  slack: [
+    ['#error-inline', 4.5, 'remapped important text'],
+    ['#success-inline', 4.5, 'remapped success text'],
+    ['#warning', 4.5, 'remapped warning text on its tint'],
+    ['#error', 4.5, 'remapped error text on its tint'],
+    ['#success', 4.5, 'remapped success text on its tint'],
+    ['#education', 4.5, 'remapped education text on its tint'],
   ],
 };
 
@@ -84,14 +100,21 @@ for (const theme of themes) {
     const palette = { name: theme.name, mode: theme.mode, colors: theme.colors };
     await options.eval(`chrome.storage.local.set({ palette: ${JSON.stringify(palette)} })`);
     const failures = [];
-    for (const [app, base] of Object.entries(CHECKS)) {
-      const checks = theme.mode === 'light' ? [...base, ...(PRESERVED_LIGHT[app] ?? [])] : base;
-      const page = await browser.open(`https://app.${app}.com/?mode=${theme.mode}`);
+    const opposite = theme.mode === 'light' ? 'dark' : 'light';
+    const cases = [
+      { app: 'notion', mode: theme.mode, checks: CHECKS.notion },
+      { app: 'slack', mode: theme.mode, checks: theme.mode === 'light' ? [...CHECKS.slack, ...PRESERVED_LIGHT.slack] : CHECKS.slack },
+      // Slack cannot follow the system appearance, so it is also themed when
+      // its own mode is the opposite one, with status colours remapped.
+      { app: 'slack', mode: opposite, checks: [...CHECKS.slack, ...REMAPPED.slack] },
+    ];
+    for (const { app, mode, checks } of cases) {
+      const page = await browser.open(`https://app.${app}.com/?mode=${mode}`);
       await page.waitFor(`document.documentElement.getAttribute('data-omarchy-adapters') === '${app}' && getComputedStyle(document.documentElement).getPropertyValue('--omarchy-background').trim() === '${theme.colors.background}'`);
       for (const [selector, min, label] of checks) {
         const { fg, bg } = await page.eval(`(${RESOLVE})(${JSON.stringify(selector)})`);
         const ratio = C.contrast(fg, bg);
-        if (ratio < min) failures.push(`${app} ${label}: ${fg} on ${bg} = ${ratio.toFixed(2)} < ${min}`);
+        if (ratio < min) failures.push(`${app} (${mode}) ${label}: ${fg} on ${bg} = ${ratio.toFixed(2)} < ${min}`);
       }
       await page.close();
     }

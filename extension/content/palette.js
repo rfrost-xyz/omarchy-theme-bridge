@@ -6,6 +6,9 @@
   const root = document.documentElement;
   const STYLE_ID = 'omarchy-webapp-theme-palette';
   const ATTR = 'data-omarchy-adapters';
+  // Adapters active although the app's own light/dark mode differs from the
+  // palette's (only for adapters registered with modePolicy: 'any').
+  const REMAP_ATTR = 'data-omarchy-remap';
   const adapters = new Map();
   const reported = new Map();
   let palette = null;
@@ -42,6 +45,7 @@
 
   function evaluate() {
     const active = [];
+    const remapped = [];
     for (const [id, adapter] of adapters) {
       let appMode = null;
       try { appMode = adapter.appMode(); } catch { appMode = null; }
@@ -49,15 +53,20 @@
       if (disabled.has(id)) reason = 'disabled';
       else if (!palette) reason = 'no-palette';
       else if (!appMode) reason = 'app-mode-unknown';
-      else if (appMode !== palette.mode) reason = 'mode-mismatch';
-      if (reason === 'active') active.push(id);
+      else if (appMode !== palette.mode) reason = adapter.modePolicy === 'any' ? 'active-remapped' : 'mode-mismatch';
+      if (reason === 'active' || reason === 'active-remapped') active.push(id);
+      if (reason === 'active-remapped') remapped.push(id);
       report(id, { reason, appMode, paletteMode: palette?.mode ?? null });
     }
-    const value = active.join(' ');
-    if ((root.getAttribute(ATTR) ?? '') !== value) {
-      if (value) root.setAttribute(ATTR, value);
-      else root.removeAttribute(ATTR);
-    }
+    setTokens(ATTR, active);
+    setTokens(REMAP_ATTR, remapped);
+  }
+
+  function setTokens(name, ids) {
+    const value = ids.join(' ');
+    if ((root.getAttribute(name) ?? '') === value) return;
+    if (value) root.setAttribute(name, value);
+    else root.removeAttribute(name);
   }
 
   // After the extension is reloaded or removed, this script is orphaned and
@@ -88,7 +97,7 @@
     if (palette && style && style.parentNode !== root) ensureStyle();
     evaluate();
   });
-  observer.observe(root, { attributes: true, attributeFilter: ['class', ATTR], childList: true });
+  observer.observe(root, { attributes: true, attributeFilter: ['class', ATTR, REMAP_ATTR], childList: true });
   let bodyObserved = null;
   const watchBody = () => {
     if (document.body && bodyObserved !== document.body) {
@@ -122,6 +131,7 @@
     window.removeEventListener('focus', ensureConnection);
     style?.remove();
     root.removeAttribute(ATTR);
+    root.removeAttribute(REMAP_ATTR);
     delete root.dataset.omarchyMode;
     adapters.clear();
   }

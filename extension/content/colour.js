@@ -6,6 +6,7 @@
   const KEY = /^[a-z_][a-z0-9_]{0,40}$/;
   const REQUIRED = ['background', 'foreground', 'accent'];
   // Steps of the neutral ramp from background (0) towards foreground (100).
+  const HUE_TINT = 0.18;
   const RAMP = [2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 28, 40, 60, 80];
 
   const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
@@ -54,7 +55,16 @@
     const surfaces = [bg, ramp[4], ramp[8]];
     const text = readable(fg, [...surfaces, ramp[12]], 4.5, pole);
     const inkCandidates = [bg, fg, '#ffffff', '#000000'];
+    // Readable versions of the palette's hues, for adapters that must show a
+    // meaning colour (error, success, warning, link) on the palette surfaces.
+    const hues = {};
+    for (const key of ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'orange']) {
+      // Also readable on its own tint (up to 18% of the hue over the background).
+      const hue = palette.colors[key];
+      if (hue) hues[`${key}-text`] = readable(hue, [...surfaces, mix(bg, hue, HUE_TINT)], 4.5, pole);
+    }
     return {
+      ...hues,
       ramp,
       text,
       'text-secondary': readable(mix(fg, bg, 0.3), surfaces, 4.5, text),

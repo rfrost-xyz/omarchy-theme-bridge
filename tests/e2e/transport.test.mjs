@@ -24,8 +24,7 @@ before(async () => {
 after(() => browser?.close());
 
 test('initial load exposes palette properties', async () => {
-  const page = await browser.open('https://app.notion.com/');
-  await waitBg(page, '#1a1b26');
+  const page = await openWith('https://app.notion.com/', 'tokyo-night', DARK, '#1a1b26');
   assert.equal(await page.eval("document.documentElement.dataset.omarchyMode"), 'dark');
   assert.match(await page.eval("getComputedStyle(document.documentElement).getPropertyValue('--omarchy-accent-rgb').trim()"), /^122, 162, 247$/);
   assert.equal(await page.eval("document.querySelectorAll('#omarchy-webapp-theme-palette').length"), 1);
@@ -33,9 +32,9 @@ test('initial load exposes palette properties', async () => {
 });
 
 test('live change and directory replacement reach open pages without reload', async () => {
-  const notion = await browser.open('https://app.notion.com/');
+  const notion = await openWith('https://app.notion.com/', 'tokyo-night', DARK, '#1a1b26');
   const slack = await browser.open('https://app.slack.com/');
-  await waitBg(notion, '#1a1b26');
+  await waitBg(slack, '#1a1b26');
   await notion.eval('window.__marker = 1');
   browser.setTheme('vantablack', DARK2);
   await waitBg(notion, '#000000', 6000);
@@ -48,14 +47,15 @@ test('live change and directory replacement reach open pages without reload', as
 });
 
 test('options page reports the helper connection', async () => {
+  const page = await openWith('https://app.notion.com/', 'tokyo-night', DARK, '#1a1b26');
+  await page.close();
   const options = await browser.options();
   await options.waitFor("document.getElementById('host').textContent.includes('connected (tokyo-night)')");
   await options.close();
 });
 
 test('helper is relaunched after it is killed', async () => {
-  const page = await browser.open('https://app.notion.com/');
-  await waitBg(page, '#1a1b26');
+  const page = await openWith('https://app.notion.com/', 'tokyo-night', DARK, '#1a1b26');
   const before = browser.hostPids();
   assert.ok(before.length >= 1);
   browser.killHost();
@@ -78,8 +78,7 @@ test('stopped service worker reconnects when a page regains attention', async ()
 });
 
 test('a live worker reconnects at once on ensure instead of waiting for backoff', async () => {
-  const page = await browser.open('https://app.notion.com/');
-  await waitBg(page, '#1a1b26');
+  const page = await openWith('https://app.notion.com/', 'tokyo-night', DARK, '#1a1b26');
   browser.breakHost();
   try {
     browser.killHost();

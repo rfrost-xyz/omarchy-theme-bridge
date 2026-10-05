@@ -78,6 +78,7 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.equal(await page.style('#link', 'color'), css(derived['accent-text']));
   assert.equal(await page.style('#menu', 'backgroundColor'), css(derived.ramp[3]));
   assert.equal(await page.style('#dialog', 'backgroundColor'), css(derived.ramp[3]));
+  assert.match(await page.style('#dialog', 'borderTopColor'), /^rgba\(169, 177, 214, 0\.13\)$/);
   assert.equal(await page.style('#code', 'backgroundColor'), css(derived.ramp[8]));
   assert.equal(await page.style('#backdrop', 'backgroundColor'), css('#1a1b26'));
   assert.match(await page.style('#sidebar', 'backgroundColor'), /^rgba\(169, 177, 214, 0\.05/);
@@ -132,6 +133,11 @@ test('slack: a different app mode keeps theming and remaps status colours', asyn
   assert.equal(await page.style('#education', 'color'), css(derived['blue-text']));
   assert.equal(await page.style('#badge', 'backgroundColor'), css('#cd2553'));
   assert.equal(await page.style('#presence', 'backgroundColor'), css('#2bac76'));
+  // Slack is light here, so its badges keep their light values.
+  assert.equal(await page.style('#red-badge', 'backgroundColor'), css('#e01e5a'));
+  assert.equal(await page.style('#red-badge', 'color'), css('#ffffff'));
+  assert.equal(await page.style('#white-badge', 'color'), css('#1264a3'));
+  assert.equal(await page.style('#icon-badge', 'backgroundColor'), css('#1264a3'));
   assert.equal(await page.style('body', 'colorScheme'), 'dark');
   const options = await browser.options();
   await options.waitFor("document.body.textContent.includes('status colours use the palette')");
@@ -154,6 +160,10 @@ test('slack: a light palette over Slack in Dark uses light controls and palette 
     assert.equal(await page.style('#error-inline', 'color'), css(light['red-text']));
     assert.equal(await page.style('#warning', 'color'), css(light['yellow-text']));
     assert.equal(await page.style('#badge', 'backgroundColor'), css('#cd2553'));
+    assert.equal(await page.style('#red-badge', 'backgroundColor'), css('#e01e5a'));
+    assert.equal(await page.style('#red-badge', 'color'), css('#1a1d21'));
+    assert.equal(await page.style('#white-badge', 'color'), css('#0a77a7'));
+    assert.equal(await page.style('#icon-badge', 'backgroundColor'), css('#0a77a7'));
     const options = await browser.options();
     await options.waitFor("document.body.textContent.includes('status colours use the palette')");
     await options.close();

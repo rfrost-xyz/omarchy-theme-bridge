@@ -56,6 +56,16 @@ test('notion: chrome follows the palette and authored colours stay', async () =>
   await page.close();
 });
 
+test('notion: switching its appearance on an open page re-evaluates at once', async () => {
+  const page = await browser.open('https://app.notion.com/?mode=dark');
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'notion'");
+  await page.eval("document.body.classList.remove('dark', 'notion-dark-theme')");
+  await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-adapters')", 1000);
+  await page.eval("document.body.classList.add('dark', 'notion-dark-theme')");
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'notion'", 1000);
+  await page.close();
+});
+
 test('notion: mode mismatch leaves the page alone and is reported', async () => {
   const page = await browser.open('https://app.notion.com/?mode=light');
   await page.waitFor("getComputedStyle(document.documentElement).getPropertyValue('--omarchy-background').trim() === '#1a1b26'");
@@ -99,6 +109,7 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.equal(await page.style('#icon-badge', 'backgroundColor'), css('#0a77a7'));
   // Menus follow the palette, including the highlighted row.
   assert.equal(await page.style('#menu-item', 'color'), css(derived.text));
+  assert.equal(await page.style('#menu-shortcut', 'color'), css(derived['text-tertiary']));
   assert.match(await page.style('#menu-highlight', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.2\)$/);
   assert.equal(await page.style('#menu-highlight', 'color'), css(derived.text));
   // Triplet tokens still resolve inside rgba().
@@ -122,8 +133,10 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
 test('slack: a different app mode keeps theming and remaps status colours', async () => {
   const page = await browser.open('https://app.slack.com/?mode=dark');
   await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
-  await page.eval("document.getElementById('client').className = 'p-client sk-client-theme--light'");
-  await page.waitFor("document.documentElement.getAttribute('data-omarchy-remap') === 'slack'", 4000);
+  // The signed-in client marks its mode on <body>; flip it there so the
+  // observer (not the two-second fallback poll) has to react.
+  await page.eval("document.body.className = 'sk-client-theme--light'; document.getElementById('client').className = 'p-client sk-client-theme--light'");
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-remap') === 'slack'", 1000);
   assert.equal(await active(page), 'slack');
   assert.equal(await page.style('#client', 'backgroundColor'), css('#1a1b26'));
   assert.equal(await page.style('#client', 'color'), css(derived.text));
@@ -142,8 +155,8 @@ test('slack: a different app mode keeps theming and remaps status colours', asyn
   const options = await browser.options();
   await options.waitFor("document.body.textContent.includes('status colours use the palette')");
   await options.close();
-  await page.eval("document.getElementById('client').className = 'p-client sk-client-theme--dark'");
-  await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-remap')", 4000);
+  await page.eval("document.body.className = 'sk-client-theme--dark'; document.getElementById('client').className = 'p-client sk-client-theme--dark'");
+  await page.waitFor("!document.documentElement.hasAttribute('data-omarchy-remap')", 1000);
   assert.equal(await page.style('#error-inline', 'color'), css('#e46e8f'));
   await page.close();
 });

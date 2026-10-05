@@ -34,7 +34,7 @@ Hyprland 0.56.2, Chromium 153.0.8010.52, Python 3.14.7, Node 26.10.0).
 | Independent adapters | `options/`, `disabledAdapters` | e2e `adapters toggle independently and live from the options page` | Pass |
 | Mode gating: Notion mismatch and match | `palette.js` `evaluate`, Notion `appMode` | e2e `notion: mode mismatch …`, `notion: chrome follows the palette …` | Pass |
 | Mode gating: Slack mismatch remaps | `modePolicy: 'any'`, `data-omarchy-remap`, Slack remap CSS | e2e `slack: a different app mode keeps theming and remaps status colours` (dark palette, Slack light) and `slack: a light palette over Slack in Dark uses light controls and palette hues` (fails if `color-scheme: light` is wrong); live: user reported Slack correct under light and dark themes | Pass |
-| Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, rail, legacy link, tooltips and who-reacted popovers, shortcut hints, your own reactions) | Pass |
+| Semantic mapping: surfaces, menus, dialogs, sidebars, code blocks | `adapters/notion/adapter.css`, `adapters/slack/adapter.css` | e2e `notion: chrome follows …` (search dialog modelled on Notion's real `.notion-dialog` with an inline background inside a `display: contents` theme wrapper, glass header, translucent borders), `slack: tokens follow …` (backdrop, inverted sidebar, rail, legacy link, `.c-menu` on `--dt_color-ctr-pry` with item, shortcut and highlighted row, tooltips and who-reacted popovers, your own reactions; badges, unread dots, white badge and shortcut hints keep Slack's values) | Pass |
 | Preserved meaning: Notion chromatic families and button blue | Notion CSS exclusions | e2e asserts every chromatic token in the fixture, `--c-palUiBlu600`, opposite-theme container | Pass |
 | Preserved meaning: Slack status colours while modes match; badges always | Slack CSS exclusions | e2e asserts error, success (text and background), warning (text and background), education, badge, presence while modes match, and badges under remap. Which token signed-in Slack uses for presence dots was not captured, so under remap presence may take the palette's green (stated in the spec and README) | Pass |
 | Readable contrast | `colour.js` `derive`, both adapters | `tests/extension` derived values for 22 stock themes; e2e `contrast.test.mjs`: 22 themes × (Notion, Slack same mode, Slack opposite mode with remapped status text on its tint); a deliberately broken mapping was confirmed to fail | Pass |
@@ -57,7 +57,8 @@ the signed-in client. No workspace content is stored.
 | Switch shares a line, is indented or carries whitespace | `occurrences`, `Refuse`, post-write check | `test_refuses_switch_that_is_indented_or_shares_a_line`, `test_switch_with_trailing_whitespace_is_refused` | Pass |
 | Uninstall restores byte for byte; repeated uninstall no-op; foreign files kept | `scripts/flags.py` `remove`, `flags-state.json` | `test_round_trip_is_byte_exact` (7 file shapes), `test_uninstall_restores_original_and_is_idempotent`, `test_foreign_files_are_left_alone` | Pass |
 | Entry cannot be removed | `uninstall.sh`, `flags.py mentions` | `test_uninstall_keeps_files_when_entry_cannot_be_removed` | Pass |
-| Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON; `flags.py` ignores lines the launcher skips | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited` | Pass |
+| Manifest ownership and odd paths | `uninstall.sh` parses the manifest JSON (normalised); `common.sh` `normal_dir`; `flags.py` `tokens` mirrors GLib | `test_non_ascii_install_path_uninstalls_cleanly`, `test_line_with_unbalanced_quotes_is_not_edited`, `test_other_spelling_of_data_home_uninstalls_cleanly`, `test_hash_inside_a_word_is_not_a_comment`, `test_flags_tokens.py` (15 GLib-verified lines) | Pass |
+| Uninstall dry run predicts refusal | `flags.py remove` exit 4 | `test_uninstall_dry_run_predicts_refusal` | Pass |
 | Reinstall guidance | `install.sh` | `test_reinstall_says_reload_instead_of_restart` | Pass |
 
 ## Colour scheme preference (task 5.2)
@@ -92,7 +93,14 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   dark themes. The who-reacted popover was then reported white: a diagnostic
   showed tooltips use Slack's inverted tokens, which were mapped to a literal
   inverse. They now use a raised palette surface, and your own reactions an
-  accent tint; the user confirmed ("Looks right").
+  accent tint; the user confirmed ("Looks right"). Review round 4 showed the
+  global inverse mapping also recoloured badges, unread dots and menu
+  highlights, so it was narrowed to `.c-tooltip__tip` and
+  `.c-reaction--reacted`; the user rechecked ("Seems okay").
+- Slack right-click menu: dark with dim text under light themes and Slack
+  grey under dark ones. A diagnostic showed `.c-menu` on
+  `--dt_color-ctr-pry`; the container family and the menu highlight are now
+  mapped, and the user confirmed it in light and dark themes.
 - Not inspected individually in the live apps: code blocks and authored or
   status colours (covered by the automated suites only). Screen captures were
   viewed and deleted immediately; none are kept.
@@ -113,6 +121,10 @@ as `omarchy-launch-webapp` app windows in `Profile 1`.
   search fixture, presence wording under remap and the untested
   light-over-dark Slack direction. All fixed. Its Notion search findings
   repeated the earlier user report, which the user had since resolved.
+- Round 4: global inverse and inverse-highlight remaps that broke badges,
+  dots and menu highlights; `#` mid-word treated as a comment (now matches
+  GLib, with a parity test); different spellings of the install path; uninstall
+  dry run not predicting refusal; broader unsafe-path coverage. All fixed.
 
 ## Full check
 

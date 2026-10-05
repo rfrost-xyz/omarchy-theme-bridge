@@ -130,9 +130,14 @@ deliberately opposite-mode elements such as tooltips keep the app's colours.
   while modes match. Live inspection of the signed-in client showed that
   navigation uses the `--dt_color-theme-*-inv-*` variants and a translucent
   sidebar over `.p-theme_background`, which Slack paints from its raw grey
-  palette (`--dt_color-plt-gray-10`). That one theme hook gets the palette
-  background directly rather than remapping Slack's shared grey palette; it is
-  the only class selector in the adapters.
+  palette (`--dt_color-plt-gray-10`). That theme hook gets the palette
+  background directly rather than remapping Slack's shared grey palette.
+  Slack's inverse pair (`--dt_color-base-inv-*`, `--dt_color-content-inv-*`,
+  `--sk_inverted_*`) is shared by tooltips and by badges, unread dots, menu
+  highlights and danger items on saturated fills, so it stays Slack's
+  globally; only `.c-tooltip__tip` (tooltips and the who-reacted popover)
+  and `.c-reaction--reacted` (your own reactions) override it locally. These
+  three component hooks are the only class selectors in the adapters.
 
 ### Mode policy per adapter, never mode forcing
 

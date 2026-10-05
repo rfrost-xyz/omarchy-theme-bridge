@@ -102,12 +102,16 @@ styling.
   grey ramp, the neutral grey block family, link blue and the selection tint. Authored block colours (red, blue, yellow and the other chromatic
   families), the primary button blue (it sits under white labels), shadows and
   error rings are left as Notion draws them.
-- **Slack**: `--dt_color-content-*`, `-base-*`, `-surf-*` and `-otl-*`
-  neutrals, the link and mention colour (`hgl-1`), the legacy `--sk_*`
+- **Slack**: `--dt_color-content-*`, `-base-*`, `-surf-*`, `-otl-*` and
+  `-ctr-*` (menus, including the right-click menu) neutrals, the menu
+  highlight, the link and mention colour (`hgl-1`), the legacy `--sk_*`
   triplets, the workspace theme tokens `--dt_color-theme-*` (navigation uses
-  the `-inv-` variants) and the window backdrop `.p-theme_background`, the
-  one class selector in the adapters, because Slack paints it from its shared
-  grey palette. While Slack's mode matches the theme, success and presence
+  the `-inv-` variants) and the window backdrop `.p-theme_background`, because
+  Slack paints it from its shared grey palette. Tooltips (including the
+  who-reacted popover, `.c-tooltip__tip`) and your own reactions
+  (`.c-reaction--reacted`) get a raised surface and an accent tint locally;
+  Slack's inverse colours elsewhere (badges, unread dots, menu highlights)
+  stay Slack's. These three component hooks are the only class selectors. While Slack's mode matches the theme, success and presence
   (`hgl-2`), highlights (`hgl-3`), important and error (`imp`), education and
   badge colours stay Slack's; otherwise the first four take the palette's
   hues (so anything Slack draws in its success green, possibly including

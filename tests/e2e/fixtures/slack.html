@@ -13,6 +13,7 @@
   --dt_color-content-hgl-1: #1264a3; --dt_color-content-hgl-2: #007a5a; --dt_color-content-hgl-3: #6b5000;
   --dt_color-content-imp: #c01343; --dt_color-content-inv-pry: #fff;
   --dt_color-ctr-pry: #ffffff;
+  --dt_color-theme-base-hgl-1: #1164a3; --dt_color-theme-content-hgl-1: #ffffff;
   --dt_color-base-inv-pry: #1d1c1d; --dt_color-base-inv-hgl-1: #1264a3; --dt_color-base-hgl-1: #e3f8ff; --dt_color-base-inv-imp: #e01e5a;
   --sk_inverted_background: 29, 28, 29; --sk_inverted_foreground: 255, 255, 255;
   --dt_color-content-education: #112377; --dt_color-base-education: #f0f3fc;
@@ -32,6 +33,7 @@
   --dt_color-content-hgl-1: #1d9bd1; --dt_color-content-hgl-2: #2bac76; --dt_color-content-hgl-3: #e8b13b;
   --dt_color-content-imp: #e46e8f; --dt_color-content-inv-pry: #1a1d21;
   --dt_color-ctr-pry: #212428;
+  --dt_color-theme-base-hgl-1: #414549; --dt_color-theme-content-hgl-1: #f8f8f8;
   --dt_color-base-inv-pry: #d1d2d3; --dt_color-base-inv-hgl-1: #0a77a7; --dt_color-base-hgl-1: #1d3d52; --dt_color-base-inv-imp: #e01e5a;
   --sk_inverted_background: 209, 210, 211; --sk_inverted_foreground: 26, 29, 33;
   --dt_color-content-education: #a9b9f5; --dt_color-base-education: #1c2340;
@@ -50,6 +52,8 @@
 body { margin: 0; font: 14px sans-serif; }
 #client { background: var(--dt_color-base-pry); color: var(--dt_color-content-pry); }
 #sidebar { background-color: var(--dt_color-theme-surf-inv-sec); color: var(--dt_color-theme-content-inv-sec); }
+/* Selected sidebar row as in the signed-in client */
+.p-channel_sidebar__link--selected { background-color: var(--dt_color-theme-base-hgl-1); color: var(--dt_color-theme-content-hgl-1); }
 #rail { color: var(--dt_color-theme-content-inv-pry); }
 #legacy-link { color: rgba(var(--sk_highlight), 1); }
 #secondary { color: var(--dt_color-content-sec); }
@@ -85,7 +89,7 @@ body { margin: 0; font: 14px sans-serif; }
 <div id="client" class="p-client sk-client-theme--{{MODE}}">
  <div id="backdrop" class="p-theme_background">
   <div id="rail">Rail</div>
-  <nav id="sidebar">Channels <span id="presence"></span> <span id="badge">3</span></nav>
+  <nav id="sidebar"><div id="selected-row" class="p-channel_sidebar__link p-channel_sidebar__link--selected">Unread messages</div> Channels <span id="presence"></span> <span id="badge">3</span></nav>
  </div>
   <main>
     <p id="secondary">Secondary text</p>

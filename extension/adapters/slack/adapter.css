@@ -123,6 +123,11 @@ html[data-omarchy-remap~="slack"] [class*="sk-client-theme--"] {
   --dt_color-theme-surf-inv-ter-hover: rgba(var(--omarchy-foreground-rgb), 0.12) !important;
   --dt_color-theme-surf-inv-ter-pressed: rgba(var(--omarchy-foreground-rgb), 0.16) !important;
   --dt_color-theme-otl-inv-pry: var(--omarchy-mix-28) !important;
+  /* The selected sidebar row (observed: theme base-hgl-1 with content-hgl-1) */
+  --dt_color-theme-base-hgl-1: rgba(var(--omarchy-accent-rgb), 0.18) !important;
+  --dt_color-theme-base-hgl-1-hover: rgba(var(--omarchy-accent-rgb), 0.21) !important;
+  --dt_color-theme-base-hgl-1-pressed: rgba(var(--omarchy-accent-rgb), 0.24) !important;
+  --dt_color-theme-content-hgl-1: var(--omarchy-text) !important;
 }
 
 /* The window backdrop behind the tab rail, top bar and translucent sidebar is

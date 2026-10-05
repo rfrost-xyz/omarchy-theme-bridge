@@ -83,6 +83,8 @@ test('slack: tokens follow the palette and meaningful colours stay', async () =>
   assert.match(await page.style('#sidebar', 'backgroundColor'), /^rgba\(169, 177, 214, 0\.05/);
   assert.equal(await page.style('#sidebar', 'color'), css(derived['text-secondary']));
   assert.equal(await page.style('#rail', 'color'), css(derived.text));
+  assert.match(await page.style('#selected-row', 'backgroundColor'), /^rgba\(122, 162, 247, 0\.18\)$/);
+  assert.equal(await page.style('#selected-row', 'color'), css(derived.text));
   assert.equal(await page.style('#legacy-link', 'color'), css(derived['accent-text']));
   // Tooltips and who-reacted popovers: raised surface, not a literal inverse.
   assert.equal(await page.style('#tooltip', 'backgroundColor'), css(derived.ramp[12]));

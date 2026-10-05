@@ -59,6 +59,7 @@ const CHECKS = {
     ['#code', 4.5, 'text on code block'],
     ['#sidebar', 4.5, 'sidebar text'],
     ['#rail', 4.5, 'rail text on backdrop'],
+    ['#selected-row', 4.5, 'selected sidebar row'],
     ['#legacy-link', 4.5, 'legacy link'],
     ['#tooltip', 4.5, 'tooltip and reaction popover text'],
     ['#reacted', 4.5, 'text on your own reaction'],

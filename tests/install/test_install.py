@@ -262,9 +262,12 @@ class InstallTest(unittest.TestCase):
                 self.write_flags(original)
                 self.run_script("install.sh", "--load-extension-flag")
                 if expected is None:
-                    # A later entry that merely starts with our path must survive.
+                    # An entry that merely starts with our path, placed right before
+                    # ours, must survive (this is the shape that reaches the boundary
+                    # check after the recorded prefix).
+                    ours = f",{self.data}/extension\n".encode()
                     lookalike = f",{self.data}/extension-old".encode()
-                    self.write_flags(self.read_flags().replace(b"\n", lookalike + b"\n", 1))
+                    self.write_flags(self.read_flags().replace(ours, lookalike + ours))
                     expected = b"--load-extension=/a" + lookalike + b"\n"
                 else:
                     self.write_flags(migrate(self.read_flags()))

@@ -7,6 +7,7 @@
 <meta charset="utf-8">
 <style>
 :root, .notion-light-theme {
+  --ca-borPriTra: rgba(28,19,1,.11);
   --ca-popWaxPapBac: rgba(255,255,255,.9);
   --ca-glaWas: rgba(249,249,248,.8);
   --ca-palTraGra200: rgba(0,0,0,.07);
@@ -60,6 +61,7 @@
   --c-greTexPri: #2a533c;
 }
 .notion-dark-theme {
+  --ca-borPriTra: rgba(255,255,235,.1);
   --ca-popWaxPapBac: rgba(32,32,32,.9);
   --ca-glaWas: rgba(32,32,32,.8);
   --ca-palTraGra200: rgba(255,255,255,.055);
@@ -116,8 +118,6 @@ body { margin: 0; background: var(--c-bacPri); color: var(--c-texPri); font: 14p
 #muted { color: var(--c-texTer); }
 #link { color: var(--c-palUiBlu700, var(--c-palUiBlu600)); }
 #menu, #dialog { background: var(--c-popBac); color: var(--c-texPri); border: 1px solid var(--c-borPri); }
-#search { background: var(--ca-popWaxPapBac); color: var(--c-texPri); }
-#search-hover { background: var(--ca-palTraGra200); }
 #glass-header { background: var(--ca-glaWas); color: var(--c-texSec); }
 #code { background: var(--cd-codBloBac); color: var(--c-texPri); }
 #red-block { background: var(--c-redBacPri); color: var(--c-redTexPri); }
@@ -139,7 +139,7 @@ body { margin: 0; background: var(--c-bacPri); color: var(--c-texPri); font: 14p
   <a id="link" href="#">Link</a>
   <div id="menu" role="menu">Menu</div>
   <div id="dialog" role="dialog">Dialog</div>
-  <div id="search" role="dialog">Search <div id="search-hover">Recent page</div></div>
+  <div id="search-layer"></div>
   <div id="glass-header">Floating header</div>
   <pre id="code">const x = 1;</pre>
   <div id="red-block">Authored red block</div>
@@ -151,6 +151,13 @@ body { margin: 0; background: var(--c-bacPri); color: var(--c-texPri); font: 14p
   <div id="opposite-holder"></div>
 </main>
 <script>
+  // Ctrl+K search as Notion renders it: a display:contents theme wrapper in
+  // the app's mode around a .notion-dialog whose background is an inline style.
+  const mode = document.body.classList.contains('notion-dark-theme') ? 'dark' : 'light';
+  document.getElementById('search-layer').innerHTML =
+    `<div class="notion-${mode}-theme" style="display: contents"><div id="search" class="notion-dialog" role="dialog" ` +
+    `style="background: var(--ca-popWaxPapBac); backdrop-filter: blur(40px); color: var(--c-texPri); border: 1px solid var(--ca-borPriTra)">` +
+    `Search <div id="search-hover" style="background: var(--ca-palTraGra200)">Recent page</div></div></div>`;
   // A container in the opposite theme, such as a tooltip, keeps Notion's colours.
   const opposite = document.createElement('div');
   opposite.id = 'opposite';

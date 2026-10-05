@@ -55,6 +55,16 @@ html[data-omarchy-adapters~="notion"][data-omarchy-mode="light"] .notion-light-t
   --ca-glaPag: rgba(var(--omarchy-background-rgb), 0.85) !important;
   --ca-palPagGla0: rgba(var(--omarchy-background-rgb), 0.85) !important;
 
+  /* Translucent washes and borders (dialogs, side panels, callouts) */
+  --ca-bacSecTra: rgba(var(--omarchy-foreground-rgb), 0.03) !important;
+  --ca-bacTerTra: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
+  --ca-borSecTra: rgba(var(--omarchy-foreground-rgb), 0.08) !important;
+  --ca-borPriTra: rgba(var(--omarchy-foreground-rgb), 0.1) !important;
+  --ca-graBacPriTra: rgba(var(--omarchy-foreground-rgb), 0.03) !important;
+  --ca-graBacSecTra: rgba(var(--omarchy-foreground-rgb), 0.1) !important;
+  --ca-graBacTerTra: rgba(var(--omarchy-foreground-rgb), 0.3) !important;
+  --ca-sidSecBac: rgba(var(--omarchy-foreground-rgb), 0.025) !important;
+
   /* Translucent grey ramp used for hovers, chips and dividers */
   --ca-palTraGra75: rgba(var(--omarchy-foreground-rgb), 0.016) !important;
   --ca-palTraGra100: rgba(var(--omarchy-foreground-rgb), 0.03) !important;

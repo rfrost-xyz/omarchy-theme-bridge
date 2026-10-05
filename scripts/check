@@ -1,0 +1,19 @@
+#!/bin/bash
+# Run every check: syntax, helper, installer, extension unit and headless browser tests.
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+echo "== shell syntax"
+bash -n install.sh uninstall.sh scripts/common.sh scripts/check
+echo "== helper"
+python3 -m unittest discover -s tests/host
+echo "== installer"
+python3 -m unittest discover -s tests/install
+echo "== extension unit"
+node --test tests/extension/
+echo "== headless Chromium"
+node --test --test-concurrency=1 --test-timeout=60000 tests/e2e/
+if command -v openspec >/dev/null; then
+  echo "== openspec"
+  openspec validate --all --strict
+fi

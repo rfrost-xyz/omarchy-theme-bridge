@@ -234,11 +234,44 @@ class InstallTest(unittest.TestCase):
                 self.assertEqual(self.flags_text(), FLAGS)
 
     def test_crlf_flags_file_is_refused(self):
-        original = b"--a\r\n--load-extension=/x\r\n--b\r\n"
-        self.write_flags(original)
-        result = self.run_env({}, "install.sh", "--load-extension-flag")
-        self.assertIn("CRLF", result.stderr)
-        self.assertEqual(self.read_flags(), original)
+        for original in (b"--a\r\n--load-extension=/x\r\n--b\r\n", b"--a\r\n--b\r\n"):
+            with self.subTest(original=original):
+                self.write_flags(original)
+                result = self.run_env({}, "install.sh", "--load-extension-flag")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("CRLF", result.stderr)
+                self.assertIn("Load unpacked", result.stdout)
+                self.assertEqual(self.read_flags(), original)
+
+    def test_uninstall_after_an_omarchy_migration_keeps_its_extension(self):
+        # Omarchy's migrations run: sed "s|^--load-extension=\\(.*\\)$|--load-extension=\\1,$EXT|"
+        def migrate(data):
+            return b"".join(
+                line[:-1] + b",/usr/share/omarchy/new\n" if line.startswith(b"--load-extension=") else line
+                for line in data.splitlines(keepends=True)
+            )
+        cases = {
+            "default list": (FLAGS.encode(), FLAGS.encode().replace(b"yt-dlp\n", b"yt-dlp,/usr/share/omarchy/new\n")),
+            "empty list": (b"--load-extension=\n", b"--load-extension=,/usr/share/omarchy/new\n"),
+            "leading empty item": (b"--load-extension=,/a\n", b"--load-extension=,/a,/usr/share/omarchy/new\n"),
+            "no switch": (b"--a\n", b"--a\n--load-extension=/usr/share/omarchy/new\n"),
+            "lookalike path appended": (b"--load-extension=/a\n", None),
+        }
+        for label, (original, expected) in cases.items():
+            with self.subTest(label):
+                self.write_flags(original)
+                self.run_script("install.sh", "--load-extension-flag")
+                if expected is None:
+                    # A later entry that merely starts with our path must survive.
+                    lookalike = f",{self.data}/extension-old".encode()
+                    self.write_flags(self.read_flags().replace(b"\n", lookalike + b"\n", 1))
+                    expected = b"--load-extension=/a" + lookalike + b"\n"
+                else:
+                    self.write_flags(migrate(self.read_flags()))
+                self.run_script("uninstall.sh")
+                self.assertEqual(self.read_flags(), expected)
+                self.assertFalse(os.path.exists(self.data))
+                self.assertFalse(os.path.exists(self.manifest))
 
     def test_switch_with_trailing_whitespace_is_refused(self):
         for original in (b"--load-extension=/a\t\n", b"--load-extension=/a\t#note\n", b"--load-extension=/a \n"):

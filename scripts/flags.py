@@ -90,6 +90,11 @@ def same(a, b):
 
 
 def add(lines, ext):
+    if any("\r" in line for line in lines):
+        raise Refuse(
+            "the flags file uses CRLF line endings, which Chromium's launcher passes "
+            "through; convert it to LF or load the extension unpacked"
+        )
     found = list(occurrences(lines))
     if not found:
         state = {"action": "added-line", "final_newline": not lines or ending(lines[-1]) != ""}
@@ -99,11 +104,6 @@ def add(lines, ext):
         new.append(SWITCH + ext + "\n")
         return new, state, None, new[-1]
     index, standalone = found[-1]
-    if "\r" in lines[index]:
-        raise Refuse(
-            "the flags file uses CRLF line endings, which Chromium's launcher passes "
-            "through; convert it to LF or load the extension unpacked"
-        )
     if not standalone:
         raise Refuse(
             "the last --load-extension switch shares a line, is indented or is quoted; "
@@ -138,8 +138,11 @@ def remove(lines, ext, state):
             continue
         old_line = line
         state = state or {}
-        if state.get("action") == "appended" and state.get("written") == value:
-            restored = state.get("original", "")
+        written = state.get("written")
+        if state.get("action") == "appended" and written is not None and value.startswith(written) and value[len(written):len(written) + 1] in ("", ","):
+            # Restore our recorded original and keep anything added after us,
+            # such as an extension an Omarchy migration appended later.
+            restored = state.get("original", "") + value[len(written):]
         elif not any(kept) and state.get("action") != "appended":
             restored = None
         else:

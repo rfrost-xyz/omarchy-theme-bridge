@@ -115,9 +115,15 @@ class HostTest(unittest.TestCase):
             ('background = "#ffffff"\nforeground = "#000000"\naccent = "#335599"\nmode = "dark"', "light"),
             ('mode = "dark&light"\nbackground = "#ffffff"\nforeground = "#000000"\naccent = "#335599"\n', "light"),
         ]
+        omarchy = shutil.which("omarchy-theme-color")
         for colours, expected in cases:
             with self.subTest(colours=colours):
                 self.write_theme("x", colours)
+                if omarchy:
+                    # Cross-check the expectation against Omarchy itself (its GNOME
+                    # hook treats anything other than "light" as dark).
+                    result = subprocess.run([omarchy, "--file", os.path.join(self.state, "theme", "colors.toml"), "mode"], capture_output=True, text=True)
+                    self.assertEqual("light" if result.stdout.strip() == "light" else "dark", expected)
                 host = Host(self.state)
                 try:
                     self.assertEqual(host.read()["mode"], expected)

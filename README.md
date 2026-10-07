@@ -1,6 +1,6 @@
 # omarchy-webapp-theme
 
-Keeps the Notion and Slack web apps in Chromium in step with the active Omarchy
+Keeps the Notion, Slack and Google Meet web apps in Chromium in step with the active Omarchy
 theme, including `omarchy-launch-webapp` app windows. When you run
 `omarchy theme set`, open pages recolour within about a second, with no reload
 and no Chromium restart.
@@ -15,8 +15,10 @@ It has three parts:
   request except `get`.
 - **Transport** (`extension/background.js`, `extension/content/`): the
   extension keeps the helper connected, stores the last good palette and
-  exposes it to Notion and Slack pages as `--omarchy-*` CSS custom properties.
-- **Adapters** (`extension/adapters/notion/`, `extension/adapters/slack/`): one
+  exposes it to Notion, Slack and Meet pages as `--omarchy-*` CSS custom
+  properties.
+- **Adapters** (`extension/adapters/notion/`, `extension/adapters/slack/`,
+  `extension/adapters/meet/`): one
   CSS file per app that maps those properties onto the app's own colour tokens.
   Each can be turned off on the extension's options page.
 
@@ -31,7 +33,7 @@ It has three parts:
 2. Install. Choose one way to load the extension:
 
    - `./install.sh` leaves Omarchy's Chromium flags alone. Then, in each Chromium
-     profile that opens Notion or Slack, open `chrome://extensions`, turn on
+     profile that opens Notion, Slack or Meet, open `chrome://extensions`, turn on
      Developer mode, choose **Load unpacked** and select
      `~/.local/share/omarchy-webapp-theme/extension`. Web app launchers can
      name a profile with `--profile-directory` (see
@@ -56,6 +58,14 @@ It has three parts:
    Slack's mode differs from the Omarchy theme, its error, success, warning and
    tip colours switch to the theme's own red, green, yellow and blue, adjusted
    to stay readable.
+
+   Google Meet needs no setting. It does not follow the desktop: when checked
+   its pages were light and its call screen dark. With a dark Omarchy theme every
+   Meet surface takes the palette, including the call screen, and Meet's
+   error and success colours take the theme's red and green. With a light
+   theme Meet's pages take the palette and the call screen stays Meet's dark
+   grey, so captions and controls over video keep their contrast; a Meet
+   page that is dark as a whole is left to Meet for the same reason.
 
 ### What the installer changes
 
@@ -89,7 +99,7 @@ Running it again is harmless.
 | --- | --- |
 | `nativeMessaging` | Talk to the read-only helper that reads the Omarchy palette. Only this extension's ID may start it. |
 | `storage` | Keep the last good palette, helper status and adapter switches, so pages are coloured straight away after a restart. |
-| Content scripts on `https://app.notion.com/*` and `https://app.slack.com/*` | Add the palette properties and adapter styles to those two apps. No other site is matched, and there are no host permissions, `tabs`, `scripting` or web-accessible resources. |
+| Content scripts on `https://app.notion.com/*`, `https://app.slack.com/*` and `https://meet.google.com/*` | Add the palette properties and adapter styles to those three apps. No other site is matched, and there are no host permissions, `tabs`, `scripting` or web-accessible resources. |
 
 ## How the adapters map colours
 
@@ -118,6 +128,19 @@ Slack's handling of tooltips, reactions and its two modes is described below.
   badge colours stay Slack's; otherwise the first four take the palette's
   hues (so anything Slack draws in its success green, possibly including
   presence, takes the palette's green). Badges always stay Slack's.
+- **Google Meet**: the Material 3 system tokens `--gm3-sys-color-*` (surfaces
+  and surface containers, text, outlines, primary and secondary as the accent
+  with the theme background as ink on fills, inverse surfaces for snackbars)
+  with their `-rgb` triplets, the neutral grey family
+  `--ws-sys-color-extended-grey-*`, and the older `--gm-*` and `--hotlane-*`
+  variables. Under a dark palette the tokens are set on every element,
+  because the call screen and surfaces over video redeclare them on
+  containers with generated class names; under a light palette only on the
+  page, so those containers keep Meet's dark colours. Error and tertiary
+  (success) move to the palette's red and green only while Meet's mode (read
+  from a token the adapter never sets) differs from the palette's. Meet's
+  named colour families (avatars, labels), AI and premium gradients and
+  fixed colours stay Meet's.
 
 The transport also provides generic helpers every adapter can use:
 `--omarchy-mix-<n>` (background blended n% towards foreground),
@@ -174,6 +197,17 @@ tests.
   tokens were confirmed by reading computed styles. Slack dialogs and Notion
   code blocks were not inspected live. Automated tests use synthetic pages built from
   the apps' public stylesheets, so a future app update can still drift.
+- **Google Meet** (checked 2026-10-07, signed out, in a throwaway profile):
+  the pre-join prompt and its buttons followed light and dark palettes. The
+  signed-in home page and the call screen could not be reached without an
+  account and a live meeting, so they are unverified; the call screen's
+  backdrop may be a fixed colour rather than a token. The "can't join" page
+  paints its own backdrop and headings with fixed colours, so it stays
+  white behind a themed dialog. Under a dark palette the adapter sets its
+  tokens on every element: on a 5,000-element page a full style
+  recalculation took about 16 ms instead of 8 ms, and every element that
+  restyles costs more. The cost during a call has not been measured; turn
+  the Meet adapter off on the options page if calls feel slower.
 - **Light and dark switching**: Notion follows the desktop only when set to
   use the system setting; until then the Notion adapter leaves it uncoloured.
   Slack in the browser cannot follow the desktop, so it stays in its chosen
@@ -181,16 +215,16 @@ tests.
 - **Slack's own colours**: a few things Slack draws with fixed colours (some
   icons, images and illustrations) keep their Slack look, especially when
   Slack's mode differs from the theme's.
-- **App changes**: if Notion or Slack rename their colour variables, the
+- **App changes**: if Notion, Slack or Meet rename their colour variables, the
   affected areas fall back to the app's own colours rather than breaking.
-- **Origins**: only `app.notion.com` and `app.slack.com`. Public `notion.site`
+- **Origins**: only `app.notion.com`, `app.slack.com` and `meet.google.com`. Public `notion.site`
   pages and older `www.notion.so` links that do not redirect to
   `app.notion.com` are not coloured.
 - **Flags file**: if an Omarchy update rewrites `~/.config/chromium-flags.conf`
   and drops the entry, rerun `./install.sh --load-extension-flag`.
 - **Extension reloads**: Chromium does not re-inject content scripts into tabs
   that are already open. After reinstalling or reloading the extension, open
-  Notion and Slack windows drop back to the apps' own colours until reloaded.
+  Notion, Slack and Meet windows drop back to the apps' own colours until reloaded.
 - **Hand-written themes**: the helper reads `colors.toml` the way
   `omarchy-theme-color` does, including legacy `bg`, `fg` and `colorN` names
   and the same light or dark rule, so it agrees with the desktop's colour

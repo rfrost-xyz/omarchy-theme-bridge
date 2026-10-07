@@ -108,7 +108,10 @@
   };
   const bodyWatcher = new MutationObserver(watchBody);
   bodyWatcher.observe(root, { childList: true });
-  document.addEventListener('DOMContentLoaded', watchBody);
+  // A mode marker below <body> is parsed after the palette may have loaded,
+  // so check once more when the document is complete.
+  const onReady = () => { watchBody(); evaluate(); };
+  document.addEventListener('DOMContentLoaded', onReady);
 
   chrome.storage.local.get(['palette', 'disabledAdapters']).then(load).catch(() => {});
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -127,6 +130,7 @@
     observer.disconnect();
     bodyWatcher.disconnect();
     clearInterval(interval);
+    document.removeEventListener('DOMContentLoaded', onReady);
     document.removeEventListener('visibilitychange', onVisible);
     window.removeEventListener('focus', ensureConnection);
     style?.remove();

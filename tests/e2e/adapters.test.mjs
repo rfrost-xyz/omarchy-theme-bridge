@@ -173,6 +173,30 @@ test('slack: a mode marker below <body> is still picked up by the fallback poll'
   await page.close();
 });
 
+test('slack: no theme class means Slack is in Light', async () => {
+  const page = await browser.open('https://app.slack.com/?mode=dark');
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
+  // Slack in Light can carry no theme class at all; its light tokens are on :root.
+  await page.eval("document.body.className = ''; document.getElementById('client').className = 'p-client'");
+  await page.waitFor("document.documentElement.getAttribute('data-omarchy-remap') === 'slack'", 4000);
+  assert.equal(await page.style('#client', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#error-inline', 'color'), css(derived['red-text']));
+  await page.close();
+
+  const LIGHT = { mode: 'light', colors: { background: '#eff1f5', foreground: '#4c4f69', accent: '#1e66f5', red: '#d20f39', green: '#40a02b', yellow: '#df8e1d', blue: '#1e66f5' } };
+  browser.setTheme('latte', toml(LIGHT));
+  try {
+    const matched = await browser.open('https://app.slack.com/?mode=none');
+    await matched.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack' && document.documentElement.dataset.omarchyMode === 'light'", 8000);
+    assert.equal(await matched.eval("document.documentElement.hasAttribute('data-omarchy-remap')"), false);
+    assert.equal(await matched.style('#client', 'backgroundColor'), css('#eff1f5'));
+    assert.equal(await matched.style('#error', 'color'), css('#c01343'));
+    await matched.close();
+  } finally {
+    browser.setTheme('tokyo-night', toml(DARK));
+  }
+});
+
 test('slack: a light palette over Slack in Dark uses light controls and palette hues', async () => {
   const LIGHT = { mode: 'light', colors: { background: '#eff1f5', foreground: '#4c4f69', accent: '#1e66f5', red: '#d20f39', green: '#40a02b', yellow: '#df8e1d', blue: '#1e66f5' } };
   const light = C.derive(LIGHT);

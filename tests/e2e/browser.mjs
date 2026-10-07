@@ -92,7 +92,8 @@ export class Browser {
       return;
     }
     let html = readFileSync(join(ROOT, 'tests', 'e2e', 'fixtures', fixture), 'utf8');
-    html = html.replaceAll('{{MODE}}', url.searchParams.get('mode') === 'light' ? 'light' : 'dark');
+    const mode = url.searchParams.get('mode');
+    html = html.replaceAll('{{MODE}}', ['light', 'none'].includes(mode) ? mode : 'dark');
     this.send('Fetch.fulfillRequest', {
       requestId, responseCode: 200,
       responseHeaders: [{ name: 'Content-Type', value: 'text/html; charset=utf-8' }],

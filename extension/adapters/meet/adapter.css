@@ -1,0 +1,151 @@
+/*
+ * Google Meet: map Omarchy palette properties onto Meet's Material 3 system
+ * tokens (--gm3-sys-color-*, with "r,g,b" -rgb triplets) and the older
+ * --gm-* and --hotlane-* variables. Observed signed out on the pre-join and
+ * "can't join" pages (2026-10-07): the light set is declared on body, the
+ * always-dark call screen redeclares the same tokens on a container, and a
+ * few local dark surfaces over video redeclare one or two.
+ *
+ * Light palette: html and body only. The light pages inherit the palette and
+ * every container that redeclares tokens (the call screen and its surfaces
+ * over video) keeps Meet's dark values, so captions and controls over video
+ * keep their contrast. Dark palette: also every element under body, so those
+ * containers take the palette too without naming Meet's generated classes
+ * (important declarations beat their normal ones).
+ *
+ * Left to Meet: the named colour families (--ws-sys-color-extended-*, except
+ * neutral grey), AI and premium gradients, fixed colours (*-fixed*), scrim
+ * and shadow. Error and tertiary (success) stay Meet's while Meet's mode
+ * matches the palette's; the remap block below moves them otherwise.
+ */
+html[data-omarchy-adapters~="meet"],
+html[data-omarchy-adapters~="meet"] > body,
+html[data-omarchy-adapters~="meet"][data-omarchy-mode="dark"] body * {
+  /* Surfaces */
+  --gm3-sys-color-background: var(--omarchy-background) !important;
+  --gm3-sys-color-background-rgb: var(--omarchy-background-rgb) !important;
+  --gm3-sys-color-surface: var(--omarchy-background) !important;
+  --gm3-sys-color-surface-rgb: var(--omarchy-background-rgb) !important;
+  --gm3-sys-color-surface-container-lowest: var(--omarchy-background) !important;
+  --gm3-sys-color-surface-container-low: var(--omarchy-mix-3) !important;
+  --gm3-sys-color-surface-container: var(--omarchy-mix-5) !important;
+  --gm3-sys-color-surface-container-rgb: var(--omarchy-mix-5-rgb) !important;
+  --gm3-sys-color-surface-container-high: var(--omarchy-mix-8) !important;
+  --gm3-sys-color-surface-container-high-rgb: var(--omarchy-mix-8-rgb) !important;
+  --gm3-sys-color-surface-container-highest: var(--omarchy-mix-10) !important;
+  --gm3-sys-color-surface-container-highest-rgb: var(--omarchy-mix-10-rgb) !important;
+  --gm3-sys-color-surface-variant: var(--omarchy-mix-10) !important;
+  --gm3-sys-color-surface-variant-rgb: var(--omarchy-mix-10-rgb) !important;
+  --gm3-sys-color-surface-tint: var(--omarchy-accent) !important;
+
+  /* Text and icons */
+  --gm3-sys-color-on-background: var(--omarchy-text) !important;
+  --gm3-sys-color-on-background-rgb: var(--omarchy-text-rgb) !important;
+  --gm3-sys-color-on-surface: var(--omarchy-text) !important;
+  --gm3-sys-color-on-surface-rgb: var(--omarchy-text-rgb) !important;
+  --gm3-sys-color-on-surface-variant: var(--omarchy-text-secondary) !important;
+  --gm3-sys-color-on-surface-variant-rgb: var(--omarchy-text-secondary-rgb) !important;
+
+  /* Outlines and dividers */
+  --gm3-sys-color-outline: var(--omarchy-mix-40) !important;
+  --gm3-sys-color-outline-rgb: var(--omarchy-mix-40-rgb) !important;
+  --gm3-sys-color-outline-variant: var(--omarchy-mix-16) !important;
+  --gm3-sys-color-outline-variant-rgb: var(--omarchy-mix-16-rgb) !important;
+
+  /* Primary (buttons, links, focus) and secondary (selected states) follow
+     the accent: the readable accent as a colour, the background as ink on
+     its fills (readable by construction) and an accent tint with normal
+     text as the container. Tints come from color-mix(), which has no "r,g,b"
+     form, so the container -rgb triplets (rarely used) stay Meet's. */
+  --gm3-sys-color-primary: var(--omarchy-accent-text) !important;
+  --gm3-sys-color-primary-rgb: var(--omarchy-accent-text-rgb) !important;
+  --gm3-sys-color-on-primary: var(--omarchy-background) !important;
+  --gm3-sys-color-on-primary-rgb: var(--omarchy-background-rgb) !important;
+  --gm3-sys-color-primary-container: color-mix(in srgb, var(--omarchy-accent) 22%, var(--omarchy-background)) !important;
+  --gm3-sys-color-on-primary-container: var(--omarchy-text) !important;
+  --gm3-sys-color-on-primary-container-rgb: var(--omarchy-text-rgb) !important;
+  --gm3-sys-color-secondary: var(--omarchy-accent-text) !important;
+  --gm3-sys-color-secondary-rgb: var(--omarchy-accent-text-rgb) !important;
+  --gm3-sys-color-on-secondary: var(--omarchy-background) !important;
+  --gm3-sys-color-on-secondary-rgb: var(--omarchy-background-rgb) !important;
+  --gm3-sys-color-secondary-container: color-mix(in srgb, var(--omarchy-accent) 18%, var(--omarchy-background)) !important;
+  --gm3-sys-color-on-secondary-container: var(--omarchy-text) !important;
+  --gm3-sys-color-on-secondary-container-rgb: var(--omarchy-text-rgb) !important;
+
+  /* Inverse (snackbars, plain tooltips): a raised palette surface with
+     normal text, as Slack's tooltips. */
+  --gm3-sys-color-inverse-surface: var(--omarchy-mix-12) !important;
+  --gm3-sys-color-inverse-surface-rgb: var(--omarchy-mix-12-rgb) !important;
+  --gm3-sys-color-inverse-on-surface: var(--omarchy-text) !important;
+  --gm3-sys-color-inverse-on-surface-rgb: var(--omarchy-text-rgb) !important;
+  --gm3-sys-color-inverse-primary: var(--omarchy-accent-text) !important;
+
+  /* Neutral grey family */
+  --ws-sys-color-extended-grey-fill: var(--omarchy-mix-60) !important;
+  --ws-sys-color-extended-on-grey-fill: var(--omarchy-background) !important;
+  --ws-sys-color-extended-grey-tonal: var(--omarchy-mix-12) !important;
+  --ws-sys-color-extended-on-grey-tonal: var(--omarchy-text) !important;
+  --ws-sys-color-extended-grey-outline: var(--omarchy-mix-12) !important;
+  --ws-sys-color-extended-on-grey-outline: var(--omarchy-text-secondary) !important;
+
+  /* Older Google variables the call screen redeclares */
+  --hotlane-background-color: var(--omarchy-background) !important;
+  --hotlane-theme-background-color: var(--omarchy-background) !important;
+  --hotlane-on-background-color: var(--omarchy-text) !important;
+  --hotlane-on-surface-color: var(--omarchy-text) !important;
+  --hotlane-on-surface-variant-color: var(--omarchy-text-secondary) !important;
+  --hotlane-primary-color: var(--omarchy-accent-text) !important;
+  --hotlane-custom-background-color: var(--omarchy-mix-8) !important;
+  --hotlane-surface-container-color: var(--omarchy-mix-5) !important;
+}
+
+/* Older Google variables, declared only on :root, so inherited from there. */
+html[data-omarchy-adapters~="meet"] {
+  --gm-background-color: var(--omarchy-background) !important;
+  --gm-body-text-color: var(--omarchy-text) !important;
+  --gm-caption-color: var(--omarchy-text-secondary) !important;
+  --gm-hint-color: var(--omarchy-text-secondary) !important;
+  --gm-label-color: var(--omarchy-text-secondary) !important;
+  --gm-navigation-icon-color: var(--omarchy-text-secondary) !important;
+  --gm-hairline-color: var(--omarchy-mix-16) !important;
+  --gm-neutral-outline-color: var(--omarchy-mix-16) !important;
+  --gm-neutral-highlight-color: var(--omarchy-mix-3) !important;
+  --gm-theme-color: var(--omarchy-accent-text) !important;
+  --gm-theme-color--base: var(--omarchy-accent-text) !important;
+  --gm-theme-color--stateful: var(--omarchy-accent-text) !important;
+  --gm-theme-color-highlight: color-mix(in srgb, var(--omarchy-accent) 18%, var(--omarchy-background)) !important;
+}
+
+/* Meet's page mode differs from the palette's (Meet's light pages under a
+   dark palette): its error and success colours, tuned for white, move to the
+   palette's red and green adjusted for contrast. */
+html[data-omarchy-remap~="meet"],
+html[data-omarchy-remap~="meet"] > body,
+html[data-omarchy-remap~="meet"][data-omarchy-mode="dark"] body * {
+  --gm3-sys-color-error: var(--omarchy-red-text, var(--omarchy-text)) !important;
+  --gm3-sys-color-error-rgb: var(--omarchy-red-text-rgb, var(--omarchy-text-rgb)) !important;
+  --gm3-sys-color-on-error: var(--omarchy-background) !important;
+  --gm3-sys-color-on-error-rgb: var(--omarchy-background-rgb) !important;
+  --gm3-sys-color-error-container: color-mix(in srgb, var(--omarchy-red, var(--omarchy-foreground)) 18%, var(--omarchy-background)) !important;
+  --gm3-sys-color-on-error-container: var(--omarchy-red-text, var(--omarchy-text)) !important;
+  --gm3-sys-color-on-error-container-rgb: var(--omarchy-red-text-rgb, var(--omarchy-text-rgb)) !important;
+  --gm3-sys-color-tertiary: var(--omarchy-green-text, var(--omarchy-text)) !important;
+  --gm3-sys-color-tertiary-rgb: var(--omarchy-green-text-rgb, var(--omarchy-text-rgb)) !important;
+  --gm3-sys-color-on-tertiary: var(--omarchy-background) !important;
+  --gm3-sys-color-on-tertiary-rgb: var(--omarchy-background-rgb) !important;
+  --gm3-sys-color-tertiary-container: color-mix(in srgb, var(--omarchy-green, var(--omarchy-foreground)) 18%, var(--omarchy-background)) !important;
+  --gm3-sys-color-on-tertiary-container: var(--omarchy-green-text, var(--omarchy-text)) !important;
+  --gm3-sys-color-on-tertiary-container-rgb: var(--omarchy-green-text-rgb, var(--omarchy-text-rgb)) !important;
+  --gm-error-color: var(--omarchy-red-text, var(--omarchy-text)) !important;
+  --hotlane-error-color: var(--omarchy-red-text, var(--omarchy-text)) !important;
+}
+
+/* Native scrollbars and form controls follow the palette, not Meet. */
+html[data-omarchy-remap~="meet"][data-omarchy-mode="light"],
+html[data-omarchy-remap~="meet"][data-omarchy-mode="light"] > body {
+  color-scheme: light !important;
+}
+html[data-omarchy-remap~="meet"][data-omarchy-mode="dark"],
+html[data-omarchy-remap~="meet"][data-omarchy-mode="dark"] > body {
+  color-scheme: dark !important;
+}

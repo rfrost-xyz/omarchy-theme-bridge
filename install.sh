@@ -92,7 +92,7 @@ elif [[ -f $FLAGS_FILE ]] && flags_edit mentions 2>/dev/null; then
   echo "Chromium already loads it: reload Omarchy Webapp Theme in chrome://extensions (or restart Chromium) to pick up updated files."
 else
   cat <<EOF
-Load the extension once in each Chromium profile that opens Notion or Slack.
+Load the extension once in each Chromium profile that opens Notion, Slack or Google Meet.
 Your launchers' --profile-directory flags (~/.local/share/applications/*.desktop)
 show which profiles they use:
   1. Open chrome://extensions and turn on Developer mode.
@@ -100,4 +100,4 @@ show which profiles they use:
 Or rerun with --load-extension-flag and restart Chromium once.
 EOF
 fi
-echo "Set Notion to use the system appearance so it switches between light and dark with the Omarchy theme. Slack is themed in either of its modes."
+echo "Set Notion to use the system appearance so it switches between light and dark with the Omarchy theme. Slack and Google Meet are themed in either of their modes."

@@ -201,17 +201,123 @@ test('slack: a light palette over Slack in Dark uses light controls and palette 
 test('adapters toggle independently and live from the options page', async () => {
   const notion = await browser.open('https://app.notion.com/?mode=dark');
   const slack = await browser.open('https://app.slack.com/?mode=dark');
+  const meet = await browser.open('https://meet.google.com/?mode=light');
   await notion.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'notion'");
   await slack.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
+  await meet.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'meet'");
   const options = await browser.options();
-  await options.waitFor("document.querySelectorAll('#adapters input').length === 2");
+  await options.waitFor("document.querySelectorAll('#adapters input').length === 3");
   const labels = await options.eval("[...document.querySelectorAll('#adapters label')].map((l) => l.textContent.trim())");
-  assert.deepEqual(labels, ['Notion', 'Slack']);
-  await options.eval("[...document.querySelectorAll('#adapters label')].find((l) => l.textContent.includes('Slack')).querySelector('input').click()");
+  assert.deepEqual(labels, ['Notion', 'Slack', 'Meet']);
+  const toggle = (name) => options.eval(`[...document.querySelectorAll('#adapters label')].find((l) => l.textContent.includes('${name}')).querySelector('input').click()`);
+  await toggle('Slack');
   await slack.waitFor("!document.documentElement.hasAttribute('data-omarchy-adapters')");
   assert.equal(await slack.style('#client', 'backgroundColor'), css('#1a1d21'));
   assert.equal(await active(notion), 'notion');
-  await options.eval("[...document.querySelectorAll('#adapters label')].find((l) => l.textContent.includes('Slack')).querySelector('input').click()");
+  assert.equal(await active(meet), 'meet');
+  await toggle('Slack');
   await slack.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
-  for (const page of [options, notion, slack]) await page.close();
+  await toggle('Meet');
+  await meet.waitFor("!document.documentElement.hasAttribute('data-omarchy-adapters')");
+  assert.equal(await meet.style('body', 'backgroundColor'), css('#ffffff'));
+  assert.equal(await meet.style('#call', 'backgroundColor'), css('#131314'));
+  assert.equal(await active(slack), 'slack');
+  await toggle('Meet');
+  await meet.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'meet'");
+  for (const page of [options, notion, slack, meet]) await page.close();
+});
+
+const meetActive = "document.documentElement.getAttribute('data-omarchy-adapters') === 'meet'";
+
+test('meet: a dark palette themes the pages and the call screen and remaps status colours', async () => {
+  const page = await browser.open('https://meet.google.com/?mode=light');
+  await page.waitFor(`${meetActive} && document.documentElement.getAttribute('data-omarchy-remap') === 'meet'`);
+  assert.equal(await page.style('body', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('body', 'color'), css(derived.text));
+  assert.equal(await page.style('#secondary', 'color'), css(derived['text-secondary']));
+  assert.equal(await page.style('#card', 'backgroundColor'), css(derived.ramp[5]));
+  assert.equal(await page.style('#dialog', 'backgroundColor'), css(derived.ramp[8]));
+  assert.equal(await page.style('#link', 'color'), css(derived['accent-text']));
+  assert.equal(await page.style('#button-filled', 'backgroundColor'), css(derived['accent-text']));
+  assert.equal(await page.style('#button-filled', 'color'), css('#1a1b26'));
+  assert.equal(await page.style('#outlined', 'borderTopColor'), css(derived.ramp[40]));
+  assert.equal(await page.style('#hover', 'backgroundColor'), `rgba(${C.triplet(derived.text)}, 0.08)`);
+  assert.equal(await page.style('#snackbar', 'backgroundColor'), css(derived.ramp[12]));
+  assert.equal(await page.style('#grey-chip', 'backgroundColor'), css(derived.ramp[12]));
+  assert.equal(await page.style('#legacy', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#legacy', 'color'), css(derived.text));
+  assert.equal(await page.style('#hotlane', 'color'), css(derived.text));
+  // Meet's light-tuned status colours move to the palette's hues.
+  assert.equal(await page.style('#error', 'color'), css(derived['red-text']));
+  assert.equal(await page.style('#error-banner', 'color'), css(derived['red-text']));
+  assert.equal(await page.style('#success', 'color'), css(derived['green-text']));
+  assert.equal(await page.style('#legacy-error', 'color'), css(derived['red-text']));
+  assert.equal(await page.style('body', 'colorScheme'), 'dark');
+  // The call screen and the surface over video redeclare Meet's tokens and
+  // still take the palette.
+  assert.equal(await page.style('#call', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#call-text', 'color'), css(derived.text));
+  assert.equal(await page.style('#call-controls', 'backgroundColor'), css(derived.ramp[5]));
+  assert.equal(await page.style('#call-hotlane', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#caption', 'backgroundColor'), css(derived.ramp[8]));
+  assert.equal(await page.style('#caption', 'color'), css(derived.text));
+  assert.equal(await page.style('#call-error', 'color'), css(derived['red-text']));
+  // Named colour families and gradients stay Meet's, per container.
+  assert.equal(await page.style('#blue-chip', 'backgroundColor'), css('#1157ce'));
+  assert.equal(await page.style('#call-blue-chip', 'backgroundColor'), css('#a1c9ff'));
+  assert.equal(await page.style('#gradient', 'color'), css('#3186ff'));
+  const options = await browser.options();
+  await options.waitFor("[...document.querySelectorAll('#adapters li')].some((li) => li.textContent.includes('Meet') && li.textContent.includes('status colours use the palette'))");
+  await options.close();
+  await page.close();
+});
+
+test('meet: a dark Meet page under a dark palette keeps its own status colours', async () => {
+  const page = await browser.open('https://meet.google.com/?mode=dark');
+  await page.waitFor(meetActive);
+  assert.equal(await page.eval("document.documentElement.hasAttribute('data-omarchy-remap')"), false);
+  assert.equal(await page.style('body', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#call', 'backgroundColor'), css('#1a1b26'));
+  assert.equal(await page.style('#error', 'color'), css('#f2b8b5'));
+  await page.close();
+});
+
+test('meet: a light palette themes the pages and leaves the call screen dark', async () => {
+  const LIGHT = { mode: 'light', colors: { background: '#eff1f5', foreground: '#4c4f69', accent: '#1e66f5', red: '#d20f39', green: '#40a02b', yellow: '#df8e1d', blue: '#1e66f5' } };
+  const light = C.derive(LIGHT);
+  browser.setTheme('latte', toml(LIGHT));
+  try {
+    const page = await browser.open('https://meet.google.com/?mode=light');
+    await page.waitFor(`${meetActive} && document.documentElement.dataset.omarchyMode === 'light'`, 8000);
+    assert.equal(await page.eval("document.documentElement.hasAttribute('data-omarchy-remap')"), false);
+    assert.equal(await page.style('body', 'backgroundColor'), css('#eff1f5'));
+    assert.equal(await page.style('body', 'color'), css(light.text));
+    assert.equal(await page.style('#dialog', 'backgroundColor'), css(light.ramp[8]));
+    assert.equal(await page.style('#link', 'color'), css(light['accent-text']));
+    assert.equal(await page.style('#button-filled', 'color'), css('#eff1f5'));
+    assert.equal(await page.style('#legacy', 'backgroundColor'), css('#eff1f5'));
+    // Meet is light too, so its status colours stay.
+    assert.equal(await page.style('#error', 'color'), css('#b3261e'));
+    assert.equal(await page.style('#success', 'color'), css('#146c2e'));
+    assert.equal(await page.style('#blue-chip', 'backgroundColor'), css('#1157ce'));
+    assert.equal(await page.style('#gradient', 'color'), css('#3186ff'));
+    // The call screen keeps Meet's dark colours.
+    assert.equal(await page.style('#call', 'backgroundColor'), css('#131314'));
+    assert.equal(await page.style('#call-text', 'color'), css('#e3e3e3'));
+    assert.equal(await page.style('#call-controls', 'backgroundColor'), css('#1e1f20'));
+    assert.equal(await page.style('#caption', 'backgroundColor'), css('#282a2c'));
+    assert.equal(await page.style('#call-error', 'color'), css('#f2b8b5'));
+    assert.equal(await page.style('#call-hotlane', 'backgroundColor'), css('#202124'));
+    await page.close();
+    // A page that is dark as a whole may be the call screen: left to Meet.
+    const dark = await browser.open('https://meet.google.com/?mode=dark');
+    await dark.waitFor("document.documentElement.dataset.omarchyMode === 'light'");
+    await new Promise((r) => setTimeout(r, 500));
+    assert.equal(await dark.eval("document.documentElement.hasAttribute('data-omarchy-adapters')"), false);
+    assert.equal(await dark.style('body', 'backgroundColor'), css('#131314'));
+    assert.equal(await dark.style('#error', 'color'), css('#f2b8b5'));
+    await dark.close();
+  } finally {
+    browser.setTheme('tokyo-night', toml(DARK));
+  }
 });

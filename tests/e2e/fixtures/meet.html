@@ -1,0 +1,111 @@
+<!doctype html>
+<!-- Synthetic Google Meet page. Token names and values were observed on
+     Meet's signed-out pre-join page (2026-10-07): the light set on body, the
+     dark set on the call-screen container and a local dark surface over
+     video. Meet's container classes are generated; this fixture uses
+     invented class names so the adapter is shown not to depend on them. The
+     markup is invented and holds no meeting content. page-dark is a
+     hypothetical Meet page in its dark set, for mode detection. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+:root {
+  --gm-background-color: #fff; --gm-body-text-color: rgb(60,64,67); --gm-hint-color: rgb(95,99,104);
+  --gm-hairline-color: rgb(218,220,224); --gm-theme-color: rgb(26,115,232); --gm-error-color: rgb(197,34,31);
+  --hotlane-background-color: #fff; --hotlane-on-background-color: rgb(32,33,36); --hotlane-error-color: rgb(217,48,37);
+}
+body {
+  --gm3-sys-color-background: #fff; --gm3-sys-color-surface: #fff; --gm3-sys-color-surface-rgb: 255,255,255;
+  --gm3-sys-color-surface-container-low: #f8fafd; --gm3-sys-color-surface-container: #f0f4f9;
+  --gm3-sys-color-surface-container-high: #e9eef6; --gm3-sys-color-surface-container-highest: #dde3ea;
+  --gm3-sys-color-on-surface: #1f1f1f; --gm3-sys-color-on-surface-rgb: 31,31,31; --gm3-sys-color-on-surface-variant: #444746;
+  --gm3-sys-color-outline: #747775; --gm3-sys-color-outline-variant: #c4c7c5;
+  --gm3-sys-color-primary: #0b57d0; --gm3-sys-color-on-primary: #fff;
+  --gm3-sys-color-secondary-container: #c2e7ff; --gm3-sys-color-on-secondary-container: #004a77;
+  --gm3-sys-color-inverse-surface: #303030; --gm3-sys-color-inverse-on-surface: #f2f2f2;
+  --gm3-sys-color-error: #b3261e; --gm3-sys-color-error-container: #f9dedc; --gm3-sys-color-on-error-container: #8c1d18;
+  --gm3-sys-color-tertiary: #146c2e;
+  --ws-sys-color-extended-blue-fill: #1157ce; --ws-sys-color-extended-on-blue-fill: #fff;
+  --ws-sys-color-extended-grey-tonal: #e3e3e3; --ws-sys-color-extended-on-grey-tonal: #5e5e5e;
+  --ws-sys-color-genai-text-gradient01: #3186ff;
+}
+body.page-dark, .call-stage {
+  --gm3-sys-color-background: #131314; --gm3-sys-color-surface: #131314; --gm3-sys-color-surface-rgb: 19,19,20;
+  --gm3-sys-color-surface-container-low: #1b1b1b; --gm3-sys-color-surface-container: #1e1f20;
+  --gm3-sys-color-surface-container-high: #282a2c; --gm3-sys-color-surface-container-highest: #333537;
+  --gm3-sys-color-on-surface: #e3e3e3; --gm3-sys-color-on-surface-rgb: 227,227,227; --gm3-sys-color-on-surface-variant: #c4c7c5;
+  --gm3-sys-color-outline: #8e918f; --gm3-sys-color-outline-variant: #444746;
+  --gm3-sys-color-primary: #a8c7fa; --gm3-sys-color-on-primary: #062e6f;
+  --gm3-sys-color-secondary-container: #004a77; --gm3-sys-color-on-secondary-container: #c2e7ff;
+  --gm3-sys-color-inverse-surface: #e3e3e3; --gm3-sys-color-inverse-on-surface: #303030;
+  --gm3-sys-color-error: #f2b8b5; --gm3-sys-color-error-container: #8c1d18; --gm3-sys-color-on-error-container: #f9dedc;
+  --gm3-sys-color-tertiary: #6dd58c;
+  --ws-sys-color-extended-blue-fill: #a1c9ff; --ws-sys-color-extended-on-blue-fill: #012c6f;
+  --ws-sys-color-extended-grey-tonal: #474747; --ws-sys-color-extended-on-grey-tonal: #e3e3e3;
+  --hotlane-background-color: rgb(32,33,36); --hotlane-on-background-color: rgb(232,234,237); --hotlane-error-color: rgb(242,139,130);
+}
+/* A local dark surface over video, as Meet redeclares one token. */
+.over-video { --gm3-sys-color-surface-container-high: #282a2c; --gm3-sys-color-on-surface: #e3e3e3; }
+
+body { margin: 0; font: 14px sans-serif; background: var(--gm3-sys-color-surface); color: var(--gm3-sys-color-on-surface); }
+#secondary { color: var(--gm3-sys-color-on-surface-variant); }
+#card { background: var(--gm3-sys-color-surface-container); }
+#dialog { background: var(--gm3-sys-color-surface-container-high); }
+#menu { background: var(--gm3-sys-color-surface-container-highest); }
+#low { background: var(--gm3-sys-color-surface-container-low); }
+#link { color: var(--gm3-sys-color-primary); }
+#button-filled { background: var(--gm3-sys-color-primary); color: var(--gm3-sys-color-on-primary); }
+#tonal { background: var(--gm3-sys-color-secondary-container); color: var(--gm3-sys-color-on-secondary-container); }
+#outlined { border: 1px solid var(--gm3-sys-color-outline); }
+#hover { background: rgba(var(--gm3-sys-color-on-surface-rgb), 0.08); }
+#snackbar { background: var(--gm3-sys-color-inverse-surface); color: var(--gm3-sys-color-inverse-on-surface); }
+#error { color: var(--gm3-sys-color-error); }
+#error-banner { background: var(--gm3-sys-color-error-container); color: var(--gm3-sys-color-on-error-container); }
+#success { color: var(--gm3-sys-color-tertiary); }
+.blue-chip { background: var(--ws-sys-color-extended-blue-fill); color: var(--ws-sys-color-extended-on-blue-fill); }
+#grey-chip { background: var(--ws-sys-color-extended-grey-tonal); color: var(--ws-sys-color-extended-on-grey-tonal); }
+#gradient { color: var(--ws-sys-color-genai-text-gradient01); }
+#legacy { background: var(--gm-background-color); color: var(--gm-body-text-color); }
+#legacy-hint { color: var(--gm-hint-color); }
+#legacy-error { color: var(--gm-error-color); }
+.hotlane { background: var(--hotlane-background-color); color: var(--hotlane-on-background-color); }
+.call-stage { background: var(--gm3-sys-color-surface); color: var(--gm3-sys-color-on-surface); padding: 8px; }
+#call-controls { background: var(--gm3-sys-color-surface-container); }
+#call-error { color: var(--gm3-sys-color-error); }
+#caption { background: var(--gm3-sys-color-surface-container-high); color: var(--gm3-sys-color-on-surface); }
+</style>
+</head>
+<body class="page-{{MODE}}">
+  <main id="page">
+    <h1>Ready to join?</h1>
+    <p id="secondary">No one else is here</p>
+    <div id="card">Meeting details</div>
+    <div id="dialog" role="dialog">Check your audio and video</div>
+    <div id="menu" role="menu">More options</div>
+    <div id="low">Lower surface</div>
+    <a id="link" href="#">Learn more</a>
+    <button id="button-filled">Join now</button>
+    <button id="tonal">Other ways to join</button>
+    <button id="outlined">Present</button>
+    <div id="hover">Hovered row</div>
+    <div id="snackbar" role="status">Link copied</div>
+    <p id="error">You can't join this video call</p>
+    <div id="error-banner">Camera blocked</div>
+    <p id="success">Your meeting is safe</p>
+    <span id="blue-chip" class="blue-chip">A</span>
+    <span id="grey-chip">Guest</span>
+    <span id="gradient">Take notes for me</span>
+    <div id="legacy">Legacy surface <span id="legacy-hint">hint</span> <span id="legacy-error">error</span></div>
+    <div id="hotlane" class="hotlane">Help</div>
+  </main>
+  <section id="call" class="call-stage">
+    <p id="call-text">Call screen</p>
+    <div id="call-controls">Controls</div>
+    <p id="call-error">Your microphone is off</p>
+    <span id="call-blue-chip" class="blue-chip">B</span>
+    <div id="call-hotlane" class="hotlane">Call help</div>
+    <div class="over-video"><div id="caption">Captions over video</div></div>
+  </section>
+</body>
+</html>

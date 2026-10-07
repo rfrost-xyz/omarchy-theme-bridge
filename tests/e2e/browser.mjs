@@ -106,6 +106,9 @@ export class Browser {
     const { sessionId } = await this.send('Target.attachToTarget', { targetId, flatten: true });
     await this.send('Fetch.enable', { patterns: [{ urlPattern: 'https://app.notion.com/*' }, { urlPattern: 'https://app.slack.com/*' }] }, sessionId);
     await this.send('Page.enable', {}, sessionId);
+    // Headless Chromium can mark a tab hidden a few seconds after it opens,
+    // which pauses the visible-only fallback poll. Keep every tab focused.
+    await this.send('Emulation.setFocusEmulationEnabled', { enabled: true }, sessionId);
     await this.send('Page.navigate', { url }, sessionId);
     const page = new Page(this, targetId, sessionId);
     await page.waitFor('document.readyState === "complete"');

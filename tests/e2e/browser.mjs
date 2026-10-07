@@ -11,7 +11,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const EXTENSION_ID = 'pinjcoeajnkogbmcjjgkgjafpiiebheg';
 const HOST_NAME = 'xyz.rfrost.omarchy_webapp_theme';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const FIXTURES = { 'app.notion.com': 'notion.html', 'app.slack.com': 'slack.html' };
+const FIXTURES = { 'app.notion.com': 'notion.html', 'app.slack.com': 'slack.html', 'meet.google.com': 'meet.html' };
 
 export class Browser {
   static async launch() {
@@ -45,7 +45,9 @@ export class Browser {
     this.proc = spawn(process.env.CHROMIUM || 'chromium', [
       '--headless=new', `--user-data-dir=${join(this.dir, 'profile')}`, '--remote-debugging-port=0',
       '--no-first-run', '--no-default-browser-check', '--disable-sync', '--window-size=1280,800',
-      `--load-extension=${join(ROOT, 'extension')}`, 'about:blank',
+      // Only this extension: packages such as 1Password register external
+      // extensions for every profile, whose welcome tab hides test pages.
+      `--load-extension=${join(ROOT, 'extension')}`, `--disable-extensions-except=${join(ROOT, 'extension')}`, 'about:blank',
     ], { stdio: 'ignore', env: { ...process.env, OMARCHY_PALETTE_STATE_DIR: this.state } });
     for (let i = 0; i < 100 && !existsSync(activePort); i++) await sleep(100);
     if (!existsSync(activePort)) throw new Error('Chromium did not start');
@@ -103,7 +105,7 @@ export class Browser {
   async open(url) {
     const { targetId } = await this.send('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await this.send('Target.attachToTarget', { targetId, flatten: true });
-    await this.send('Fetch.enable', { patterns: [{ urlPattern: 'https://app.notion.com/*' }, { urlPattern: 'https://app.slack.com/*' }] }, sessionId);
+    await this.send('Fetch.enable', { patterns: [{ urlPattern: 'https://app.notion.com/*' }, { urlPattern: 'https://app.slack.com/*' }, { urlPattern: 'https://meet.google.com/*' }] }, sessionId);
     await this.send('Page.enable', {}, sessionId);
     await this.send('Page.navigate', { url }, sessionId);
     const page = new Page(this, targetId, sessionId);

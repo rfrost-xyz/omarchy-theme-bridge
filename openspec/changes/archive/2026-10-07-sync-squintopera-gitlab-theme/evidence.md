@@ -34,3 +34,7 @@ Focused Chromium run: 29 tests passed, covering six GitLab tests and the contras
 `./scripts/check` passed: shell syntax, Python helper and installer suites, 28 extension unit tests, 53 headless Chromium tests and strict OpenSpec validation (four items). `git diff --check` passed.
 
 Independent adversarial review found no high- or medium-severity issues. The reviewer independently checked the proposal, delta specification, design, implementation, fixtures, tests and served CSS dependencies. All 65 overridden tokens exist in both GitLab theme scopes; primitive ramps, pipeline, diff and syntax colours remain untouched. Authenticated live coverage remains the documented limitation.
+
+## Delivery record
+
+Planning commit: `81a712e`. Implementation and verified task evidence: `51831d7`. Specifications synchronised with two modified and three added requirements; every delta block was compared with the canonical spec before archive. Strict validation passed after archive. PR: https://github.com/rfrost-xyz/omarchy-webapp-theme/pull/8.

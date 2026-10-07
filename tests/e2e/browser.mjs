@@ -11,7 +11,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const EXTENSION_ID = 'pinjcoeajnkogbmcjjgkgjafpiiebheg';
 const HOST_NAME = 'xyz.rfrost.omarchy_webapp_theme';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const FIXTURES = { 'app.notion.com': 'notion.html', 'app.slack.com': 'slack.html', 'meet.google.com': 'meet.html' };
+const FIXTURES = { 'app.notion.com': 'notion.html', 'app.slack.com': 'slack.html', 'meet.google.com': 'meet.html', 'git.squintopera.com': 'gitlab.html', 'gitlab.com': 'gitlab.html', 'git.example.test': 'gitlab.html' };
 
 export class Browser {
   static async launch() {
@@ -106,7 +106,7 @@ export class Browser {
   async open(url) {
     const { targetId } = await this.send('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await this.send('Target.attachToTarget', { targetId, flatten: true });
-    await this.send('Fetch.enable', { patterns: [{ urlPattern: 'https://app.notion.com/*' }, { urlPattern: 'https://app.slack.com/*' }, { urlPattern: 'https://meet.google.com/*' }] }, sessionId);
+    await this.send('Fetch.enable', { patterns: [{ urlPattern: 'https://app.notion.com/*' }, { urlPattern: 'https://app.slack.com/*' }, { urlPattern: 'https://meet.google.com/*' }, { urlPattern: 'https://git.squintopera.com/*' }, { urlPattern: 'https://gitlab.com/*' }, { urlPattern: 'https://git.example.test/*' }] }, sessionId);
     await this.send('Page.enable', {}, sessionId);
     // Headless Chromium can mark a tab hidden a few seconds after it opens,
     // which pauses the visible-only fallback poll. Keep every tab focused.

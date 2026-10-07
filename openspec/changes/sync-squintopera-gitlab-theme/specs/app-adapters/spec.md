@@ -3,7 +3,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Minimal extension access
-The extension SHALL request only the `nativeMessaging` and `storage` permissions and SHALL run content scripts only on `https://app.notion.com/*`, `https://app.slack.com/*` `https://meet.google.com/*` and `https://git.squintopera.com/*`.
+The extension SHALL request only the `nativeMessaging` and `storage` permissions and SHALL run content scripts only on `https://app.notion.com/*`, `https://app.slack.com/*`, `https://meet.google.com/*` and `https://git.squintopera.com/*`.
 
 #### Scenario: Manifest audit
 - **WHEN** the packaged manifest is inspected

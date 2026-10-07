@@ -21,7 +21,7 @@ test('manifest requests only nativeMessaging and storage', () => {
 
 test('content scripts match only the adapter origins and load the shared core first', () => {
   const matches = manifest.content_scripts.flatMap((c) => c.matches).sort();
-  assert.deepEqual(matches, ['https://app.notion.com/*', 'https://app.slack.com/*', 'https://meet.google.com/*']);
+  assert.deepEqual(matches, ['https://app.notion.com/*', 'https://app.slack.com/*', 'https://git.squintopera.com/*', 'https://meet.google.com/*']);
   for (const entry of manifest.content_scripts) {
     assert.deepEqual(entry.js.slice(0, 2), ['content/colour.js', 'content/palette.js']);
     const id = /^adapters\/([a-z0-9-]+)\/adapter\.js$/.exec(entry.js[2])?.[1];

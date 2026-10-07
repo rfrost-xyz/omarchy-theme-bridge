@@ -1,16 +1,16 @@
 # omarchy-webapp-theme
 
 A minimal Chromium extension and read-only native helper that keep web apps in
-step with the active Omarchy theme. Notion, Slack and Google Meet are the
-supported apps; others may be added as separate adapters. See README.md for setup and
-limitations.
+step with the active Omarchy theme. Notion, Slack, Google Meet and Squint Opera
+GitLab are the supported apps; others may be added as separate adapters. See
+README.md for setup and limitations.
 
 ## Boundaries
 
 - Scope is Chromium on Omarchy and the web apps with an adapter: currently
-  Notion (`app.notion.com`), Slack (`app.slack.com`) and Google Meet
-  (`meet.google.com`). Add an app only as a
-  new adapter with its own origin match; never widen to all sites. No other
+  Notion (`app.notion.com`), Slack (`app.slack.com`), Google Meet
+  (`meet.google.com`) and Squint Opera GitLab (`git.squintopera.com`). Add an
+  app only as a new adapter with its own origin match; never widen to all sites. No other
   browsers, general stylesheet management or theme installation or switching.
 - The native helper is read-only. It reads only the active theme's
   `colors.toml` and `theme.name` under `~/.local/state/omarchy/current`, sends
@@ -33,7 +33,8 @@ limitations.
   the palette; when it differs (Slack in the browser cannot follow the system),
   move them to readable palette hues. Always keep Slack's badge colours.
   Keep Meet's named colour families and gradients; leave Meet's dark call
-  screen alone under light palettes.
+  screen alone under light palettes. Preserve GitLab's status, pipeline, diff,
+  syntax and authored label colours; theme GitLab only in matching mode.
 - No runtime dependencies beyond system `python3` and Chromium. Tests use
   Node's built-in test runner, Python's `unittest` and a throwaway headless
   Chromium profile. Never read or write the live browser profile, live theme

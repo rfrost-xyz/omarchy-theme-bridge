@@ -71,6 +71,20 @@ const CHECKS = {
     ['#menu-shortcut', 3, 'menu shortcut hint'],
     ['#menu-highlight', 4.5, 'highlighted menu item'],
   ],
+  gitlab: [
+    ['body', 4.5, 'primary text on page'],
+    ['#sidebar', 4.5, 'sidebar text'],
+    ['#secondary', 4.5, 'secondary text'],
+    ['#muted', 3, 'tertiary text'],
+    ['#link', 4.5, 'link on page'],
+    ['#menu', 4.5, 'menu text'],
+    ['#dialog', 4.5, 'dialog text'],
+    ['#selected', 4.5, 'selected navigation'],
+    ['#button', 4.5, 'neutral button label'],
+    ['#input', 4.5, 'control text'],
+    ['#code', 4.5, 'code text'],
+    ['#scope', 4.5, 'matching scoped text'],
+  ],
   meet: [
     ['#page', 4.5, 'primary text on page'],
     ['#secondary', 4.5, 'secondary text'],
@@ -127,7 +141,7 @@ const REMAPPED = {
     ['#call-error', 4.5, 'remapped error text on the call screen'],
   ],
 };
-const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/' };
+const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/', gitlab: 'https://git.squintopera.com/' };
 
 let browser;
 let options;
@@ -149,6 +163,7 @@ for (const theme of themes) {
     const opposite = theme.mode === 'light' ? 'dark' : 'light';
     const cases = [
       { app: 'notion', mode: theme.mode, checks: CHECKS.notion },
+      { app: 'gitlab', mode: theme.mode, checks: CHECKS.gitlab },
       { app: 'slack', mode: theme.mode, checks: theme.mode === 'light' ? [...CHECKS.slack, ...PRESERVED_LIGHT.slack] : CHECKS.slack },
       // Slack cannot follow the system appearance, so it is also themed when
       // its own mode is the opposite one, with status colours remapped.

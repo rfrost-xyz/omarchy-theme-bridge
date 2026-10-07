@@ -1,7 +1,7 @@
 # omarchy-webapp-theme
 
-Keeps the Notion, Slack and Google Meet web apps in Chromium in step with the active Omarchy
-theme, including `omarchy-launch-webapp` app windows. When you run
+Keeps the Notion, Slack, Google Meet and Squint Opera GitLab web apps in Chromium
+in step with the active Omarchy theme, including `omarchy-launch-webapp` app windows. When you run
 `omarchy theme set`, open pages recolour within about a second, with no reload
 and no Chromium restart.
 
@@ -15,10 +15,10 @@ It has three parts:
   request except `get`.
 - **Transport** (`extension/background.js`, `extension/content/`): the
   extension keeps the helper connected, stores the last good palette and
-  exposes it to Notion, Slack and Meet pages as `--omarchy-*` CSS custom
+  exposes it to Notion, Slack, Meet and GitLab pages as `--omarchy-*` CSS custom
   properties.
 - **Adapters** (`extension/adapters/notion/`, `extension/adapters/slack/`,
-  `extension/adapters/meet/`): one
+  `extension/adapters/meet/`, `extension/adapters/gitlab/`): one
   CSS file per app that maps those properties onto the app's own colour tokens.
   Each can be turned off on the extension's options page.
 
@@ -33,7 +33,7 @@ It has three parts:
 2. Install. Choose one way to load the extension:
 
    - `./install.sh` leaves Omarchy's Chromium flags alone. Then, in each Chromium
-     profile that opens Notion, Slack or Meet, open `chrome://extensions`, turn on
+     profile that opens Notion, Slack, Meet or GitLab, open `chrome://extensions`, turn on
      Developer mode, choose **Load unpacked** and select
      `~/.local/share/omarchy-webapp-theme/extension`. Web app launchers can
      name a profile with `--profile-directory` (see
@@ -67,6 +67,10 @@ It has three parts:
    grey, so captions and controls over video keep their contrast; a Meet
    page that is dark as a whole is left to Meet for the same reason.
 
+   In GitLab at `git.squintopera.com`, choose **System** appearance in your
+   preferences. The GitLab adapter applies while its mode matches Omarchy.
+   After updating or reloading the extension, reload open GitLab pages once.
+
 ### What the installer changes
 
 | Path | Change |
@@ -99,7 +103,7 @@ Running it again is harmless.
 | --- | --- |
 | `nativeMessaging` | Talk to the read-only helper that reads the Omarchy palette. Only this extension's ID may start it. |
 | `storage` | Keep the last good palette, helper status and adapter switches, so pages are coloured straight away after a restart. |
-| Content scripts on `https://app.notion.com/*`, `https://app.slack.com/*` and `https://meet.google.com/*` | Add the palette properties and adapter styles to those three apps. No other site is matched, and there are no host permissions, `tabs`, `scripting` or web-accessible resources. |
+| Content scripts on `https://app.notion.com/*`, `https://app.slack.com/*`, `https://meet.google.com/*` and `https://git.squintopera.com/*` | Add the palette properties and adapter styles to those four apps. No other site is matched, and there are no host permissions, `tabs`, `scripting` or web-accessible resources. |
 
 ## How the adapters map colours
 
@@ -141,6 +145,15 @@ Slack's handling of tooltips, reactions and its two modes is described below.
   from a token the adapter never sets) differs from the palette's. Meet's
   named colour families (avatars, labels), AI and premium gradients and
   fixed colours stay Meet's.
+
+- **GitLab** (only `git.squintopera.com`): semantic `--gl-*` surfaces,
+  text, links, borders, application chrome, navigation, menus and neutral
+  buttons and form controls. Overrides also apply to explicit theme scopes
+  in the same mode. Primitive colour ramps, status and pipeline colours,
+  diff additions and deletions, syntax highlighting, authored labels,
+  confirmation and danger button fills, and opposite-mode scopes stay GitLab's.
+  Select **System** appearance in GitLab's preferences so its mode follows
+  Omarchy. In a mismatched fixed mode, the adapter waits and reports the mismatch.
 
 The transport also provides generic helpers every adapter can use:
 `--omarchy-mix-<n>` (background blended n% towards foreground),
@@ -208,6 +221,12 @@ tests.
   recalculation took about 16 ms instead of 8 ms, and every element that
   restyles costs more. The cost during a call has not been measured; turn
   the Meet adapter off on the options page if calls feel slower.
+- **GitLab** (2026-10-07): tokens and representative consumers were inspected
+  in the public stylesheets served by `git.squintopera.com`. Synthetic tests
+  cover light and dark pages, live updates, mode gating, independent toggling,
+  preserved meaning colours and stock-theme contrast. Signed-in project,
+  merge request and pipeline pages have not been checked live. Fixed colours
+  outside the semantic tokens retain GitLab's styling.
 - **Light and dark switching**: Notion follows the desktop only when set to
   use the system setting; until then the Notion adapter leaves it uncoloured.
   Slack in the browser cannot follow the desktop, so it stays in its chosen
@@ -215,16 +234,16 @@ tests.
 - **Slack's own colours**: a few things Slack draws with fixed colours (some
   icons, images and illustrations) keep their Slack look, especially when
   Slack's mode differs from the theme's.
-- **App changes**: if Notion, Slack or Meet rename their colour variables, the
+- **App changes**: if Notion, Slack, Meet or GitLab rename their colour variables, the
   affected areas fall back to the app's own colours rather than breaking.
-- **Origins**: only `app.notion.com`, `app.slack.com` and `meet.google.com`. Public `notion.site`
+- **Origins**: only `app.notion.com`, `app.slack.com`, `meet.google.com` and `git.squintopera.com`. Public `notion.site`
   pages and older `www.notion.so` links that do not redirect to
   `app.notion.com` are not coloured.
 - **Flags file**: if an Omarchy update rewrites `~/.config/chromium-flags.conf`
   and drops the entry, rerun `./install.sh --load-extension-flag`.
 - **Extension reloads**: Chromium does not re-inject content scripts into tabs
   that are already open. After reinstalling or reloading the extension, open
-  Notion, Slack and Meet windows drop back to the apps' own colours until reloaded.
+  Notion, Slack, Meet and GitLab windows drop back to the apps' own colours until reloaded.
 - **Hand-written themes**: the helper reads `colors.toml` the way
   `omarchy-theme-color` does, including legacy `bg`, `fg` and `colorN` names
   and the same light or dark rule, so it agrees with the desktop's colour

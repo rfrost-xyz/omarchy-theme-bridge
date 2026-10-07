@@ -1,0 +1,72 @@
+/* GitLab UI semantic tokens from git.squintopera.com. Keep primitive colour
+   ramps, statuses, diffs, syntax and authored labels in GitLab's own colours.
+   Explicit scopes in the opposite mode keep their declarations. */
+html[data-omarchy-adapters~="gitlab"],
+html[data-omarchy-adapters~="gitlab"][data-omarchy-mode="light"] .gl-light-scope,
+html[data-omarchy-adapters~="gitlab"][data-omarchy-mode="dark"] .gl-dark-scope {
+  --gl-background-color-default: var(--omarchy-background) !important;
+  --gl-background-color-section: var(--omarchy-background) !important;
+  --gl-control-background-color-default: var(--omarchy-background) !important;
+  --gl-application-chrome-background-color: var(--omarchy-mix-4) !important;
+  --gl-background-color-subtle: var(--omarchy-mix-4) !important;
+  --gl-background-color-disabled: var(--omarchy-mix-4) !important;
+  --gl-control-background-color-disabled: var(--omarchy-mix-4) !important;
+  --gl-control-background-color-concatenation: var(--omarchy-mix-4) !important;
+  --gl-control-background-color-readonly: var(--omarchy-mix-4) !important;
+  --gl-background-color-strong: var(--omarchy-mix-8) !important;
+  --gl-background-color-overlap: var(--omarchy-mix-3) !important;
+  --gl-text-color-default: var(--omarchy-text) !important;
+  --gl-text-color-strong: var(--omarchy-text) !important;
+  --gl-text-color-heading: var(--omarchy-text) !important;
+  --gl-action-neutral-foreground-color-default: var(--omarchy-text) !important;
+  --gl-action-confirm-foreground-color-default: var(--omarchy-text) !important;
+  --gl-action-confirm-foreground-color-hover: var(--omarchy-text) !important;
+  --gl-action-confirm-foreground-color-active: var(--omarchy-text) !important;
+  --gl-text-color-subtle: var(--omarchy-text-secondary) !important;
+  --gl-nav-item-foreground-color-default: var(--omarchy-text-secondary) !important;
+  --gl-control-placeholder-color: var(--omarchy-text-secondary) !important;
+  --gl-text-color-disabled: var(--omarchy-text-disabled) !important;
+  --gl-action-disabled-foreground-color: var(--omarchy-text-disabled) !important;
+  --gl-text-tertiary: var(--omarchy-text-tertiary) !important;
+  --gl-text-color-link: var(--omarchy-accent-text) !important;
+  --gl-focus-ring-outer-color: var(--omarchy-accent-text) !important;
+  --gl-border-color-default: var(--omarchy-mix-12) !important;
+  --gl-border-color-section: var(--omarchy-mix-12) !important;
+  --gl-action-disabled-border-color: var(--omarchy-mix-12) !important;
+  --gl-border-color-subtle: var(--omarchy-mix-8) !important;
+  --gl-border-color-strong: var(--omarchy-mix-20) !important;
+  --gl-control-border-color-default: var(--omarchy-mix-40) !important;
+  --gl-control-border-color-hover: var(--omarchy-text-secondary) !important;
+  --gl-control-border-color-focus: var(--omarchy-accent-text) !important;
+  --gl-control-background-color-selected-default: var(--omarchy-accent-text) !important;
+  --gl-control-background-color-selected-hover: var(--omarchy-accent-text) !important;
+  --gl-control-indicator-color-selected: var(--omarchy-background) !important;
+  --gl-control-border-color-disabled: var(--omarchy-mix-8) !important;
+  --gl-action-disabled-background-color: var(--omarchy-mix-8) !important;
+  --gl-button-default-primary-foreground-color-default: var(--omarchy-text) !important;
+  --gl-button-default-primary-background-color-default: var(--omarchy-mix-4) !important;
+  --gl-button-default-primary-border-color-default: var(--omarchy-mix-20) !important;
+  --gl-button-default-primary-foreground-color-hover: var(--omarchy-text) !important;
+  --gl-button-default-primary-background-color-hover: var(--omarchy-mix-8) !important;
+  --gl-button-default-primary-border-color-hover: var(--omarchy-mix-40) !important;
+  --gl-button-default-primary-foreground-color-active: var(--omarchy-text) !important;
+  --gl-button-default-primary-background-color-active: var(--omarchy-mix-8) !important;
+  --gl-button-default-primary-border-color-active: var(--omarchy-mix-40) !important;
+  --gl-action-neutral-background-color-hover: var(--omarchy-mix-4) !important;
+  --gl-action-confirm-background-color-hover: var(--omarchy-mix-4) !important;
+  --gl-dropdown-option-background-color-selected-default: var(--omarchy-mix-4) !important;
+  --gl-action-neutral-background-color-active: var(--omarchy-mix-8) !important;
+  --gl-action-confirm-background-color-active: var(--omarchy-mix-8) !important;
+  --gl-dropdown-option-background-color-selected-hover: var(--omarchy-mix-8) !important;
+  --gl-dropdown-option-background-color-selected-active: var(--omarchy-mix-8) !important;
+  --gl-nav-item-foreground-color-hover: var(--omarchy-text) !important;
+  --gl-nav-item-background-color-hover: var(--omarchy-mix-4) !important;
+  --gl-nav-item-foreground-color-active: var(--omarchy-text) !important;
+  --gl-nav-item-background-color-active: var(--omarchy-mix-8) !important;
+  --gl-nav-item-selected-foreground-color-default: var(--omarchy-text) !important;
+  --gl-nav-item-selected-background-color-default: rgba(var(--omarchy-accent-rgb), 0.12) !important;
+  --gl-nav-item-selected-foreground-color-hover: var(--omarchy-text) !important;
+  --gl-nav-item-selected-background-color-hover: rgba(var(--omarchy-accent-rgb), 0.12) !important;
+  --gl-nav-item-selected-foreground-color-active: var(--omarchy-text) !important;
+  --gl-nav-item-selected-background-color-active: rgba(var(--omarchy-accent-rgb), 0.12) !important;
+}

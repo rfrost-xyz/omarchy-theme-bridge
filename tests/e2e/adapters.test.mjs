@@ -230,9 +230,9 @@ test('adapters toggle independently and live from the options page', async () =>
   await slack.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
   await meet.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'meet'");
   const options = await browser.options();
-  await options.waitFor("document.querySelectorAll('#adapters input').length === 3");
+  await options.waitFor("document.querySelectorAll('#adapters input').length === 4");
   const labels = await options.eval("[...document.querySelectorAll('#adapters label')].map((l) => l.textContent.trim())");
-  assert.deepEqual(labels, ['Notion', 'Slack', 'Meet']);
+  assert.deepEqual(labels, ['Notion', 'Slack', 'Meet', 'Gitlab']);
   const toggle = (name) => options.eval(`[...document.querySelectorAll('#adapters label')].find((l) => l.textContent.includes('${name}')).querySelector('input').click()`);
   await toggle('Slack');
   await slack.waitFor("!document.documentElement.hasAttribute('data-omarchy-adapters')");

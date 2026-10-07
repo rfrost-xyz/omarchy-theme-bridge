@@ -1,0 +1,311 @@
+<!doctype html>
+<!-- Synthetic consumers of GitLab UI tokens served on 2026-10-07. No app data.
+     Primitive and semantic declarations are a minimal dependency closure. -->
+<html><head><meta charset="utf-8"><title>GitLab fixture</title><style>
+html,.gl-light-scope {
+  --gl-color-alpha-0: rgba(0, 0, 0, 0);
+  --gl-color-alpha-dark-2: rgba(5, 5, 6, 0.02);
+  --gl-color-alpha-dark-6: rgba(5, 5, 6, 0.06);
+  --gl-color-alpha-dark-16: rgba(5, 5, 6, 0.16);
+  --gl-color-alpha-dark-24: rgba(5, 5, 6, 0.24);
+  --gl-color-alpha-dark-40: rgba(5, 5, 6, 0.4);
+  --gl-color-alpha-light-4: rgba(255, 255, 255, 0.04);
+  --gl-color-alpha-light-8: rgba(255, 255, 255, 0.08);
+  --gl-color-alpha-light-16: rgba(255, 255, 255, 0.16);
+  --gl-color-blue-200: #9dc7f1;
+  --gl-color-blue-400: #428fdc;
+  --gl-color-blue-500: #1f75cb;
+  --gl-color-blue-700: #2f5ca0;
+  --gl-color-green-100: #c3e6cd;
+  --gl-color-green-200: #91d4a8;
+  --gl-color-green-300: #52b87a;
+  --gl-color-green-600: #2f7549;
+  --gl-color-green-700: #306440;
+  --gl-color-green-800: #225131;
+  --gl-color-green-900: #1e3e28;
+  --gl-color-neutral-0: #fff;
+  --gl-color-neutral-10: #f7f7f5;
+  --gl-color-neutral-50: #ecebea;
+  --gl-color-neutral-100: #dcdbd9;
+  --gl-color-neutral-200: #c1bfbe;
+  --gl-color-neutral-300: #a5a3a3;
+  --gl-color-neutral-400: #8a8888;
+  --gl-color-neutral-500: #747273;
+  --gl-color-neutral-600: #646163;
+  --gl-color-neutral-700: #4d4b4e;
+  --gl-color-neutral-800: #3a383d;
+  --gl-color-neutral-900: #28272d;
+  --gl-color-neutral-950: #18171d;
+  --gl-color-neutral-1000: #050408;
+  --gl-color-orange-100: #f5d9a8;
+  --gl-color-orange-200: #e9be74;
+  --gl-color-orange-300: #d99530;
+  --gl-color-orange-600: #995715;
+  --gl-color-orange-700: #894b16;
+  --gl-color-orange-800: #693c14;
+  --gl-color-red-50: #fcf1ef;
+  --gl-color-red-100: #fdd4cd;
+  --gl-color-red-200: #fcb5aa;
+  --gl-color-red-300: #f6806d;
+  --gl-color-red-600: #c02f12;
+  --gl-color-red-700: #a32c12;
+  --gl-color-red-900: #582014;
+  --gl-border-color-default: var(--gl-color-neutral-100);
+  --gl-border-color-subtle: var(--gl-color-neutral-50);
+  --gl-border-color-strong: var(--gl-color-neutral-200);
+  --gl-application-chrome-background-color: var(--gl-color-neutral-50);
+  --gl-button-default-primary-foreground-color-default: var(--gl-color-neutral-800);
+  --gl-button-default-primary-background-color-default: var(--gl-color-neutral-0);
+  --gl-button-default-primary-background-color-hover: var(--gl-color-neutral-50);
+  --gl-button-default-primary-background-color-active: var(--gl-color-neutral-100);
+  --gl-button-default-primary-border-color-default: var(--gl-color-neutral-200);
+  --gl-button-default-primary-border-color-hover: var(--gl-color-neutral-400);
+  --gl-button-default-primary-border-color-active: var(--gl-color-neutral-600);
+  --gl-button-confirm-primary-foreground-color-default: var(--gl-color-neutral-0);
+  --gl-button-confirm-primary-background-color-default: var(--gl-color-neutral-800);
+  --gl-dropdown-option-background-color-selected-default: var(--gl-color-neutral-50);
+  --gl-dropdown-option-background-color-selected-hover: var(--gl-color-neutral-100);
+  --gl-dropdown-option-background-color-selected-active: var(--gl-color-neutral-200);
+  --gl-nav-item-foreground-color-default: var(--gl-color-neutral-600);
+  --gl-nav-item-foreground-color-hover: var(--gl-color-neutral-950);
+  --gl-nav-item-background-color-hover: var(--gl-color-neutral-100);
+  --gl-nav-item-background-color-active: var(--gl-color-neutral-200);
+  --gl-nav-item-selected-foreground-color-default: var(--gl-color-neutral-950);
+  --gl-nav-item-selected-background-color-default: var(--gl-color-neutral-100);
+  --gl-action-disabled-foreground-color: var(--gl-color-neutral-400);
+  --gl-action-disabled-background-color: var(--gl-color-neutral-50);
+  --gl-action-disabled-border-color: var(--gl-color-neutral-100);
+  --gl-action-neutral-foreground-color-default: var(--gl-color-neutral-900);
+  --gl-action-neutral-background-color-hover: var(--gl-color-alpha-dark-6);
+  --gl-action-neutral-background-color-active: var(--gl-color-alpha-dark-16);
+  --gl-action-confirm-foreground-color-default: var(--gl-color-neutral-800);
+  --gl-action-confirm-foreground-color-hover: var(--gl-color-neutral-950);
+  --gl-action-confirm-foreground-color-active: var(--gl-color-neutral-1000);
+  --gl-action-confirm-background-color-hover: var(--gl-color-alpha-dark-6);
+  --gl-action-confirm-background-color-active: var(--gl-color-alpha-dark-16);
+  --gl-background-color-default: var(--gl-color-neutral-0);
+  --gl-background-color-subtle: var(--gl-color-neutral-10);
+  --gl-background-color-strong: var(--gl-color-neutral-50);
+  --gl-background-color-disabled: var(--gl-color-neutral-10);
+  --gl-background-color-overlap: var(--gl-color-neutral-0);
+  --gl-background-color-section: var(--gl-color-neutral-0);
+  --gl-background-color-overlay: var(--gl-color-alpha-dark-24);
+  --gl-control-background-color-default: var(--gl-color-neutral-0);
+  --gl-control-background-color-disabled: var(--gl-color-neutral-10);
+  --gl-control-background-color-concatenation: var(--gl-color-neutral-10);
+  --gl-control-background-color-readonly: var(--gl-color-alpha-dark-2);
+  --gl-control-background-color-selected-default: var(--gl-color-neutral-800);
+  --gl-control-background-color-selected-hover: var(--gl-color-neutral-950);
+  --gl-control-border-color-default: var(--gl-color-neutral-400);
+  --gl-control-border-color-hover: var(--gl-color-neutral-600);
+  --gl-control-border-color-focus: var(--gl-color-neutral-900);
+  --gl-control-border-color-disabled: var(--gl-color-neutral-100);
+  --gl-control-placeholder-color: var(--gl-color-neutral-500);
+  --gl-control-indicator-color-selected: var(--gl-color-neutral-0);
+  --gl-feedback-danger-background-color: var(--gl-color-red-50);
+  --gl-feedback-danger-text-color: var(--gl-color-red-700);
+  --gl-focus-ring-outer-color: var(--gl-color-blue-500);
+  --gl-status-success-background-color: var(--gl-color-green-100);
+  --gl-status-success-text-color: var(--gl-color-green-700);
+  --gl-status-warning-background-color: var(--gl-color-orange-100);
+  --gl-status-warning-text-color: var(--gl-color-orange-700);
+  --gl-text-color-default: var(--gl-color-neutral-800);
+  --gl-text-color-subtle: var(--gl-color-neutral-600);
+  --gl-text-color-strong: var(--gl-color-neutral-950);
+  --gl-text-color-heading: var(--gl-color-neutral-950);
+  --gl-text-color-link: var(--gl-color-blue-700);
+  --gl-text-color-warning: var(--gl-color-orange-600);
+  --gl-text-color-danger: var(--gl-color-red-600);
+  --gl-text-color-success: var(--gl-color-green-600);
+  --gl-text-color-disabled: var(--gl-color-neutral-400);
+  --gl-border-color-section: var(--gl-border-color-default);
+  --gl-button-default-primary-foreground-color-hover: var(--gl-button-default-primary-foreground-color-default);
+  --gl-button-default-primary-foreground-color-active: var(--gl-button-default-primary-foreground-color-default);
+  --gl-dropdown-background-color: var(--gl-background-color-overlap);
+  --gl-dropdown-border-color: var(--gl-border-color-strong);
+  --gl-dropdown-option-text-color-default: var(--gl-action-neutral-foreground-color-default);
+  --gl-nav-item-foreground-color-focus: var(--gl-nav-item-foreground-color-hover);
+  --gl-nav-item-selected-foreground-color-hover: var(--gl-nav-item-foreground-color-hover);
+  --gl-nav-item-selected-background-color-hover: var(--gl-nav-item-background-color-hover);
+  --gl-nav-item-selected-background-color-active: var(--gl-nav-item-background-color-active);
+  --gl-text-primary: var(--gl-text-color-default);
+  --gl-text-secondary: var(--gl-text-color-subtle);
+  --gl-text-tertiary: var(--gl-text-color-disabled);
+  --gl-nav-item-foreground-color-active: var(--gl-nav-item-foreground-color-focus);
+  --gl-nav-item-selected-foreground-color-active: var(--gl-nav-item-foreground-color-active);
+  --ci-icon-success-background-color: var(--gl-color-green-100);
+  --ci-icon-success-text-color: var(--gl-color-green-700);
+}
+html.gl-dark,.gl-dark-scope {
+  --gl-color-alpha-0: rgba(0, 0, 0, 0);
+  --gl-color-alpha-dark-2: rgba(5, 5, 6, 0.02);
+  --gl-color-alpha-dark-6: rgba(5, 5, 6, 0.06);
+  --gl-color-alpha-dark-16: rgba(5, 5, 6, 0.16);
+  --gl-color-alpha-dark-24: rgba(5, 5, 6, 0.24);
+  --gl-color-alpha-dark-40: rgba(5, 5, 6, 0.4);
+  --gl-color-alpha-light-4: rgba(255, 255, 255, 0.04);
+  --gl-color-alpha-light-8: rgba(255, 255, 255, 0.08);
+  --gl-color-alpha-light-16: rgba(255, 255, 255, 0.16);
+  --gl-color-blue-200: #9dc7f1;
+  --gl-color-blue-400: #428fdc;
+  --gl-color-blue-500: #1f75cb;
+  --gl-color-blue-700: #2f5ca0;
+  --gl-color-green-100: #c3e6cd;
+  --gl-color-green-200: #91d4a8;
+  --gl-color-green-300: #52b87a;
+  --gl-color-green-600: #2f7549;
+  --gl-color-green-700: #306440;
+  --gl-color-green-800: #225131;
+  --gl-color-green-900: #1e3e28;
+  --gl-color-neutral-0: #fff;
+  --gl-color-neutral-10: #f7f7f5;
+  --gl-color-neutral-50: #ecebea;
+  --gl-color-neutral-100: #dcdbd9;
+  --gl-color-neutral-200: #c1bfbe;
+  --gl-color-neutral-300: #a5a3a3;
+  --gl-color-neutral-400: #8a8888;
+  --gl-color-neutral-500: #747273;
+  --gl-color-neutral-600: #646163;
+  --gl-color-neutral-700: #4d4b4e;
+  --gl-color-neutral-800: #3a383d;
+  --gl-color-neutral-900: #28272d;
+  --gl-color-neutral-950: #18171d;
+  --gl-color-neutral-1000: #050408;
+  --gl-color-orange-100: #f5d9a8;
+  --gl-color-orange-200: #e9be74;
+  --gl-color-orange-300: #d99530;
+  --gl-color-orange-600: #995715;
+  --gl-color-orange-700: #894b16;
+  --gl-color-orange-800: #693c14;
+  --gl-color-red-50: #fcf1ef;
+  --gl-color-red-100: #fdd4cd;
+  --gl-color-red-200: #fcb5aa;
+  --gl-color-red-300: #f6806d;
+  --gl-color-red-600: #c02f12;
+  --gl-color-red-700: #a32c12;
+  --gl-color-red-900: #582014;
+  --gl-button-default-primary-background-color-default: rgba(137, 136, 141, 0.4);
+  --gl-button-default-primary-background-color-hover: rgba(137, 136, 141, 0.64);
+  --gl-button-default-primary-background-color-active: rgba(137, 136, 141, 0.32);
+  --gl-background-color-overlay: rgba(0, 0, 0, 0.64);
+  --gl-border-color-default: var(--gl-color-neutral-700);
+  --gl-border-color-subtle: var(--gl-color-neutral-800);
+  --gl-border-color-strong: var(--gl-color-neutral-600);
+  --gl-application-chrome-background-color: var(--gl-color-neutral-1000);
+  --gl-button-default-primary-foreground-color-default: var(--gl-color-neutral-50);
+  --gl-button-default-primary-border-color-default: var(--gl-color-alpha-0);
+  --gl-button-default-primary-border-color-hover: var(--gl-color-alpha-0);
+  --gl-button-default-primary-border-color-active: var(--gl-color-alpha-0);
+  --gl-button-confirm-primary-foreground-color-default: var(--gl-color-neutral-950);
+  --gl-button-confirm-primary-background-color-default: var(--gl-color-neutral-50);
+  --gl-dropdown-option-background-color-selected-default: var(--gl-color-neutral-800);
+  --gl-dropdown-option-background-color-selected-hover: var(--gl-color-neutral-700);
+  --gl-dropdown-option-background-color-selected-active: var(--gl-color-neutral-900);
+  --gl-nav-item-foreground-color-default: var(--gl-color-neutral-200);
+  --gl-nav-item-foreground-color-hover: var(--gl-color-neutral-0);
+  --gl-nav-item-background-color-hover: var(--gl-color-neutral-900);
+  --gl-nav-item-background-color-active: var(--gl-color-neutral-950);
+  --gl-nav-item-selected-foreground-color-default: var(--gl-color-neutral-0);
+  --gl-nav-item-selected-background-color-default: var(--gl-color-neutral-900);
+  --gl-action-disabled-foreground-color: var(--gl-color-neutral-500);
+  --gl-action-disabled-background-color: var(--gl-color-neutral-900);
+  --gl-action-disabled-border-color: var(--gl-color-neutral-800);
+  --gl-action-neutral-foreground-color-default: var(--gl-color-neutral-50);
+  --gl-action-neutral-background-color-hover: var(--gl-color-alpha-light-16);
+  --gl-action-neutral-background-color-active: var(--gl-color-alpha-light-8);
+  --gl-action-confirm-foreground-color-default: var(--gl-color-neutral-50);
+  --gl-action-confirm-foreground-color-hover: var(--gl-color-neutral-10);
+  --gl-action-confirm-foreground-color-active: var(--gl-color-neutral-0);
+  --gl-action-confirm-background-color-hover: var(--gl-color-alpha-light-16);
+  --gl-action-confirm-background-color-active: var(--gl-color-alpha-light-8);
+  --gl-background-color-default: var(--gl-color-neutral-950);
+  --gl-background-color-subtle: var(--gl-color-neutral-900);
+  --gl-background-color-strong: var(--gl-color-neutral-800);
+  --gl-background-color-disabled: var(--gl-color-neutral-900);
+  --gl-background-color-overlap: var(--gl-color-neutral-900);
+  --gl-background-color-section: var(--gl-color-neutral-800);
+  --gl-control-background-color-default: var(--gl-color-alpha-dark-40);
+  --gl-control-background-color-disabled: var(--gl-color-alpha-light-4);
+  --gl-control-background-color-concatenation: var(--gl-color-alpha-light-4);
+  --gl-control-background-color-readonly: var(--gl-color-alpha-light-8);
+  --gl-control-background-color-selected-default: var(--gl-color-neutral-50);
+  --gl-control-background-color-selected-hover: var(--gl-color-neutral-10);
+  --gl-control-border-color-default: var(--gl-color-neutral-500);
+  --gl-control-border-color-hover: var(--gl-color-neutral-300);
+  --gl-control-border-color-focus: var(--gl-color-neutral-50);
+  --gl-control-border-color-disabled: var(--gl-color-neutral-800);
+  --gl-control-placeholder-color: var(--gl-color-neutral-400);
+  --gl-control-indicator-color-selected: var(--gl-color-neutral-950);
+  --gl-feedback-danger-background-color: var(--gl-color-red-900);
+  --gl-feedback-danger-text-color: var(--gl-color-red-200);
+  --gl-focus-ring-outer-color: var(--gl-color-blue-400);
+  --gl-status-success-background-color: var(--gl-color-green-800);
+  --gl-status-success-text-color: var(--gl-color-green-200);
+  --gl-status-warning-background-color: var(--gl-color-orange-800);
+  --gl-status-warning-text-color: var(--gl-color-orange-200);
+  --gl-text-color-default: var(--gl-color-neutral-50);
+  --gl-text-color-subtle: var(--gl-color-neutral-200);
+  --gl-text-color-strong: var(--gl-color-neutral-0);
+  --gl-text-color-heading: var(--gl-color-neutral-0);
+  --gl-text-color-link: var(--gl-color-blue-200);
+  --gl-text-color-warning: var(--gl-color-orange-300);
+  --gl-text-color-danger: var(--gl-color-red-300);
+  --gl-text-color-success: var(--gl-color-green-300);
+  --gl-text-color-disabled: var(--gl-color-neutral-400);
+  --gl-border-color-section: var(--gl-background-color-default);
+  --gl-button-default-primary-foreground-color-hover: var(--gl-button-default-primary-foreground-color-default);
+  --gl-button-default-primary-foreground-color-active: var(--gl-button-default-primary-foreground-color-default);
+  --gl-dropdown-background-color: var(--gl-background-color-overlap);
+  --gl-dropdown-border-color: var(--gl-border-color-default);
+  --gl-dropdown-option-text-color-default: var(--gl-action-neutral-foreground-color-default);
+  --gl-nav-item-foreground-color-focus: var(--gl-nav-item-foreground-color-hover);
+  --gl-nav-item-selected-foreground-color-hover: var(--gl-nav-item-foreground-color-hover);
+  --gl-nav-item-selected-background-color-hover: var(--gl-nav-item-background-color-hover);
+  --gl-nav-item-selected-background-color-active: var(--gl-nav-item-background-color-active);
+  --gl-text-primary: var(--gl-text-color-default);
+  --gl-text-secondary: var(--gl-text-color-subtle);
+  --gl-text-tertiary: var(--gl-text-color-disabled);
+  --gl-nav-item-foreground-color-active: var(--gl-nav-item-foreground-color-focus);
+  --gl-nav-item-selected-foreground-color-active: var(--gl-nav-item-foreground-color-active);
+  --ci-icon-success-background-color: var(--gl-color-green-300);
+  --ci-icon-success-text-color: var(--gl-color-green-900);
+}
+body { background: var(--gl-background-color-default); color: var(--gl-text-color-default); }
+#sidebar { background: var(--gl-application-chrome-background-color); color: var(--gl-nav-item-foreground-color-default); }
+#secondary { color: var(--gl-text-color-subtle); }
+#muted { color: var(--gl-text-tertiary); }
+#link { color: var(--gl-text-color-link); }
+#menu, #dialog { background: var(--gl-dropdown-background-color); color: var(--gl-dropdown-option-text-color-default); border: 1px solid var(--gl-dropdown-border-color); }
+#selected { background: var(--gl-nav-item-selected-background-color-default); color: var(--gl-nav-item-selected-foreground-color-default); }
+#button { background: var(--gl-button-default-primary-background-color-default); color: var(--gl-button-default-primary-foreground-color-default); border: 1px solid var(--gl-button-default-primary-border-color-default); }
+#confirm { background: var(--gl-button-confirm-primary-background-color-default); color: var(--gl-button-confirm-primary-foreground-color-default); }
+#input { background: var(--gl-control-background-color-default); color: var(--gl-text-color-default); border: 1px solid var(--gl-control-border-color-default); }
+#code { background: var(--gl-background-color-strong); color: var(--gl-text-color-default); }
+#error { background: var(--gl-feedback-danger-background-color); color: var(--gl-feedback-danger-text-color); }
+#success { background: var(--gl-status-success-background-color); color: var(--gl-status-success-text-color); }
+#warning { background: var(--gl-status-warning-background-color); color: var(--gl-status-warning-text-color); }
+#pipeline { background: var(--ci-icon-success-background-color); color: var(--ci-icon-success-text-color); }
+#added { background: #ddfbe6; color: #1f2328; }
+#removed { background: #ffebe9; color: #1f2328; }
+html.gl-dark #added { background: #1c4532; color: #ececef; }
+html.gl-dark #removed { background: #5c2c2c; color: #ececef; }
+#syntax { color: #e83e8c; }
+#label { --label-background-color: #a21caf; background: var(--label-background-color); color: white; }
+#scope, #opposite { background: var(--gl-background-color-default); color: var(--gl-text-color-default); }
+</style><script>
+const dark = '{{MODE}}' === 'dark';
+document.documentElement.className = dark ? 'gl-dark' : 'gl-light';
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('scope').className = dark ? 'gl-dark-scope' : 'gl-light-scope';
+  document.getElementById('opposite').className = dark ? 'gl-light-scope' : 'gl-dark-scope';
+});
+</script></head><body>
+<aside id="sidebar">Projects <div id="selected">Selected project</div></aside>
+<main>Project <span id="secondary">Description</span><span id="muted">Metadata</span>
+<a id="link" href="#">Merge requests</a><div id="menu">Menu</div><div id="dialog">Dialog</div>
+<button id="button">Cancel</button><button id="confirm">Create</button><input id="input" value="Search">
+<pre id="code">Code <span id="syntax">keyword</span></pre>
+<div id="error">Error</div><div id="success">Passed</div><div id="warning">Warning</div><div id="pipeline">Pipeline</div>
+<div id="added">Added line</div><div id="removed">Removed line</div><span id="label">Authored label</span>
+<div id="scope">Matching scope</div><div id="opposite">Opposite scope</div></main>
+</body></html>

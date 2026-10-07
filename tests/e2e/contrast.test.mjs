@@ -1,4 +1,4 @@
-// Contrast matrix: every stock Omarchy palette rendered through both adapters.
+// Contrast matrix: every stock Omarchy palette rendered through every adapter.
 // Palettes are written straight to extension storage; the helper path is
 // covered by transport.test.mjs.
 import { test, before, after } from 'node:test';
@@ -14,7 +14,11 @@ const themes = stockThemes();
 // Resolve an element's text colour and effective background (walking up
 // through transparent backgrounds) as hex.
 const RESOLVE = `(selector) => {
-  const parse = (v) => (v.match(/[\\d.]+/g) || []).map(Number);
+  // rgb()/rgba(), or color(srgb r g b / a) as color-mix() computes to.
+  const parse = (v) => {
+    const n = (v.match(/[\\d.]+/g) || []).map(Number);
+    return v.startsWith('color(srgb') ? n.map((x, i) => (i < 3 ? x * 255 : x)) : n;
+  };
   const el = document.querySelector(selector);
   let node = el; let layers = [];
   while (node) {
@@ -67,7 +71,29 @@ const CHECKS = {
     ['#menu-shortcut', 3, 'menu shortcut hint'],
     ['#menu-highlight', 4.5, 'highlighted menu item'],
   ],
+  meet: [
+    ['#page', 4.5, 'primary text on page'],
+    ['#secondary', 4.5, 'secondary text'],
+    ['#card', 4.5, 'text on surface container'],
+    ['#dialog', 4.5, 'text on dialog'],
+    ['#menu', 4.5, 'text on highest container'],
+    ['#low', 4.5, 'text on low container'],
+    ['#link', 4.5, 'link on page'],
+    ['#button-filled', 4.5, 'filled button label'],
+    ['#tonal', 4.5, 'tonal button label'],
+    ['#snackbar', 4.5, 'snackbar text'],
+    ['#grey-chip', 4.5, 'grey chip text'],
+    ['#legacy', 4.5, 'legacy text on legacy surface'],
+    ['#legacy-hint', 4.5, 'legacy hint text'],
+    ['#hotlane', 4.5, 'hotlane text'],
+  ],
 };
+// Meet's call screen, themed only under dark palettes.
+const MEET_CALL = [
+  ['#call-text', 4.5, 'call screen text'],
+  ['#call-controls', 4.5, 'text on call controls'],
+  ['#caption', 4.5, 'captions over video'],
+];
 // Slack's own status colours on our surfaces. Only Slack's light values were
 // observable, so these run for light palettes.
 const PRESERVED_LIGHT = {
@@ -76,6 +102,10 @@ const PRESERVED_LIGHT = {
     ['#success-inline', 3, 'Slack success text on messages'],
     ['#red-badge', 4.5, 'red badge count'],
     ['#white-badge', 4.5, 'white badge count'],
+  ],
+  meet: [
+    ['#error', 4.5, 'Meet error text on page'],
+    ['#success', 4.5, 'Meet success text on page'],
   ],
 };
 
@@ -89,7 +119,15 @@ const REMAPPED = {
     ['#success', 4.5, 'remapped success text on its tint'],
     ['#education', 4.5, 'remapped education text on its tint'],
   ],
+  meet: [
+    ['#error', 4.5, 'remapped error text'],
+    ['#error-banner', 4.5, 'remapped error text on its tint'],
+    ['#success', 4.5, 'remapped success text'],
+    ['#legacy-error', 4.5, 'remapped legacy error text'],
+    ['#call-error', 4.5, 'remapped error text on the call screen'],
+  ],
 };
+const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/' };
 
 let browser;
 let options;
@@ -115,9 +153,12 @@ for (const theme of themes) {
       // Slack cannot follow the system appearance, so it is also themed when
       // its own mode is the opposite one, with status colours remapped.
       { app: 'slack', mode: opposite, checks: [...CHECKS.slack, ...REMAPPED.slack] },
+      // Meet's pages are light whatever the system appearance; its call
+      // screen takes the palette only under dark palettes.
+      { app: 'meet', mode: 'light', checks: theme.mode === 'light' ? [...CHECKS.meet, ...PRESERVED_LIGHT.meet] : [...CHECKS.meet, ...MEET_CALL, ...REMAPPED.meet] },
     ];
     for (const { app, mode, checks } of cases) {
-      const page = await browser.open(`https://app.${app}.com/?mode=${mode}`);
+      const page = await browser.open(`${URLS[app]}?mode=${mode}`);
       await page.waitFor(`document.documentElement.getAttribute('data-omarchy-adapters') === '${app}' && getComputedStyle(document.documentElement).getPropertyValue('--omarchy-background').trim() === '${theme.colors.background}'`);
       for (const [selector, min, label] of checks) {
         const { fg, bg } = await page.eval(`(${RESOLVE})(${JSON.stringify(selector)})`);

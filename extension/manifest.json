@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Omarchy Webapp Theme",
   "version": "0.1.0",
-  "description": "Keeps Notion and Slack in step with the active Omarchy theme.",
+  "description": "Keeps Notion, Slack and Google Meet in step with the active Omarchy theme.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnaUhYHzzDd243LEITPxkNUjAB7LT94AEUp2UFgnUQmN2WD+cWHsjx/6uELWY3yKI3jfbppCuQ2DXU92pY8U7po1tM8vFVC7bIbkdAs2547hMMzZWV7mAVsm0ecj0de71dkR/qDYtY4ZiWfiTdaH1EgpVgpbfld5rKqhp8Y9axqDrvgagIOVPceBdmT5TeK0NoznbKrlnZBa1UpeaV7olxwJWVEN1hnArHWVtop4aRbfauDGYhoJcMp2PaX6usJKxY/KN2e8iL7VExzLznWZonu520qrxJFD/pI/clMdZanigzgKJmm9/qhE1QcA9k1608D7z504zpFQwkHKuGMlfXQIDAQAB",
   "minimum_chrome_version": "120",
   "permissions": [
@@ -42,6 +42,20 @@
       ],
       "css": [
         "adapters/slack/adapter.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://meet.google.com/*"
+      ],
+      "js": [
+        "content/colour.js",
+        "content/palette.js",
+        "adapters/meet/adapter.js"
+      ],
+      "css": [
+        "adapters/meet/adapter.css"
       ],
       "run_at": "document_start"
     }

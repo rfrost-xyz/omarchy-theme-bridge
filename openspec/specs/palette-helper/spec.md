@@ -17,7 +17,7 @@ The helper SHALL read only `theme/colors.toml` and `theme.name` beneath the Omar
 - **THEN** the helper performs no action and sends nothing in reply
 
 ### Requirement: Palette validation and mode
-The helper SHALL read `colors.toml` as Omarchy's own resolver does, skipping lines it cannot read and accepting quoted or unquoted values and the legacy `bg`, `fg` and ANSI `colorN` names. It SHALL send a palette message containing the theme name, a mode of `light` or `dark`, and colours normalised to lower-case `#rrggbb`. `background`, `foreground` and `accent` (falling back to `blue`) SHALL be required. Mode SHALL match Omarchy's desktop colour scheme: the `mode` key, else `theme_type`, else a `light.mode` marker, else light when the raw background value (then `bg`, then `color0`) is a six-digit hex colour whose red, green and blue sum to more than 382, else dark; any declared value other than `light` means dark. Keys are read with only spaces and quotes stripped, as Omarchy reads them.
+The helper SHALL read `colors.toml` as Omarchy's own resolver does, skipping lines it cannot read and accepting quoted or unquoted values and the legacy `bg`, `fg` and ANSI `colorN` names. Keys are read with only spaces and quotes stripped, as Omarchy reads them. It SHALL send a palette message containing the theme name, a mode of `light` or `dark`, and colours normalised to lower-case `#rrggbb`. `background`, `foreground` and `accent` (falling back to `blue`) SHALL be required.
 
 #### Scenario: Valid palette
 - **WHEN** the active theme has a valid `colors.toml`
@@ -59,3 +59,10 @@ The helper SHALL exit when its standard input closes and SHALL use the native me
 #### Scenario: Browser disconnects
 - **WHEN** the extension disconnects or Chromium exits
 - **THEN** the helper process exits without leaving child processes
+
+### Requirement: Mode resolution
+The palette mode SHALL match Omarchy's desktop colour scheme: the `mode` key, else `theme_type`, else a `light.mode` marker, else light when the raw background value (then `bg`, then `color0`) is a six-digit hex colour whose red, green and blue sum to more than 382, else dark. Any declared value other than `light` means dark.
+
+#### Scenario: Unrecognised declared mode
+- **WHEN** `colors.toml` declares `mode = "sepia"` with a light background
+- **THEN** the palette mode is `dark`, as `omarchy-theme-color` reports

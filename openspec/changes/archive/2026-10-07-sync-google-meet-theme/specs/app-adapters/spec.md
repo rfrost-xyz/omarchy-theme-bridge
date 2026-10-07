@@ -1,16 +1,4 @@
-# app-adapters Specification
-
-## Purpose
-Apply the Omarchy palette to the Notion, Slack and Google Meet web apps in Chromium, including app-mode windows, through small per-app adapters over a shared palette transport.
-
-## Requirements
-
-### Requirement: Minimal extension access
-The extension SHALL request only the `nativeMessaging` and `storage` permissions and SHALL run content scripts only on `https://app.notion.com/*`, `https://app.slack.com/*` and `https://meet.google.com/*`.
-
-#### Scenario: Manifest audit
-- **WHEN** the packaged manifest is inspected
-- **THEN** it lists exactly those permissions, no `host_permissions`, and content script matches only for those three origins
+## MODIFIED Requirements
 
 ### Requirement: Palette transport
 The extension SHALL keep a connection to the helper, store the last good palette and helper status, and expose the palette to matching pages as `--omarchy-*` CSS custom properties with derived helper values. Pages SHALL receive changes without reloading.
@@ -35,6 +23,13 @@ The extension SHALL keep a connection to the helper, store the last good palette
 - **WHEN** Chromium starts with matching pages restored
 - **THEN** the cached palette is applied immediately and refreshed once the helper reconnects
 
+### Requirement: Minimal extension access
+The extension SHALL request only the `nativeMessaging` and `storage` permissions and SHALL run content scripts only on `https://app.notion.com/*`, `https://app.slack.com/*` and `https://meet.google.com/*`.
+
+#### Scenario: Manifest audit
+- **WHEN** the packaged manifest is inspected
+- **THEN** it lists exactly those permissions, no `host_permissions`, and content script matches only for those three origins
+
 ### Requirement: Independent adapters
 Notion, Slack and Google Meet adapters SHALL be enabled and disabled independently from the extension options page, and disabling one SHALL remove its styling from open pages without reload.
 
@@ -45,6 +40,13 @@ Notion, Slack and Google Meet adapters SHALL be enabled and disabled independent
 #### Scenario: Disable Meet only
 - **WHEN** the Meet adapter is disabled
 - **THEN** Meet pages revert to Meet's own colours without reload
+
+### Requirement: Readable contrast
+For every stock Omarchy theme, mapped primary text SHALL reach at least 4.5:1 against mapped primary, secondary and popover surfaces (including Notion's search dialog, Slack's navigation and Meet's surface containers), secondary text and accent text at least 4.5:1 against the primary surface, tertiary text at least 3:1, remapped Slack status text at least 4.5:1 against its own tinted background, and remapped Meet error text at least 4.5:1 against the primary surface.
+
+#### Scenario: Contrast matrix
+- **WHEN** the adapters are rendered against each stock Omarchy palette
+- **THEN** every measured pair meets its threshold
 
 ### Requirement: Mode gating
 Each adapter SHALL declare how it treats the app's own light or dark mode, and the extension SHALL re-evaluate when either mode changes. The Notion adapter, whose app follows the system appearance, SHALL apply only while Notion's mode matches the palette mode. The extension SHALL NOT fake the page's colour scheme preference or operate the apps' settings.
@@ -72,12 +74,7 @@ Adapters SHALL override the apps' semantic colour variables rather than layout s
 - **WHEN** Slack shows an important or success state
 - **THEN** it keeps Slack's own colour for the current mode
 
-### Requirement: Readable contrast
-For every stock Omarchy theme, mapped primary text SHALL reach at least 4.5:1 against mapped primary, secondary and popover surfaces (including Notion's search dialog, Slack's navigation and Meet's surface containers), secondary text and accent text at least 4.5:1 against the primary surface, tertiary text at least 3:1, remapped Slack status text at least 4.5:1 against its own tinted background, and remapped Meet error text at least 4.5:1 against the primary surface.
-
-#### Scenario: Contrast matrix
-- **WHEN** the adapters are rendered against each stock Omarchy palette
-- **THEN** every measured pair meets its threshold
+## ADDED Requirements
 
 ### Requirement: Slack in either mode
 The Slack adapter, whose browser app cannot follow the system appearance, SHALL apply in either mode. When Slack's mode differs from the palette's, it SHALL move Slack's meaning colours onto readable versions of the palette's hues and native controls SHALL follow the palette's mode.
@@ -114,3 +111,4 @@ The Meet adapter SHALL NOT change Meet's named colour families other than neutra
 #### Scenario: Meet named colour
 - **WHEN** Meet draws an element from one of its named colour families, such as its extended blue fill
 - **THEN** it keeps Meet's value in either palette mode
+

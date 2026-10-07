@@ -40,7 +40,7 @@ The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, 
 - **THEN** the flags file is byte-for-byte unchanged and setup instructions for loading the unpacked extension are printed
 
 ### Requirement: Clean removal
-The uninstaller SHALL remove only what the installer added, including its flags entry, and SHALL restore the flags file byte for byte, including line endings, the final newline and an originally empty `--load-extension=` list, when nothing else has changed that line since installation. If something has (such as an Omarchy migration), it SHALL remove only this extension's entry and keep the later additions. If the flags file cannot be written, it SHALL keep its files and explain how to remove the entry by hand.
+The uninstaller SHALL remove only what the installer added, including its flags entry. When nothing else has changed that line since installation, it SHALL restore the flags file byte for byte, including line endings, final newline and an originally empty `--load-extension=` list; otherwise it SHALL remove only this extension's entry and keep the later additions. If the flags file cannot be written, it SHALL keep its files and explain how to remove the entry by hand.
 
 #### Scenario: Uninstall after flag merge
 - **WHEN** the uninstaller runs after an install with the flag merge

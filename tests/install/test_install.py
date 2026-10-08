@@ -20,15 +20,15 @@ EXTENSION_ID = "pinjcoeajnkogbmcjjgkgjafpiiebheg"
 
 class InstallTest(unittest.TestCase):
     def setUp(self):
-        self.home = tempfile.mkdtemp(prefix="omarchy-webapp-theme-home-")
+        self.home = tempfile.mkdtemp(prefix="omarchy-theme-bridge-home-")
         self.config = os.path.join(self.home, ".config")
         os.makedirs(os.path.join(self.config, "chromium"))
         self.flags = os.path.join(self.config, "chromium-flags.conf")
         with open(self.flags, "w") as handle:
             handle.write(FLAGS)
         os.chmod(self.flags, 0o640)
-        self.data = os.path.join(self.home, ".local", "share", "omarchy-webapp-theme")
-        self.manifest = os.path.join(self.config, "chromium", "NativeMessagingHosts", "xyz.rfrost.omarchy_webapp_theme.json")
+        self.data = os.path.join(self.home, ".local", "share", "omarchy-theme-bridge")
+        self.manifest = os.path.join(self.config, "chromium", "NativeMessagingHosts", "xyz.rfrost.omarchy_theme_bridge.json")
 
     def tearDown(self):
         shutil.rmtree(self.home, ignore_errors=True)
@@ -71,11 +71,11 @@ class InstallTest(unittest.TestCase):
         with open(self.manifest) as handle:
             manifest = json.load(handle)
         self.assertEqual(manifest["allowed_origins"], [f"chrome-extension://{EXTENSION_ID}/"])
-        self.assertEqual(manifest["path"], os.path.join(self.data, "bin", "omarchy-webapp-theme-host"))
+        self.assertEqual(manifest["path"], os.path.join(self.data, "bin", "omarchy-theme-bridge-host"))
         self.assertTrue(os.access(manifest["path"], os.X_OK))
         self.assertTrue(os.path.isfile(os.path.join(self.data, "extension", "manifest.json")))
         written = sorted(self.snapshot())
-        outside = [p for p in written if not p.startswith(".local/share/omarchy-webapp-theme/") and not p.endswith("/")]
+        outside = [p for p in written if not p.startswith(".local/share/omarchy-theme-bridge/") and not p.endswith("/")]
         self.assertEqual(outside, [".config/chromium-flags.conf", os.path.relpath(self.manifest, self.home)])
 
     def test_flag_merge_is_single_and_idempotent(self):
@@ -203,7 +203,7 @@ class InstallTest(unittest.TestCase):
     def test_dry_runs_list_every_file_and_write_nothing(self):
         before = self.snapshot()
         out = self.run_script("install.sh", "--dry-run", "--load-extension-flag")
-        self.assertIn(".installed-by-omarchy-webapp-theme", out)
+        self.assertIn(".installed-by-omarchy-theme-bridge", out)
         self.assertIn("flags-state.json", out)
         self.assertEqual(self.snapshot(), before)
         self.run_script("install.sh", "--load-extension-flag")
@@ -220,10 +220,10 @@ class InstallTest(unittest.TestCase):
                 self.assertIn("load the extension unpacked", result.stderr)
                 self.assertEqual(self.flags_text(), FLAGS)
                 with open(self.manifest) as handle:
-                    self.assertEqual(json.load(handle)["path"], os.path.join(data_home, "omarchy-webapp-theme", "bin", "omarchy-webapp-theme-host"))
+                    self.assertEqual(json.load(handle)["path"], os.path.join(data_home, "omarchy-theme-bridge", "bin", "omarchy-theme-bridge-host"))
                 self.assertEqual(self.run_env({"XDG_DATA_HOME": data_home}, "uninstall.sh").returncode, 0)
                 self.assertFalse(os.path.exists(self.manifest))
-                self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-webapp-theme")))
+                self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-theme-bridge")))
 
     def test_relative_data_home_is_refused(self):
         for script in ("install.sh", "uninstall.sh"):
@@ -299,7 +299,7 @@ class InstallTest(unittest.TestCase):
     def test_reinstall_says_reload_instead_of_restart(self):
         self.run_script("install.sh", "--load-extension-flag")
         out = self.run_script("install.sh", "--load-extension-flag")
-        self.assertIn("reload Omarchy Webapp Theme in chrome://extensions", out)
+        self.assertIn("reload Omarchy Theme Bridge in chrome://extensions", out)
 
     def test_non_ascii_install_path_uninstalls_cleanly(self):
         data_home = os.path.join(self.home, "zoë")
@@ -308,7 +308,7 @@ class InstallTest(unittest.TestCase):
         result = self.run_env({"XDG_DATA_HOME": data_home}, "uninstall.sh")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(os.path.exists(self.manifest))
-        self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-webapp-theme")))
+        self.assertFalse(os.path.exists(os.path.join(data_home, "omarchy-theme-bridge")))
 
     def test_line_with_unbalanced_quotes_is_not_edited(self):
         original = b"--load-extension=/a\n--load-extension=/b'\n"

@@ -1,4 +1,4 @@
-# omarchy-webapp-theme
+# omarchy-theme-bridge
 
 Keeps the Notion, Slack, Google Meet and Squint Opera GitLab web apps in Chromium
 in step with the active Omarchy theme, including `omarchy-launch-webapp` app windows. When you run
@@ -6,9 +6,12 @@ in step with the active Omarchy theme, including `omarchy-launch-webapp` app win
 and no Chromium restart. It can also switch Grok Build to its terminal theme,
 so Grok follows your terminal's palette (see [Grok Build](#grok-build)).
 
+This project was formerly named `omarchy-webapp-theme`, the same name as Scott
+Jones's project credited below; it is a separate project.
+
 It has three parts:
 
-- **Helper** (`host/omarchy-webapp-theme-host`): a read-only Python script that
+- **Helper** (`host/omarchy-theme-bridge-host`): a read-only Python script that
   Chromium starts through native messaging. It reads
   `~/.local/state/omarchy/current/theme/colors.toml` and `theme.name`, checks
   every value is a hex colour, and sends the palette on connect and after each
@@ -36,7 +39,7 @@ It has three parts:
    - `./install.sh` leaves Omarchy's Chromium flags alone. Then, in each Chromium
      profile that opens Notion, Slack, Meet or GitLab, open `chrome://extensions`, turn on
      Developer mode, choose **Load unpacked** and select
-     `~/.local/share/omarchy-webapp-theme/extension`. Web app launchers can
+     `~/.local/share/omarchy-theme-bridge/extension`. Web app launchers can
      name a profile with `--profile-directory` (see
      `~/.local/share/applications/*.desktop`); load it in each profile they use.
    - `./install.sh --load-extension-flag` also appends the extension to the
@@ -90,7 +93,7 @@ The installer sets two keys in `~/.grok/config.toml`: `theme = "terminal"` under
 `[ui]` and `terminal_theme = true` under `[features]`. The terminal theme is
 behind a rollout flag; without it Grok silently uses GrokNight. Only those two
 keys change, and the installer records what it did in
-`~/.local/share/omarchy-webapp-theme/grok-state.json`.
+`~/.local/share/omarchy-theme-bridge/grok-state.json`.
 
 Restart open Grok sessions once after installing. To check, run `/theme` in
 Grok: the Terminal row should be marked active. `GROK_THEME` and
@@ -104,8 +107,8 @@ is very dark, Grok's dividers and dim text look faint.
 
 | Path | Change |
 | --- | --- |
-| `~/.local/share/omarchy-webapp-theme/` | New: `extension/`, `bin/omarchy-webapp-theme-host`, an ownership marker and, after a flags edit, `flags-state.json` recording how the line was changed and, after a Grok edit, `grok-state.json` |
-| `~/.config/chromium/NativeMessagingHosts/xyz.rfrost.omarchy_webapp_theme.json` | New: registers the helper for this extension's ID only |
+| `~/.local/share/omarchy-theme-bridge/` | New: `extension/`, `bin/omarchy-theme-bridge-host`, an ownership marker and, after a flags edit, `flags-state.json` recording how the line was changed and, after a Grok edit, `grok-state.json` |
+| `~/.config/chromium/NativeMessagingHosts/xyz.rfrost.omarchy_theme_bridge.json` | New: registers the helper for this extension's ID only |
 | `~/.config/chromium-flags.conf` | Only with `--load-extension-flag`: this extension's path is appended to the last `--load-extension=` line (or one line is added). Only that line changes; line endings, the final newline, symlinks and permissions are kept. Rerunning never adds a duplicate. |
 | `~/.grok/config.toml` | Only with `--grok`: sets `theme = "terminal"` under `[ui]` and `terminal_theme = true` under `[features]`, and nothing else. Skipped, with the file left untouched, if it uses CRLF line endings, multi-line strings, top-level dotted keys or inline tables for `ui` or `features`, duplicate headers, or is not valid TOML. |
 
@@ -135,6 +138,17 @@ nothing else is in it.
 
 Restart Chromium, or remove an unpacked copy from `chrome://extensions`.
 Running it again is harmless.
+
+## Upgrading from omarchy-webapp-theme
+
+Run `./install.sh` from this checkout with the switches you used before. It
+migrates the old install: the old `--load-extension` entry is replaced by the
+new path, the Grok record is carried over, and the old directory and helper
+registration are removed (`--dry-run` lists each step). Restart Chromium once.
+Profiles that loaded the extension unpacked show the old copy as missing:
+remove it in `chrome://extensions` and load
+`~/.local/share/omarchy-theme-bridge/extension` instead. Adapter switches carry
+over because the extension ID is unchanged.
 
 ## Permissions
 

@@ -16,7 +16,7 @@ One consistent name everywhere users and code see it, with a safe one-step migra
 - **Dry run** lists every legacy item it would remove or move.
 - **Uninstaller** removes the new install and any marked legacy install with the same rules.
 - **Unmarked legacy directory** is left alone and reported.
-- **Repository.** Rename `rfrost-xyz/omarchy-webapp-theme` to `rfrost-xyz/omarchy-theme-sync` (GitHub redirects the old URLs) and update the local remote. Archived changes under `openspec/changes/archive/` are history and keep the old name.
+- **Repository.** Rename `rfrost-xyz/omarchy-webapp-theme` to `rfrost-xyz/omarchy-theme-bridge` (GitHub redirects the old URLs) and update the local remote. Archived changes under `openspec/changes/archive/` are history and keep the old name.
 
 ## Risks / Trade-offs
 
@@ -25,4 +25,4 @@ One consistent name everywhere users and code see it, with a safe one-step migra
 
 ## Migration Plan
 
-Run `./install.sh` (with the same switches as before) from the renamed checkout, restart Chromium, and reload the unpacked extension from `~/.local/share/omarchy-theme-sync/extension` if it was loaded that way.
+Run `./install.sh` (with the same switches as before) from the renamed checkout, restart Chromium, and reload the unpacked extension from `~/.local/share/omarchy-theme-bridge/extension` if it was loaded that way.

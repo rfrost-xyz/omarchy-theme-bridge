@@ -3,7 +3,7 @@
 // so no dark marker means light. Slack in the browser cannot follow the system
 // appearance (only Light or Dark), so it is themed in either mode and remaps its
 // status colours when its mode differs from the palette's.
-globalThis.OmarchyWebappTheme.register({
+globalThis.OmarchyThemeBridge.register({
   id: 'slack',
   modePolicy: 'any',
   appMode() {

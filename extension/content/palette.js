@@ -1,10 +1,10 @@
 // Palette transport for pages: storage -> CSS custom properties, plus the
 // adapter registry that switches app styling on and off. App-agnostic.
 (() => {
-  if (globalThis.OmarchyWebappTheme) return;
+  if (globalThis.OmarchyThemeBridge) return;
   const { validPalette, paletteCss } = globalThis.OmarchyColour;
   const root = document.documentElement;
-  const STYLE_ID = 'omarchy-webapp-theme-palette';
+  const STYLE_ID = 'omarchy-theme-bridge-palette';
   const ATTR = 'data-omarchy-adapters';
   // Adapters active although the app's own light/dark mode differs from the
   // palette's (only for adapters registered with modePolicy: 'any').
@@ -144,7 +144,7 @@
   document.addEventListener('visibilitychange', onVisible);
   window.addEventListener('focus', ensureConnection);
 
-  globalThis.OmarchyWebappTheme = {
+  globalThis.OmarchyThemeBridge = {
     register(adapter) {
       adapters.set(adapter.id, adapter);
       watchBody();

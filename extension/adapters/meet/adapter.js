@@ -5,7 +5,7 @@
 // except a page that is dark as a whole under a light palette: that may be
 // the call screen, whose captions and controls sit over video, so it is left
 // to Meet (reported as waiting, since the app mode is not usable).
-globalThis.OmarchyWebappTheme.register({
+globalThis.OmarchyThemeBridge.register({
   id: 'meet',
   modePolicy: 'any',
   appMode() {

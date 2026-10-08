@@ -1,5 +1,5 @@
 #!/bin/bash
-# Remove everything install.sh added for omarchy-webapp-theme.
+# Remove everything install.sh added for omarchy-theme-bridge.
 # Usage: ./uninstall.sh [--dry-run]
 set -euo pipefail
 
@@ -24,6 +24,18 @@ done
 require_absolute_dirs
 
 changed=0
+# A marked install under the former name goes by the same rules. Its flags
+# entry is checked before anything is removed.
+legacy_detect
+if ((LEGACY_FOUND)); then
+  legacy_flags_plan || exit 1
+  if [[ $LEGACY_FLAGS_PLAN != unchanged ]]; then
+    echo "Change: $FLAGS_FILE (only the legacy --load-extension line):"
+    echo "$LEGACY_FLAGS_PLAN"
+    changed=1
+  fi
+fi
+
 # Flags first: the record of how the line was changed lives in $DATA_DIR.
 if [[ -f $FLAGS_FILE ]]; then
   status=0
@@ -37,6 +49,10 @@ if [[ -f $FLAGS_FILE ]]; then
   elif ((status != 0)); then
     echo "Could not read $FLAGS_FILE; nothing was removed." >&2
     exit 1
+  fi
+  # Written only once our own entry is known to be removable too.
+  if ((LEGACY_FOUND)) && [[ $LEGACY_FLAGS_PLAN != unchanged ]] && ((!DRY_RUN)); then
+    flags_edit_at remove "$FLAGS_FILE" "$LEGACY_EXTENSION_DIR" "$LEGACY_FLAGS_STATE" --write >/dev/null
   fi
   if [[ $plan != unchanged ]]; then
     echo "Change: $FLAGS_FILE (only the --load-extension line):"
@@ -65,6 +81,30 @@ if [[ -f $DATA_DIR/$MARKER && -f $GROK_STATE ]]; then
   fi
 fi
 
+if ((LEGACY_FOUND)) && [[ -f $LEGACY_GROK_STATE ]]; then
+  status=0
+  plan=$(grok_edit_at remove "$LEGACY_GROK_STATE") || status=$?
+  if ((status == 3)); then
+    echo "Restore the theme and terminal_theme lines in $GROK_CONFIG by hand, then rerun ./uninstall.sh. Installed files were kept." >&2
+    exit 1
+  elif ((status != 0)); then
+    echo "Could not update $GROK_CONFIG; nothing more was removed." >&2
+    exit 1
+  fi
+  if [[ $plan != unchanged ]]; then
+    echo "Change: $GROK_CONFIG (only the theme and terminal_theme lines):"
+    echo "$plan"
+    ((DRY_RUN)) || grok_edit_at remove "$LEGACY_GROK_STATE" --write >/dev/null
+    changed=1
+  fi
+fi
+
+if ((LEGACY_FOUND)); then
+  legacy_files list
+  ((DRY_RUN)) || legacy_files apply
+  changed=1
+fi
+
 if [[ -f $DATA_DIR/$MARKER ]]; then
   echo "Remove: $DATA_DIR/"
   ((DRY_RUN)) || rm -rf "$DATA_DIR"
@@ -73,7 +113,7 @@ elif [[ -e $DATA_DIR ]]; then
   echo "Skip: $DATA_DIR was not created by the installer."
 fi
 
-if [[ -f $MANIFEST_PATH ]] && /usr/bin/python3 -c 'import json, os, sys; sys.exit(0 if os.path.normpath(json.load(open(sys.argv[1])).get("path", "")) == os.path.normpath(sys.argv[2]) else 1)' "$MANIFEST_PATH" "$HOST_PATH" 2>/dev/null; then
+if [[ -f $MANIFEST_PATH ]] && manifest_points_at "$MANIFEST_PATH" "$HOST_PATH"; then
   echo "Remove: $MANIFEST_PATH"
   ((DRY_RUN)) || rm -f "$MANIFEST_PATH"
   changed=1

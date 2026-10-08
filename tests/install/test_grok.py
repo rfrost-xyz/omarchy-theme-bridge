@@ -30,10 +30,10 @@ CONFIG = (
 
 class GrokTest(unittest.TestCase):
     def setUp(self):
-        self.home = tempfile.mkdtemp(prefix="omarchy-webapp-theme-grok-")
+        self.home = tempfile.mkdtemp(prefix="omarchy-theme-bridge-grok-")
         self.grok_dir = os.path.join(self.home, ".grok")
         self.config = os.path.join(self.grok_dir, "config.toml")
-        self.data = os.path.join(self.home, ".local", "share", "omarchy-webapp-theme")
+        self.data = os.path.join(self.home, ".local", "share", "omarchy-theme-bridge")
         self.state = os.path.join(self.data, "grok-state.json")
 
     def tearDown(self):

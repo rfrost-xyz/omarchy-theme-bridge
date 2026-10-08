@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const EXTENSION_ID = 'pinjcoeajnkogbmcjjgkgjafpiiebheg';
-const HOST_NAME = 'xyz.rfrost.omarchy_webapp_theme';
+const HOST_NAME = 'xyz.rfrost.omarchy_theme_bridge';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const FIXTURES = { 'app.notion.com': 'notion.html', 'app.slack.com': 'slack.html', 'meet.google.com': 'meet.html', 'git.squintopera.com': 'gitlab.html', 'gitlab.com': 'gitlab.html', 'git.example.test': 'gitlab.html' };
 
@@ -21,11 +21,11 @@ export class Browser {
   }
 
   async start() {
-    this.dir = mkdtempSync(join(process.env.E2E_TMPDIR || tmpdir(), 'omarchy-webapp-theme-e2e-'));
+    this.dir = mkdtempSync(join(process.env.E2E_TMPDIR || tmpdir(), 'omarchy-theme-bridge-e2e-'));
     this.state = join(this.dir, 'state');
-    this.hostPath = join(this.dir, 'host', 'omarchy-webapp-theme-host');
+    this.hostPath = join(this.dir, 'host', 'omarchy-theme-bridge-host');
     mkdirSync(dirname(this.hostPath), { recursive: true });
-    copyFileSync(join(ROOT, 'host', 'omarchy-webapp-theme-host'), this.hostPath);
+    copyFileSync(join(ROOT, 'host', 'omarchy-theme-bridge-host'), this.hostPath);
     chmodSync(this.hostPath, 0o755);
     const hosts = join(this.dir, 'profile', 'NativeMessagingHosts');
     mkdirSync(hosts, { recursive: true });
@@ -153,7 +153,7 @@ export class Browser {
   }
 
   restoreHost() {
-    copyFileSync(join(ROOT, 'host', 'omarchy-webapp-theme-host'), this.hostPath);
+    copyFileSync(join(ROOT, 'host', 'omarchy-theme-bridge-host'), this.hostPath);
     chmodSync(this.hostPath, 0o755);
   }
 

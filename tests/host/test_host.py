@@ -11,7 +11,7 @@ import time
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-HOST = os.path.join(ROOT, "host", "omarchy-webapp-theme-host")
+HOST = os.path.join(ROOT, "host", "omarchy-theme-bridge-host")
 
 DARK = """mode = "dark"
 accent = "#7AA2F7"

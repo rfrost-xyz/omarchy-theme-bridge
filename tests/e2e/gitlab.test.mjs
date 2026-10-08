@@ -105,7 +105,7 @@ test('gitlab: independent switch persists across a page reload', async () => {
 test('gitlab: unrelated GitLab origins receive no extension scripts', async () => {
   for (const origin of ['https://gitlab.com/', 'https://git.example.test/']) {
     const page = await browser.open(origin);
-    assert.equal(await page.eval("document.querySelector('#omarchy-webapp-theme-palette')"), null);
+    assert.equal(await page.eval("document.querySelector('#omarchy-theme-bridge-palette')"), null);
     assert.equal(await page.eval("document.documentElement.hasAttribute('data-omarchy-adapters')"), false);
     await page.close();
   }

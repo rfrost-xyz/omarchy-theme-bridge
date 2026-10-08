@@ -14,6 +14,6 @@ test('reloading the extension removes stale styling from open pages', async () =
   await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
   const options = await browser.options();
   await options.eval('setTimeout(() => chrome.runtime.reload(), 50); true');
-  await page.waitFor("document.getElementById('omarchy-webapp-theme-palette') === null && !document.documentElement.hasAttribute('data-omarchy-mode') && !document.documentElement.hasAttribute('data-omarchy-adapters')", 6000);
+  await page.waitFor("document.getElementById('omarchy-theme-bridge-palette') === null && !document.documentElement.hasAttribute('data-omarchy-mode') && !document.documentElement.hasAttribute('data-omarchy-adapters')", 6000);
   await page.close();
 });

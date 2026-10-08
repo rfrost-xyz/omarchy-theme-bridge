@@ -27,7 +27,7 @@ test('initial load exposes palette properties', async () => {
   const page = await openWith('https://app.notion.com/', 'tokyo-night', DARK, '#1a1b26');
   assert.equal(await page.eval("document.documentElement.dataset.omarchyMode"), 'dark');
   assert.match(await page.eval("getComputedStyle(document.documentElement).getPropertyValue('--omarchy-accent-rgb').trim()"), /^122, 162, 247$/);
-  assert.equal(await page.eval("document.querySelectorAll('#omarchy-webapp-theme-palette').length"), 1);
+  assert.equal(await page.eval("document.querySelectorAll('#omarchy-theme-bridge-palette').length"), 1);
   await page.close();
 });
 

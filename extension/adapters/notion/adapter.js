@@ -1,5 +1,5 @@
 // Notion reports its theme with classes on <body>.
-globalThis.OmarchyWebappTheme.register({
+globalThis.OmarchyThemeBridge.register({
   id: 'notion',
   appMode() {
     const body = document.body;

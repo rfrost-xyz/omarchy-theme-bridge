@@ -1,4 +1,4 @@
-# omarchy-webapp-theme
+# omarchy-theme-bridge
 
 A minimal Chromium extension and read-only native helper that keep web apps in
 step with the active Omarchy theme. Notion, Slack, Google Meet and Squint Opera

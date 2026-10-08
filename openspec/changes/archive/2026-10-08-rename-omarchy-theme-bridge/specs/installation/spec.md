@@ -1,9 +1,6 @@
-# installation Specification
+# Spec Delta
 
-## Purpose
-Install and remove the helper and extension for one user and Chromium only, showing every change and leaving Omarchy and existing browser configuration intact.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Transparent per-user install
 The installer SHALL support a dry run that lists every file it would write and every configuration line it would change, without printing unrelated configuration lines. It SHALL install only under the user's home: the extension and helper under `~/.local/share/omarchy-theme-bridge/`, one native messaging manifest under `~/.config/chromium/NativeMessagingHosts/` and, only with `--grok`, the two Grok keys in `~/.grok/config.toml`.
@@ -19,25 +16,6 @@ The installer SHALL support a dry run that lists every file it would write and e
 #### Scenario: Unsafe install path
 - **WHEN** the install directory is relative, or contains whitespace, commas, quotes, backslashes, `#` or control characters
 - **THEN** a relative directory is refused, and otherwise the flags file is left unchanged with instructions to load the extension unpacked
-
-### Requirement: Omarchy configuration preserved
-The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, hooks or other browsers. Editing `~/.config/chromium-flags.conf` SHALL be opt-in, SHALL append this extension's path to the existing single `--load-extension=` list (or add the line when absent), SHALL keep every other line, symlink and file mode, and SHALL NOT duplicate the entry. Editing `~/.grok/config.toml` SHALL be opt-in through `--grok` and SHALL follow the `grok-theme` capability.
-
-#### Scenario: Opt-in flag merge
-- **WHEN** the installer runs with `--load-extension-flag` twice
-- **THEN** the flags file contains one `--load-extension=` line with the original entries followed by this extension once, and all other lines unchanged
-
-#### Scenario: Switch shares a line
-- **WHEN** the last `--load-extension` switch is indented or shares a line with other flags
-- **THEN** the installer leaves the flags file unchanged, explains why and prints instructions for loading the extension unpacked
-
-#### Scenario: CRLF flags file
-- **WHEN** the flags file uses CRLF line endings
-- **THEN** the installer leaves it unchanged, explains why and prints instructions for loading the extension unpacked
-
-#### Scenario: Default install leaves flags alone
-- **WHEN** the installer runs without `--load-extension-flag`
-- **THEN** the flags file is byte-for-byte unchanged and setup instructions for loading the unpacked extension are printed
 
 ### Requirement: Clean removal
 The uninstaller SHALL remove only what the installer added, including its flags entry. When nothing else has changed that line since installation, it SHALL restore the flags file byte for byte, including line endings, final newline and an originally empty `--load-extension=` list; otherwise it SHALL remove only this extension's entry and keep the later additions. If the flags file cannot be written, it SHALL keep its files and explain how to remove the entry by hand. It SHALL also remove a marked legacy `omarchy-webapp-theme` install by the same rules.
@@ -61,6 +39,8 @@ The uninstaller SHALL remove only what the installer added, including its flags 
 #### Scenario: Legacy install left over
 - **WHEN** the uninstaller runs and a marked legacy `~/.local/share/omarchy-webapp-theme/` install exists
 - **THEN** its flags entry, native host manifest and directory are removed as well
+
+## ADDED Requirements
 
 ### Requirement: Legacy install migration
 The installer SHALL migrate an install made under the former name `omarchy-webapp-theme` when its directory carries the legacy ownership marker. It SHALL remove the legacy `--load-extension` entry and add the new extension path in its place, carry the Grok record over so uninstall can still revert Grok's configuration, remove the legacy native host manifest only when it points at the legacy helper, and remove the legacy directory. The dry run SHALL list each of these steps. An unmarked legacy directory SHALL be left alone and reported. If the legacy flags entry cannot be edited safely, the installer SHALL change nothing and explain how to remove it by hand.

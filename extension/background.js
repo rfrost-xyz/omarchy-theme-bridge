@@ -2,7 +2,7 @@
 // Pages subscribe through storage, so this needs no tabs or host permission.
 importScripts('content/colour.js');
 
-const HOST = 'xyz.rfrost.omarchy_webapp_theme';
+const HOST = 'xyz.rfrost.omarchy_theme_bridge';
 const MIN_RETRY = 1000;
 const MAX_RETRY = 30000;
 let port = null;

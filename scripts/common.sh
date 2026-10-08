@@ -60,3 +60,12 @@ FLAGS_STATE=$DATA_DIR/flags-state.json
 flags_edit() {
   /usr/bin/python3 "$SOURCE/scripts/flags.py" "$1" "$FLAGS_FILE" "$EXTENSION_DIR" "$FLAGS_STATE" "${@:2}"
 }
+
+GROK_CONFIG=$HOME/.grok/config.toml
+GROK_STATE=$DATA_DIR/grok-state.json
+
+# Point Grok at the terminal theme, or put its configuration back. Prints only
+# the changed lines, or "unchanged"; pass --write to apply. See scripts/grok.py.
+grok_edit() {
+  /usr/bin/python3 "$SOURCE/scripts/grok.py" "$1" "$GROK_CONFIG" "$GROK_STATE" "${@:2}"
+}

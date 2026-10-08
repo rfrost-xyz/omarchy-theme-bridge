@@ -46,6 +46,25 @@ if [[ -f $FLAGS_FILE ]]; then
   fi
 fi
 
+# Grok before $DATA_DIR is removed, for the same reason.
+if [[ -f $DATA_DIR/$MARKER && -f $GROK_STATE ]]; then
+  status=0
+  plan=$(grok_edit remove) || status=$?
+  if ((status == 3)); then
+    echo "Restore the theme and terminal_theme lines in $GROK_CONFIG by hand, then rerun ./uninstall.sh. Installed files were kept." >&2
+    exit 1
+  elif ((status != 0)); then
+    echo "Could not update $GROK_CONFIG; nothing more was removed." >&2
+    exit 1
+  fi
+  if [[ $plan != unchanged ]]; then
+    echo "Change: $GROK_CONFIG (only the theme and terminal_theme lines):"
+    echo "$plan"
+    ((DRY_RUN)) || grok_edit remove --write >/dev/null
+    changed=1
+  fi
+fi
+
 if [[ -f $DATA_DIR/$MARKER ]]; then
   echo "Remove: $DATA_DIR/"
   ((DRY_RUN)) || rm -rf "$DATA_DIR"

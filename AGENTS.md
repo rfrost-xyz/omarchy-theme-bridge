@@ -2,16 +2,21 @@
 
 A minimal Chromium extension and read-only native helper that keep web apps in
 step with the active Omarchy theme. Notion, Slack, Google Meet and Squint Opera
-GitLab are the supported apps; others may be added as separate adapters. See
-README.md for setup and limitations.
+GitLab are the supported web apps; others may be added as separate adapters.
+Grok Build is the one supported terminal app, through its own terminal theme.
+See README.md for setup and limitations.
 
 ## Boundaries
 
-- Scope is Chromium on Omarchy and the web apps with an adapter: currently
+- Browser scope is Chromium on Omarchy and the web apps with an adapter: currently
   Notion (`app.notion.com`), Slack (`app.slack.com`), Google Meet
   (`meet.google.com`) and Squint Opera GitLab (`git.squintopera.com`). Add an
   app only as a new adapter with its own origin match; never widen to all sites. No other
   browsers, general stylesheet management or theme installation or switching.
+- Grok Build is the only terminal app. It follows Omarchy through the
+  terminal's own palette by using Grok's terminal theme; no palette is
+  generated or sent to it, and the helper stays Chromium-only. Any further
+  non-browser app needs its own opt-in, reversible integration and spec.
 - The native helper is read-only. It reads only the active theme's
   `colors.toml` and `theme.name` under `~/.local/state/omarchy/current`, sends
   only validated palette data and accepts only a `get` request. It never
@@ -20,7 +25,11 @@ README.md for setup and limitations.
   touch `/usr/share/omarchy`, managed browser policies, themes, hooks or
   templates. Editing `~/.config/chromium-flags.conf` is opt-in, appends to the
   existing `--load-extension=` list the way Omarchy's migrations do, and is
-  fully reversed by the uninstaller.
+  fully reversed by the uninstaller. Editing `~/.grok/config.toml` is likewise
+  opt-in (`--grok`), sets only `[ui] theme = "terminal"` and
+  `[features] terminal_theme = true`, refuses unsafe file shapes leaving the
+  file untouched, and is reverted key by key only while the line is still the
+  installer's.
 - Extension permissions stay at `nativeMessaging` and `storage` plus content
   script matches for each adapter's origins. Justify any addition in the README.
 - Keep palette transport (host, service worker, `content/palette.js`) separate

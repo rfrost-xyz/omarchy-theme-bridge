@@ -1,9 +1,6 @@
-# installation Specification
+# Spec Delta
 
-## Purpose
-Install and remove the helper and extension for one user and Chromium only, showing every change and leaving Omarchy and existing browser configuration intact.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Transparent per-user install
 The installer SHALL support a dry run that lists every file it would write and every configuration line it would change, without printing unrelated configuration lines. It SHALL install only under the user's home: the extension and helper under `~/.local/share/omarchy-webapp-theme/`, one native messaging manifest under `~/.config/chromium/NativeMessagingHosts/` and, only with `--grok`, the two Grok keys in `~/.grok/config.toml`.
@@ -38,22 +35,3 @@ The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, 
 #### Scenario: Default install leaves flags alone
 - **WHEN** the installer runs without `--load-extension-flag`
 - **THEN** the flags file is byte-for-byte unchanged and setup instructions for loading the unpacked extension are printed
-
-### Requirement: Clean removal
-The uninstaller SHALL remove only what the installer added, including its flags entry. When nothing else has changed that line since installation, it SHALL restore the flags file byte for byte, including line endings, final newline and an originally empty `--load-extension=` list; otherwise it SHALL remove only this extension's entry and keep the later additions. If the flags file cannot be written, it SHALL keep its files and explain how to remove the entry by hand.
-
-#### Scenario: Uninstall after flag merge
-- **WHEN** the uninstaller runs after an install with the flag merge
-- **THEN** the flags file matches its pre-install content and the installed directory and manifest are gone
-
-#### Scenario: Omarchy appended an extension after install
-- **WHEN** an Omarchy migration appended another extension to the `--load-extension=` line after installation
-- **THEN** the uninstaller removes only this extension's entry and the line matches what the migration would have produced without it
-
-#### Scenario: Entry cannot be removed
-- **WHEN** the flags file still names the installed extension on a line the uninstaller cannot edit safely
-- **THEN** the uninstaller keeps the installed files, explains how to remove the entry and exits with an error
-
-#### Scenario: Repeated uninstall
-- **WHEN** the uninstaller runs when nothing is installed
-- **THEN** it succeeds without changing anything

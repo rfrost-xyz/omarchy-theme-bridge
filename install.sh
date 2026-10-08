@@ -1,6 +1,6 @@
 #!/bin/bash
-# Per-user, Chromium-only installer for omarchy-webapp-theme.
-# Usage: ./install.sh [--dry-run] [--load-extension-flag]
+# Per-user installer for omarchy-webapp-theme (Chromium, and Grok on opt-in).
+# Usage: ./install.sh [--dry-run] [--load-extension-flag] [--grok]
 set -euo pipefail
 
 SOURCE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -8,10 +8,12 @@ source "$SOURCE/scripts/common.sh"
 
 DRY_RUN=0
 FLAG=0
+GROK=0
 for arg in "$@"; do
   case $arg in
   --dry-run) DRY_RUN=1 ;;
   --load-extension-flag) FLAG=1 ;;
+  --grok) GROK=1 ;;
   -h | --help)
     sed -n '2,3p' "$0" | sed 's/^# \{0,1\}//'
     exit 0
@@ -60,6 +62,30 @@ else
   echo "Flags: $FLAGS_FILE is not changed."
 fi
 
+GROK_REQUESTED=$GROK
+if ((GROK)); then
+  status=0
+  plan=$(grok_edit add) || status=$?
+  if ((status != 0)); then
+    echo "Grok: $GROK_CONFIG is not changed; the rest of the install continues without it."
+    GROK=0
+    GROK_REQUESTED=0
+  elif [[ $plan == unchanged ]]; then
+    echo "Grok: $GROK_CONFIG already uses the terminal theme."
+    GROK=0
+  else
+    if [[ -f $GROK_CONFIG ]]; then
+      echo "Grok: $GROK_CONFIG (only the theme and terminal_theme lines change):"
+    else
+      echo "Grok: $GROK_CONFIG does not exist and is created with only these lines:"
+    fi
+    echo "$plan"
+    echo "  $GROK_STATE (records the change so uninstall can restore the file exactly)"
+  fi
+else
+  echo "Grok: $GROK_CONFIG is not changed."
+fi
+
 if ((DRY_RUN)); then
   echo "Dry run: nothing was written."
   exit 0
@@ -72,6 +98,7 @@ cp -R "$SOURCE/extension" "$staging/extension"
 install -m 0755 "$SOURCE/host/$HOST_FILE" "$staging/bin/$HOST_FILE"
 touch "$staging/$MARKER"
 [[ -f $FLAGS_STATE ]] && cp "$FLAGS_STATE" "$staging/"
+[[ -f $GROK_STATE ]] && cp "$GROK_STATE" "$staging/"
 rm -rf "$DATA_DIR"
 mkdir -p "$(dirname "$DATA_DIR")"
 mv "$staging" "$DATA_DIR"
@@ -83,6 +110,13 @@ mv "$MANIFEST_PATH.tmp.$$" "$MANIFEST_PATH"
 
 if ((FLAG)); then
   flags_edit add --write >/dev/null
+fi
+
+if ((GROK)); then
+  grok_edit add --write >/dev/null || {
+    echo "Grok: $GROK_CONFIG is not changed; the rest of the install is complete without it."
+    GROK_REQUESTED=0
+  }
 fi
 
 echo "Installed."
@@ -99,5 +133,8 @@ show which profiles they use:
   2. Choose "Load unpacked" and select $EXTENSION_DIR
 Or rerun with --load-extension-flag and restart Chromium once.
 EOF
+fi
+if ((GROK_REQUESTED)); then
+  echo "Grok: restart open Grok sessions. Its colours now follow the terminal palette, so they change with the Omarchy theme. Setting GROK_THEME overrides the configuration."
 fi
 echo "Set Notion to use the system appearance so it switches between light and dark with the Omarchy theme. Slack and Google Meet are themed in either of their modes."

@@ -3,7 +3,8 @@
 Keeps the Notion, Slack, Google Meet and Squint Opera GitLab web apps in Chromium
 in step with the active Omarchy theme, including `omarchy-launch-webapp` app windows. When you run
 `omarchy theme set`, open pages recolour within about a second, with no reload
-and no Chromium restart.
+and no Chromium restart. It can also switch Grok Build to its terminal theme,
+so Grok follows your terminal's palette (see [Grok Build](#grok-build)).
 
 It has three parts:
 
@@ -71,17 +72,47 @@ It has three parts:
    preferences. The GitLab adapter applies while its mode matches Omarchy.
    After updating or reloading the extension, reload open GitLab pages once.
 
+### Grok Build
+
+Optional, and off unless you ask for it:
+
+```bash
+./install.sh --grok
+```
+
+Grok cannot load custom palettes, so this does not generate a theme. Grok
+Build's built-in terminal theme uses the terminal's default foreground and
+background and its 16-colour ANSI palette, and paints no backgrounds. Omarchy
+reloads the Ghostty, Kitty and Alacritty palettes on every theme change, so
+Grok recolours live in those terminals with no hook and no helper.
+
+The installer sets two keys in `~/.grok/config.toml`: `theme = "terminal"` under
+`[ui]` and `terminal_theme = true` under `[features]`. The terminal theme is
+behind a rollout flag; without it Grok silently uses GrokNight. Only those two
+keys change, and the installer records what it did in
+`~/.local/share/omarchy-webapp-theme/grok-state.json`.
+
+Restart open Grok sessions once after installing. To check, run `/theme` in
+Grok: the Terminal row should be marked active. `GROK_THEME` and
+`LC_GROK_THEME` override the config, so unset them if Grok keeps another theme.
+Minimal mode (`--minimal`) ignores themes and already uses terminal colours.
+
+Contrast depends on your terminal profile. If a theme's bright black (ANSI 8)
+is very dark, Grok's dividers and dim text look faint.
+
 ### What the installer changes
 
 | Path | Change |
 | --- | --- |
-| `~/.local/share/omarchy-webapp-theme/` | New: `extension/`, `bin/omarchy-webapp-theme-host`, an ownership marker and, after a flags edit, `flags-state.json` recording how the line was changed |
+| `~/.local/share/omarchy-webapp-theme/` | New: `extension/`, `bin/omarchy-webapp-theme-host`, an ownership marker and, after a flags edit, `flags-state.json` recording how the line was changed and, after a Grok edit, `grok-state.json` |
 | `~/.config/chromium/NativeMessagingHosts/xyz.rfrost.omarchy_webapp_theme.json` | New: registers the helper for this extension's ID only |
 | `~/.config/chromium-flags.conf` | Only with `--load-extension-flag`: this extension's path is appended to the last `--load-extension=` line (or one line is added). Only that line changes; line endings, the final newline, symlinks and permissions are kept. Rerunning never adds a duplicate. |
+| `~/.grok/config.toml` | Only with `--grok`: sets `theme = "terminal"` under `[ui]` and `terminal_theme = true` under `[features]`, and nothing else. Skipped, with the file left untouched, if it uses CRLF line endings, multi-line strings, top-level dotted keys or inline tables for `ui` or `features`, duplicate headers, or is not valid TOML. |
 
 Nothing else is touched: no `sudo`, no Omarchy files, themes, hooks or browser
-policies, and no other browsers. The dry run prints only the flags line that
-would change, never the rest of the file.
+policies, no other browsers and no other Grok settings. The dry run prints only
+the lines that would change in the flags and Grok files, never the rest of
+either.
 
 ## Removal
 
@@ -94,6 +125,14 @@ This removes the installed directory, the helper registration and this
 extension's flags entry, leaving the flags file byte for byte as it was before
 installing. If an Omarchy update has since added another extension to that
 line, only this extension's entry is removed.
+
+For Grok, each of the two keys is reverted only while it is still the line the
+installer wrote. If nothing else changed, the file is restored byte for byte.
+A theme you later picked in Grok is kept, and a `terminal_theme = true` that
+existed before installing is never removed. A `config.toml` the installer
+created is deleted once it is empty, and so is a `~/.grok/` it created if
+nothing else is in it.
+
 Restart Chromium, or remove an unpacked copy from `chrome://extensions`.
 Running it again is harmless.
 
@@ -239,6 +278,12 @@ tests.
 - **Origins**: only `app.notion.com`, `app.slack.com`, `meet.google.com` and `git.squintopera.com`. Public `notion.site`
   pages and older `www.notion.so` links that do not redirect to
   `app.notion.com` are not coloured.
+- **Grok Build** (1.0.46): the terminal theme follows the terminal, so it only
+  tracks Omarchy in terminals that reload their palette on theme change
+  (Ghostty, Kitty and Alacritty). Other terminals keep the colours they were
+  started with. The rollout flag is Grok's, not ours; if a Grok update renames
+  the keys, Grok may fall back to GrokNight. Grok's own colour choices that sit
+  outside the 16-colour palette are not themed.
 - **Flags file**: if an Omarchy update rewrites `~/.config/chromium-flags.conf`
   and drops the entry, rerun `./install.sh --load-extension-flag`.
 - **Extension reloads**: Chromium does not re-inject content scripts into tabs

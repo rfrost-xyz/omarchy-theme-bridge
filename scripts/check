@@ -7,6 +7,9 @@ echo "== shell syntax"
 for script in install.sh uninstall.sh scripts/common.sh scripts/check; do
   bash -n "$script"
 done
+for script in scripts/*.py; do
+  python3 -c 'import ast, sys; ast.parse(open(sys.argv[1]).read())' "$script"
+done
 echo "== helper"
 python3 -m unittest discover -s tests/host
 echo "== installer"

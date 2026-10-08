@@ -2,7 +2,9 @@ schema: spec-driven
 
 context: |
   Single-user Omarchy (Arch, Hyprland) desktop. Chromium is the only target browser,
-  including --app windows launched by omarchy-launch-webapp. Omarchy owns
+  including --app windows launched by omarchy-launch-webapp. Grok Build is the only
+  terminal app, via its terminal theme; ~/.grok/config.toml is edited only on opt-in
+  (--grok) and reverted on uninstall while the installer's lines are unchanged. Omarchy owns
   ~/.local/state/omarchy/current, /usr/share/omarchy and managed browser policy;
   this project must not modify them. Write artifacts in British English without em dashes.
 

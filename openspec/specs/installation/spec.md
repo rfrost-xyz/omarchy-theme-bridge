@@ -6,11 +6,11 @@ Install and remove the helper and extension for one user and Chromium only, show
 ## Requirements
 
 ### Requirement: Transparent per-user install
-The installer SHALL support a dry run that lists every file it would write and every configuration line it would change, without printing unrelated configuration lines. It SHALL install only under the user's home: the extension and helper under `~/.local/share/omarchy-webapp-theme/` and one native messaging manifest under `~/.config/chromium/NativeMessagingHosts/`.
+The installer SHALL support a dry run that lists every file it would write and every configuration line it would change, without printing unrelated configuration lines. It SHALL install only under the user's home: the extension and helper under `~/.local/share/omarchy-webapp-theme/`, one native messaging manifest under `~/.config/chromium/NativeMessagingHosts/` and, only with `--grok`, the two Grok keys in `~/.grok/config.toml`.
 
 #### Scenario: Dry run
 - **WHEN** the installer runs with `--dry-run`
-- **THEN** it prints every planned file (including the ownership marker and the flags record) and changed line, and writes nothing; the uninstaller's dry run also writes nothing
+- **THEN** it prints every planned file (including the ownership marker and the flags and Grok records) and changed line, and writes nothing; the uninstaller's dry run also writes nothing
 
 #### Scenario: Install
 - **WHEN** the installer runs
@@ -21,7 +21,7 @@ The installer SHALL support a dry run that lists every file it would write and e
 - **THEN** a relative directory is refused, and otherwise the flags file is left unchanged with instructions to load the extension unpacked
 
 ### Requirement: Omarchy configuration preserved
-The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, hooks or other browsers. Editing `~/.config/chromium-flags.conf` SHALL be opt-in, SHALL append this extension's path to the existing single `--load-extension=` list (or add the line when absent), SHALL keep every other line, symlink and file mode, and SHALL NOT duplicate the entry.
+The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, hooks or other browsers. Editing `~/.config/chromium-flags.conf` SHALL be opt-in, SHALL append this extension's path to the existing single `--load-extension=` list (or add the line when absent), SHALL keep every other line, symlink and file mode, and SHALL NOT duplicate the entry. Editing `~/.grok/config.toml` SHALL be opt-in through `--grok` and SHALL follow the `grok-theme` capability.
 
 #### Scenario: Opt-in flag merge
 - **WHEN** the installer runs with `--load-extension-flag` twice

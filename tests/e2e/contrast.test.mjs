@@ -38,6 +38,36 @@ const RESOLVE = `(selector) => {
 }`;
 
 const CHECKS = {
+  x: [
+    ['body', 4.5, 'primary text on page'],
+    ['#secondary', 4.5, 'secondary text'],
+    ['#muted', 3, 'tertiary text'],
+    ['#sidebar', 4.5, 'sidebar text'],
+    ['#dialog', 4.5, 'dialog text'],
+    ['#input', 4.5, 'input text'],
+    ['#button', 4.5, 'neutral filled button label'],
+    ['#scope', 4.5, 'matching scoped text'],
+    ['#legacy', 4.5, 'legacy neutral text'],
+    ['#pressed', 4.5, 'pressed neutral primary text'],
+    ['#pressed-secondary', 4.5, 'pressed neutral secondary text'],
+    ['#pressed-muted', 3, 'pressed neutral tertiary text'],
+  ],
+  grok: [
+    ['body', 4.5, 'primary text on page'],
+    ['#secondary', 4.5, 'secondary text'],
+    ['#muted', 3, 'tertiary text'],
+    ['#link', 4.5, 'link text'],
+    ['#sidebar', 4.5, 'sidebar text'],
+    ['#dialog', 4.5, 'dialog text'],
+    ['#input', 4.5, 'input text'],
+    ['#button', 4.5, 'neutral filled button label'],
+    ['#scope', 4.5, 'matching scoped text'],
+    ['#deep', 4.5, 'deepest surface text'],
+    ['#deep-hover', 4.5, 'deepest hover surface text'],
+    ['#deep-secondary', 4.5, 'deepest secondary text'],
+    ['#deep-muted', 3, 'deepest tertiary text'],
+    ['#deep-link', 4.5, 'deepest link text'],
+  ],
   notion: [
     ['body', 4.5, 'primary text on page'],
     ['#sidebar', 4.5, 'secondary text on sidebar'],
@@ -141,7 +171,18 @@ const REMAPPED = {
     ['#call-error', 4.5, 'remapped error text on the call screen'],
   ],
 };
-const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/', gitlab: 'https://git.squintopera.com/' };
+const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/', gitlab: 'https://git.squintopera.com/', x: 'https://x.com/', grok: 'https://grok.com/' };
+const NATIVE_X = [
+  ['body',4.5,'native body text'],
+  ['#timeline',4.5,'native timeline text'],
+  ['#secondary',4.5,'native secondary text'],
+  ['#sidebar',4.5,'native sidebar text'],
+  ['#sidebar-secondary',4.5,'native sidebar secondary text'],
+  ['#sticky',4.5,'native sticky header text'],
+  ['#inline',4.5,'native inline text'],
+  ['#important',4.5,'native priority text'],
+  ['#inverted',4.5,'native inverted button label'],
+];
 
 let browser;
 let options;
@@ -164,6 +205,9 @@ for (const theme of themes) {
     const cases = [
       { app: 'notion', mode: theme.mode, checks: CHECKS.notion },
       { app: 'gitlab', mode: theme.mode, checks: CHECKS.gitlab },
+      { app: 'x', mode: theme.mode, checks: CHECKS.x },
+      { app: 'x', client: 'native', mode: theme.mode, checks: NATIVE_X },
+      { app: 'grok', mode: theme.mode, checks: CHECKS.grok },
       { app: 'slack', mode: theme.mode, checks: theme.mode === 'light' ? [...CHECKS.slack, ...PRESERVED_LIGHT.slack] : CHECKS.slack },
       // Slack cannot follow the system appearance, so it is also themed when
       // its own mode is the opposite one, with status colours remapped.
@@ -172,9 +216,10 @@ for (const theme of themes) {
       // screen takes the palette only under dark palettes.
       { app: 'meet', mode: 'light', checks: theme.mode === 'light' ? [...CHECKS.meet, ...PRESERVED_LIGHT.meet] : [...CHECKS.meet, ...MEET_CALL, ...REMAPPED.meet] },
     ];
-    for (const { app, mode, checks } of cases) {
-      const page = await browser.open(`${URLS[app]}?mode=${mode}`);
+    for (const { app, mode, checks, client } of cases) {
+      const page = await browser.open(`${URLS[app]}?mode=${mode}${client === 'native' ? '&client=native' : ''}`);
       await page.waitFor(`document.documentElement.getAttribute('data-omarchy-adapters') === '${app}' && getComputedStyle(document.documentElement).getPropertyValue('--omarchy-background').trim() === '${theme.colors.background}'`);
+      if(client==='native') await page.waitFor(`getComputedStyle(document.querySelector('#timeline')).backgroundColor === 'rgb(${C.triplet(theme.colors.background)})'`);
       for (const [selector, min, label] of checks) {
         const { fg, bg } = await page.eval(`(${RESOLVE})(${JSON.stringify(selector)})`);
         const ratio = C.contrast(fg, bg);

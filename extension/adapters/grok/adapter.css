@@ -1,0 +1,60 @@
+/* Grok.com semantic tokens inspected on 2026-10-13 in its public stylesheet:
+   https://cdn.grok.com/_next/static/chunks/01_1py3b_-l92.css
+   The warm UI redeclares tokens on body, so map both declaration scopes.
+   Named ramps, statuses, diffs, syntax, incognito and branded accents stay
+   app-owned. Explicit descendant light/dark scopes retain their tokens. */
+html[data-omarchy-adapters~="grok"],
+html[data-omarchy-adapters~="grok"] > body {
+  --surface-base: var(--omarchy-background) !important;
+  --surface-inset: var(--omarchy-mix-4) !important;
+  --surface-l1: var(--omarchy-mix-4) !important;
+  --surface-l1-hover: var(--omarchy-mix-8) !important;
+  --surface-l2: var(--omarchy-mix-8) !important;
+  --surface-l2-active: var(--omarchy-mix-8) !important;
+  --surface-l3: var(--omarchy-mix-8) !important;
+  --surface-l4: var(--omarchy-mix-8) !important;
+  --surface-l4-hover: var(--omarchy-mix-8) !important;
+  --surface-elevated: var(--omarchy-mix-3) !important;
+  --surface-invert: var(--omarchy-text) !important;
+  --surface-user-bubble: var(--omarchy-mix-8) !important;
+  --surface-composer: var(--omarchy-mix-4) !important;
+  --fg-primary: var(--omarchy-text) !important;
+  --fg-secondary: var(--omarchy-text-secondary) !important;
+  --fg-tertiary: var(--omarchy-text-tertiary) !important;
+  --fg-quaternary: var(--omarchy-text-disabled) !important;
+  --fg-invert: var(--omarchy-background) !important;
+  --fg-link: var(--omarchy-accent-text) !important;
+  --fg-link-hover: var(--omarchy-accent-text) !important;
+  --border-l1: var(--omarchy-mix-12) !important;
+  --border-l2: var(--omarchy-mix-20) !important;
+  --border-l3: var(--omarchy-mix-28) !important;
+  --border-composer: var(--omarchy-mix-40) !important;
+  --ring: var(--omarchy-accent-text) !important;
+  --button-filled: var(--omarchy-text) !important;
+  --button-filled-hover: var(--omarchy-text) !important;
+  --button-filled-active: var(--omarchy-text) !important;
+  --button-primary: var(--omarchy-text) !important;
+  --button-primary-hover: var(--omarchy-text) !important;
+  --button-secondary: var(--omarchy-mix-4) !important;
+  --button-secondary-hover: var(--omarchy-mix-8) !important;
+  --button-ghost-surface-hover: var(--omarchy-mix-3) !important;
+  --button-ghost-hover: var(--omarchy-mix-4) !important;
+  --button-ghost-active: var(--omarchy-mix-8) !important;
+  --button-secondary-fill: var(--omarchy-mix-4) !important;
+  --button-secondary-fill-hover: var(--omarchy-mix-8) !important;
+  --button-secondary-fill-active: var(--omarchy-mix-8) !important;
+  --input: var(--omarchy-mix-4) !important;
+  --input-hover: var(--omarchy-mix-4) !important;
+  --input-border: var(--omarchy-mix-40) !important;
+  --input-border-focus: var(--omarchy-accent-text) !important;
+  --input-background: var(--omarchy-mix-4) !important;
+  --input-button-background: var(--omarchy-mix-8) !important;
+  --input-button-background-hover: var(--omarchy-mix-8) !important;
+  --toggle-border: var(--omarchy-mix-20) !important;
+  --toggle-selected: var(--omarchy-mix-8) !important;
+  --background-color: var(--omarchy-background) !important;
+  --background: var(--omarchy-background) !important;
+  --popover: var(--omarchy-mix-3) !important;
+  --card: var(--omarchy-mix-4) !important;
+  --card-hover: var(--omarchy-mix-8) !important;
+}

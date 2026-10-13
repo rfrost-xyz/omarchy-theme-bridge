@@ -1,6 +1,6 @@
 # omarchy-theme-bridge
 
-Keeps the Notion, Slack, Google Meet and Squint Opera GitLab web apps in Chromium
+Keeps the Notion, Slack, Google Meet, Squint Opera GitLab, X and Grok.com web apps in Chromium
 in step with the active Omarchy theme, including `omarchy-launch-webapp` app windows. When you run
 `omarchy theme set`, open pages recolour within about a second, with no reload
 and no Chromium restart. It can also switch Grok Build to its terminal theme,
@@ -19,10 +19,11 @@ It has three parts:
   request except `get`.
 - **Transport** (`extension/background.js`, `extension/content/`): the
   extension keeps the helper connected, stores the last good palette and
-  exposes it to Notion, Slack, Meet and GitLab pages as `--omarchy-*` CSS custom
+  exposes it to the supported app pages as `--omarchy-*` CSS custom
   properties.
 - **Adapters** (`extension/adapters/notion/`, `extension/adapters/slack/`,
-  `extension/adapters/meet/`, `extension/adapters/gitlab/`): one
+  `extension/adapters/meet/`, `extension/adapters/gitlab/`,
+  `extension/adapters/x/`, `extension/adapters/grok/`): one
   CSS file per app that maps those properties onto the app's own colour tokens.
   Each can be turned off on the extension's options page.
 
@@ -37,7 +38,7 @@ It has three parts:
 2. Install. Choose one way to load the extension:
 
    - `./install.sh` leaves Omarchy's Chromium flags alone. Then, in each Chromium
-     profile that opens Notion, Slack, Meet or GitLab, open `chrome://extensions`, turn on
+     profile that opens a supported app, open `chrome://extensions`, turn on
      Developer mode, choose **Load unpacked** and select
      `~/.local/share/omarchy-theme-bridge/extension`. Web app launchers can
      name a profile with `--profile-directory` (see
@@ -74,6 +75,14 @@ It has three parts:
    In GitLab at `git.squintopera.com`, choose **System** appearance in your
    preferences. The GitLab adapter applies while its mode matches Omarchy.
    After updating or reloading the extension, reload open GitLab pages once.
+
+   X (`x.com`) and Grok.com each have their own adapter switch. Their light or
+   dark appearance must match Omarchy for the palette to apply; a mismatch or
+   an unrecognised appearance leaves the site's colours in place and is
+   reported on the options page. Choose a matching appearance in the app, or
+   system appearance where offered. Reload the extension and open X/Grok.com
+   pages once after updating. Grok.com's browser adapter is separate from the
+   optional Grok Build terminal setup below.
 
 ### Grok Build
 
@@ -156,12 +165,13 @@ over because the extension ID is unchanged.
 | --- | --- |
 | `nativeMessaging` | Talk to the read-only helper that reads the Omarchy palette. Only this extension's ID may start it. |
 | `storage` | Keep the last good palette, helper status and adapter switches, so pages are coloured straight away after a restart. |
-| Content scripts on `https://app.notion.com/*`, `https://app.slack.com/*`, `https://meet.google.com/*` and `https://git.squintopera.com/*` | Add the palette properties and adapter styles to those four apps. No other site is matched, and there are no host permissions, `tabs`, `scripting` or web-accessible resources. |
+| Content scripts on `https://app.notion.com/*`, `https://app.slack.com/*`, `https://meet.google.com/*`, `https://git.squintopera.com/*`, `https://x.com/*` and `https://grok.com/*` | Add the palette properties and adapter styles to those six apps. No other site is matched, and there are no host permissions, `tabs`, `scripting` or web-accessible resources. |
 
 ## How the adapters map colours
 
-Adapters only assign the apps' own CSS variables; they do not restyle layout
-classes. In Notion, overrides apply to the page root and to theme containers in
+Adapters map colour through CSS variables without restyling layout classes.
+X's signed-in client also needs the bounded neutral declaration translation
+described below. In Notion, overrides apply to the page root and to theme containers in
 the same mode, so deliberately opposite-mode elements keep Notion's styling.
 Slack's handling of tooltips, reactions and its two modes is described below.
 
@@ -207,6 +217,32 @@ Slack's handling of tooltips, reactions and its two modes is described below.
   confirmation and danger button fills, and opposite-mode scopes stay GitLab's.
   Select **System** appearance in GitLab's preferences so its mode follows
   Omarchy. In a mismatched fixed mode, the adapter waits and reports the mismatch.
+
+- **X** (only `x.com`): semantic `--x-*` neutral surfaces, text, borders,
+  menus and buttons, plus the current stylesheet's legacy neutral HSL slots.
+  The fixed page-root backdrop consumes the mapped background. The adapter
+  reads X's `data-theme` marker in the public client and its untouched inline
+  body background in the classic signed-in client, recognising light and
+  dark; it waits for other values. The classic client's fixed neutral colour
+  declarations in its named React Native stylesheet and inline styles are
+  translated to palette variables, without selecting generated classes or
+  changing layout. Newly inserted declarations are checked within a second.
+  Original values and priorities restore on disable or extension removal
+  while they are still the adapter's. Later app edits are preserved.
+  Native media fallbacks and a private original-colour cascade preserve
+  shared and inherited SVG colours, including native colour animations.
+  Status, destructive, badges, brand colours, authored media
+  and gradients keep X's values. Appearance changes are picked up by the
+  existing two-second visible-page re-check. Body inline background stays
+  untouched, so the adapter cannot mistake its own styling for X's mode.
+
+- **Grok.com** (only `grok.com`): semantic neutral `--surface-*`, `--fg-*`,
+  `--border-*`, `--input-*` and `--button-*` tokens, including composer and
+  user-bubble surfaces. Both root and body receive the mapping because the
+  app redeclares warm neutral colours on the body. The adapter reads the
+  app's light/dark root classes; named ramps, danger, success, warning,
+  incognito, diff, syntax, authored media and branded gradients stay the
+  app's own. Opposite appearance scopes retain their own colours.
 
 The transport also provides generic helpers every adapter can use:
 `--omarchy-mix-<n>` (background blended n% towards foreground),
@@ -280,6 +316,16 @@ tests.
   preserved meaning colours and stock-theme contrast. Signed-in project,
   merge request and pipeline pages have not been checked live. Fixed colours
   outside the semantic tokens retain GitLab's styling.
+- **X and Grok.com** (2026-10-13): public signed-out pages and current public
+  stylesheets were inspected. Synthetic tests cover neutral tokens, both
+  modes, live updates, independent persistent switches, preserved meaning
+  colours, origin isolation and stock-theme contrast. X's signed-in timeline
+  style model was also inspected; synthetic native-client tests cover fixed
+  neutral declarations, CSSOM insertion, inline edits, preservation and
+  restoration. Live verification of the corrected signed-in mapping requires
+  reloading the updated extension. Grok chat histories and account-only
+  screens remain unverified. App updates or unrecognised fixed colours may
+  leave some surfaces unchanged.
 - **Light and dark switching**: Notion follows the desktop only when set to
   use the system setting; until then the Notion adapter leaves it uncoloured.
   Slack in the browser cannot follow the desktop, so it stays in its chosen

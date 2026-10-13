@@ -191,7 +191,7 @@ elif [[ -f $FLAGS_FILE ]] && flags_edit mentions 2>/dev/null; then
   echo "Chromium already loads it: reload Omarchy Theme Bridge in chrome://extensions (or restart Chromium) to pick up updated files."
 else
   cat <<EOF
-Load the extension once in each Chromium profile that opens Notion, Slack or Google Meet.
+Load the extension once in each Chromium profile that opens Notion, Slack, Google Meet, Squint Opera GitLab, X or Grok.com.
 Your launchers' --profile-directory flags (~/.local/share/applications/*.desktop)
 show which profiles they use:
   1. Open chrome://extensions and turn on Developer mode.
@@ -206,3 +206,4 @@ if ((LEGACY_FOUND)); then
   echo "Migrated from $LEGACY_NAME: its files and native host were removed. If you loaded the extension unpacked, remove the old entry in chrome://extensions and load it again from $EXTENSION_DIR."
 fi
 echo "Set Notion to use the system appearance so it switches between light and dark with the Omarchy theme. Slack and Google Meet are themed in either of their modes."
+echo "GitLab, X and Grok.com are themed while their light or dark appearance matches Omarchy. Reload their open pages once after updating the extension."

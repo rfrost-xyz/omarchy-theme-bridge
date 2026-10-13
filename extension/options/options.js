@@ -20,8 +20,11 @@ const HOST = {
 };
 
 async function render() {
-  const keys = ['hostStatus', 'disabledAdapters', ...adapterIds.map((id) => `adapter:${id}`)];
+  const keys = ['hostStatus', 'workerStatus', 'disabledAdapters', ...adapterIds.map((id) => `adapter:${id}`)];
   const values = await chrome.storage.local.get(keys);
+  const worker = document.getElementById('worker');
+  worker.hidden = values.workerStatus?.state !== 'stale';
+  worker.textContent = worker.hidden ? '' : 'Out of date: this profile still runs an older background script. Reload Omarchy Theme Bridge in chrome://extensions to finish the update.';
   const host = values.hostStatus;
   document.getElementById('host').textContent = host ? (HOST[host.state] ?? HOST.disconnected)(host.detail) : 'Helper: not connected yet';
   const disabled = new Set(values.disabledAdapters ?? []);

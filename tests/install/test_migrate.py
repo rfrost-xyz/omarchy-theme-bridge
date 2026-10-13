@@ -107,9 +107,18 @@ class MigrateTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(self.data, ".installed-by-omarchy-theme-bridge")))
         self.assertIn("load it again from", out)
         self.assertIn(f"{self.data}/extension", out)
+        self.assertIn("Restart Chromium once so it reads the new flag", out)
+        self.assertIn("Then reload Omarchy Theme Bridge in chrome://extensions in each Chromium profile", out)
         self.run_script("uninstall.sh")
         self.assertEqual(self.read(self.flags), FLAGS)
         self.assertFalse(os.path.exists(self.data))
+
+    def test_unpacked_migration_says_load_again_only(self):
+        self.make_legacy()
+        out = self.run_script("install.sh")
+        self.assertIn("load it again from", out)
+        self.assertNotIn("Updated:", out)
+        self.assertNotIn("Load the extension once", out)
 
     def test_migrates_a_flags_install_that_added_its_own_line(self):
         self.write(self.flags, "--ozone-platform=wayland\n")

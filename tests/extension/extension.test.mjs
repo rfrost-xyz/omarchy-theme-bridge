@@ -37,6 +37,25 @@ test('key yields the fixed extension ID used by the helper manifest', () => {
   assert.equal(id, EXTENSION_ID);
 });
 
+// Mirrors the marker in background.js: SHA-256 of the worker script with the
+// marker blanked, then each imported script in order.
+function workerBuild() {
+  const read = (file) => readFileSync(new URL(`../../extension/${file}`, import.meta.url), 'utf8');
+  const worker = read('background.js');
+  const imports = [...worker.matchAll(/importScripts\(([^)]*)\)/g)].flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((n) => n[1]));
+  const hash = createHash('sha256').update(worker.replace(/^const WORKER_BUILD = '[0-9a-f]*';$/m, "const WORKER_BUILD = '';"));
+  for (const file of imports) hash.update('\0').update(read(file));
+  return { worker, imports, build: hash.digest('hex').slice(0, 12) };
+}
+
+test('worker build marker matches the worker script and its imports', () => {
+  const { worker, imports, build } = workerBuild();
+  assert.deepEqual(imports, ['content/colour.js']);
+  const markers = [...worker.matchAll(/^const WORKER_BUILD = '([0-9a-f]+)';$/gm)].map((m) => m[1]);
+  assert.equal(markers.length, 1, 'background.js declares WORKER_BUILD once');
+  assert.equal(markers[0], build, `worker code changed: set WORKER_BUILD in extension/background.js to '${build}'`);
+});
+
 test('validPalette accepts only clean palettes', () => {
   const ok = { type: 'palette', name: 'tokyo-night', mode: 'dark', colors: { background: '#000000', foreground: '#ffffff', accent: '#7aa2f7' } };
   assert.deepEqual(C.validPalette(ok), { name: 'tokyo-night', mode: 'dark', colors: ok.colors });

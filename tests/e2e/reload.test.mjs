@@ -1,6 +1,5 @@
 // Separate browser: an unpacked --load-extension extension does not come back
-// after runtime.reload() in headless Chromium, and a profile that has already
-// been relaunched stops answering after the reload.
+// after runtime.reload() in headless Chromium.
 import { test, after } from 'node:test';
 import { Browser } from './browser.mjs';
 

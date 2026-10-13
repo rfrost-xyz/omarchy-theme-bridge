@@ -299,7 +299,33 @@ class InstallTest(unittest.TestCase):
     def test_reinstall_says_reload_instead_of_restart(self):
         self.run_script("install.sh", "--load-extension-flag")
         out = self.run_script("install.sh", "--load-extension-flag")
-        self.assertIn("reload Omarchy Theme Bridge in chrome://extensions", out)
+        self.assertIn("Chromium already loads it: reload Omarchy Theme Bridge in chrome://extensions in each Chromium profile", out)
+        self.assertIn("Restarting Chromium alone keeps the previous background script", out)
+        self.assertNotIn("or restart Chromium", out)
+
+    def test_unpacked_reinstall_says_reload(self):
+        self.run_script("install.sh")
+        out = self.run_script("install.sh")
+        self.assertIn("Updated: reload Omarchy Theme Bridge in chrome://extensions in each Chromium profile", out)
+        self.assertIn("Restarting Chromium alone keeps the previous background script", out)
+        self.assertNotIn("Load the extension once", out)
+
+    def test_first_install_with_flags_already_naming_it_says_restart(self):
+        with open(self.flags, "w") as handle:
+            handle.write(FLAGS.replace(OMARCHY_EXTENSIONS, f"{OMARCHY_EXTENSIONS},{self.data}/extension"))
+        out = self.run_script("install.sh")
+        self.assertIn("restart Chromium once so it loads the extension", out)
+        self.assertNotIn("Restarting Chromium alone", out)
+
+    def test_first_install_has_no_update_reload_notice(self):
+        for args in ((), ("--load-extension-flag",)):
+            with self.subTest(args=args):
+                shutil.rmtree(self.data, ignore_errors=True)
+                with open(self.flags, "w") as handle:
+                    handle.write(FLAGS)
+                out = self.run_script("install.sh", *args)
+                self.assertNotIn("Restarting Chromium alone", out)
+                self.assertNotIn("Updated:", out)
 
     def test_non_ascii_install_path_uninstalls_cleanly(self):
         data_home = os.path.join(self.home, "zoë")

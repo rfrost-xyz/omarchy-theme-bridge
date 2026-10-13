@@ -40,7 +40,7 @@ The installer SHALL NOT modify Omarchy-managed files, browser policies, themes, 
 - **THEN** the flags file is byte-for-byte unchanged and setup instructions for loading the unpacked extension are printed
 
 ### Requirement: Clean removal
-The uninstaller SHALL remove only what the installer added, including its flags entry. When nothing else has changed that line since installation, it SHALL restore the flags file byte for byte, including line endings, final newline and an originally empty `--load-extension=` list; otherwise it SHALL remove only this extension's entry and keep the later additions. If the flags file cannot be written, it SHALL keep its files and explain how to remove the entry by hand. It SHALL also remove a marked legacy `omarchy-webapp-theme` install by the same rules.
+The uninstaller SHALL remove only installer additions, including its flags entry and marked legacy `omarchy-webapp-theme` installs. If the flags line is unchanged since install, it SHALL restore the file byte for byte, including line endings, final newline and an originally empty `--load-extension=` list; otherwise it SHALL retain later additions. If the flags file is unwritable, it SHALL keep its installed files and explain manual entry removal.
 
 #### Scenario: Uninstall after flag merge
 - **WHEN** the uninstaller runs after an install with the flag merge
@@ -63,7 +63,7 @@ The uninstaller SHALL remove only what the installer added, including its flags 
 - **THEN** its flags entry, native host manifest and directory are removed as well
 
 ### Requirement: Legacy install migration
-The installer SHALL migrate an install made under the former name `omarchy-webapp-theme` when its directory carries the legacy ownership marker. It SHALL remove the legacy `--load-extension` entry and add the new extension path in its place, carry the Grok record over so uninstall can still revert Grok's configuration, remove the legacy native host manifest only when it points at the legacy helper, and remove the legacy directory. The dry run SHALL list each of these steps. An unmarked legacy directory SHALL be left alone and reported. If the legacy flags entry cannot be edited safely, the installer SHALL change nothing and explain how to remove it by hand.
+For marked legacy `omarchy-webapp-theme` installs, the installer SHALL replace the flags entry with the new path, carry over the Grok record for uninstall, remove the directory and remove the native host manifest only if it points at the legacy helper. Dry runs SHALL list every step. Unmarked legacy directories SHALL remain untouched and be reported. Unsafe legacy flag edits SHALL leave everything unchanged with manual removal instructions.
 
 #### Scenario: Migrate a flags install
 - **WHEN** the installer runs over a legacy install that added a `--load-extension` entry

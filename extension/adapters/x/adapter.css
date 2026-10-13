@@ -1,0 +1,79 @@
+/* X semantic tokens observed in its public web stylesheet on 2026-10-13.
+   Keep primitive ramps, brand, engagement, status, badge and media colours.
+   Explicit opposite-mode scopes keep X's own declarations. */
+html[data-omarchy-adapters~="x"],
+html[data-omarchy-adapters~="x"][data-omarchy-mode="light"] [data-theme="light"],
+html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"] [data-theme="dark"] {
+  --x-bg-primary: var(--omarchy-background) !important;
+  --x-bg-secondary: var(--omarchy-mix-4) !important;
+  --x-bg-tertiary: var(--omarchy-mix-8) !important;
+  --x-bg-quaternary: var(--omarchy-mix-4) !important;
+  --x-bg-sheets: var(--omarchy-mix-4) !important;
+  --x-bg-modal: var(--omarchy-mix-4) !important;
+  --x-bg-inputs: var(--omarchy-mix-4) !important;
+  --x-fg-primary: var(--omarchy-text) !important;
+  --x-fg-secondary: var(--omarchy-text-secondary) !important;
+  --x-fg-tertiary: var(--omarchy-text-tertiary) !important;
+  --x-fg-inverted: var(--omarchy-background) !important;
+  --x-border-normal: var(--omarchy-mix-12) !important;
+  --x-border-hover: var(--omarchy-mix-20) !important;
+  --x-border-active: var(--omarchy-mix-40) !important;
+  --x-btn-primary: var(--omarchy-text) !important;
+  --x-btn-primary-hover: var(--omarchy-text) !important;
+  --x-btn-primary-pressed: var(--omarchy-text) !important;
+  --x-btn-secondary: var(--omarchy-mix-4) !important;
+  --x-btn-secondary-hover: var(--omarchy-mix-8) !important;
+  --x-btn-secondary-pressed: var(--omarchy-mix-8) !important;
+  --x-btn-tertiary: var(--omarchy-mix-4) !important;
+  --x-btn-tertiary-hover: var(--omarchy-mix-8) !important;
+  --x-btn-tertiary-pressed: var(--omarchy-mix-8) !important;
+  --x-btn-tertiary-opaque: var(--omarchy-mix-4) !important;
+  --x-btn-tertiary-opaque-hover: var(--omarchy-mix-8) !important;
+  --x-btn-tertiary-opaque-pressed: var(--omarchy-mix-8) !important;
+  --x-btn-inverted: var(--omarchy-background) !important;
+  --x-btn-inverted-hover: var(--omarchy-mix-4) !important;
+  --x-btn-inverted-pressed: var(--omarchy-mix-8) !important;
+  --x-btn-ghost-hover: var(--omarchy-mix-4) !important;
+  --x-btn-ghost-pressed: var(--omarchy-mix-8) !important;
+  --x-hover-subtle: var(--omarchy-mix-4) !important;
+  --x-ring: var(--omarchy-accent-text) !important;
+  --x-shadow-focus: 0 0 0 2px var(--omarchy-accent-text) !important;
+
+  /* X also consumes neutral HSL component slots. Relative HSL preserves
+     their existing hsl(var(--token)) consumers without transport changes. */
+  --color-background: from var(--omarchy-background) h s l !important;
+  --color-text: from var(--omarchy-text) h s l !important;
+  --color-modal-background: from var(--omarchy-mix-4) h s l !important;
+  --color-nested-border: from var(--omarchy-mix-12) h s l !important;
+  --background: from var(--omarchy-background) h s l !important;
+  --foreground: from var(--omarchy-text) h s l !important;
+  --card: from var(--omarchy-mix-4) h s l !important;
+  --card-foreground: from var(--omarchy-text) h s l !important;
+  --popover: from var(--omarchy-mix-4) h s l !important;
+  --popover-foreground: from var(--omarchy-text) h s l !important;
+  --primary: from var(--omarchy-text) h s l !important;
+  --secondary: from var(--omarchy-mix-4) h s l !important;
+  --secondary-foreground: from var(--omarchy-text-secondary) h s l !important;
+  --muted: from var(--omarchy-mix-4) h s l !important;
+  --muted-foreground: from var(--omarchy-text-secondary) h s l !important;
+  --border: from var(--omarchy-mix-12) h s l !important;
+  --input: from var(--omarchy-mix-40) h s l !important;
+  --ring: from var(--omarchy-accent-text) h s l !important;
+}
+
+/* The public page fixes the root backdrop to white/black rather than a
+   token. Only that backdrop needs a direct colour declaration. */
+html[data-omarchy-adapters~="x"] {
+  background-color: var(--x-bg-primary) !important;
+}
+
+/* This branded tint normally mixes against bg-primary. Keep its native
+   white/black base when that neutral token takes the Omarchy palette. */
+html[data-omarchy-adapters~="x"][data-omarchy-mode="light"],
+html[data-omarchy-adapters~="x"][data-omarchy-mode="light"] [data-theme="light"] {
+  --x-brand-subtle: color-mix(in srgb, var(--x-fg-brand) 10%, var(--x-white)) !important;
+}
+html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"],
+html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"] [data-theme="dark"] {
+  --x-brand-subtle: color-mix(in srgb, var(--x-fg-brand) 14%, var(--x-black)) !important;
+}

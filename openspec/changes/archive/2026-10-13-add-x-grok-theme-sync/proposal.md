@@ -24,4 +24,4 @@ None.
 
 ## Impact
 
-New adapter directories, manifest entries, test fixtures, browser routing and documentation. Runtime permissions and dependencies, the native helper, palette transport and installer behaviour remain unchanged.
+New adapter directories, manifest entries, test fixtures, browser routing and documentation. Two existing installer requirement descriptions are condensed without changing their meaning to satisfy the current strict validator. Runtime permissions and dependencies, the native helper, palette transport and installer behaviour remain unchanged.

@@ -10,10 +10,16 @@ after(() => browser?.close());
 test('reloading the extension removes stale styling from open pages', async () => {
   browser = await Browser.launch();
   browser.setTheme('tokyo-night', 'mode = "dark"\nbackground = "#1a1b26"\nforeground = "#a9b1d6"\naccent = "#7aa2f7"\n');
-  const page = await browser.open('https://app.slack.com/?mode=dark');
-  await page.waitFor("document.documentElement.getAttribute('data-omarchy-adapters') === 'slack'");
+  const pages = [];
+  for (const [id, host] of [['slack', 'app.slack.com'], ['x', 'x.com'], ['grok', 'grok.com']]) {
+    const page = await browser.open(`https://${host}/?mode=dark`);
+    await page.waitFor(`document.documentElement.getAttribute('data-omarchy-adapters') === '${id}'`);
+    pages.push(page);
+  }
   const options = await browser.options();
   await options.eval('setTimeout(() => chrome.runtime.reload(), 50); true');
-  await page.waitFor("document.getElementById('omarchy-theme-bridge-palette') === null && !document.documentElement.hasAttribute('data-omarchy-mode') && !document.documentElement.hasAttribute('data-omarchy-adapters')", 6000);
-  await page.close();
+  for (const page of pages) {
+    await page.waitFor("document.getElementById('omarchy-theme-bridge-palette') === null && !document.documentElement.hasAttribute('data-omarchy-mode') && !document.documentElement.hasAttribute('data-omarchy-adapters')", 6000);
+    await page.close();
+  }
 });

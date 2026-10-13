@@ -1,0 +1,112 @@
+<!doctype html>
+<!-- Synthetic dependency closure of X's public semantic tokens, inspected
+     2026-10-13 at abs.twimg.com/x-web/x-web/assets/styles-xqUjldZF.css.
+     Consumers represent UI roles; no account data or app bundle is loaded. -->
+<html data-theme="{{MODE}}"><head><meta charset="utf-8"><title>X fixture</title><style>
+:root, [data-theme="light"] {
+  --x-black: #000; --x-white: #fff;
+  --x-blue-500: #1d9bf0; --x-red-500: #f4212e;
+  --x-green-500: #00ba7c; --x-yellow-500: #ffd400;
+  --x-magenta-500: #f91880; --x-plum-500: #c936cc;
+  --x-bg-primary: #fff; --x-bg-secondary: #f2f2f2;
+  --x-bg-tertiary: #ebebeb; --x-bg-quaternary: #0000000a;
+  --x-bg-sheets: #fff; --x-bg-modal: #fff; --x-bg-inputs: #0000000a;
+  --x-fg-primary: #000; --x-fg-secondary: #0009; --x-fg-tertiary: #0000004d;
+  --x-fg-inverted: #fff; --x-fg-on-color: #fff; --x-fg-on-brand: var(--x-fg-on-color);
+  --x-fg-brand: var(--x-blue-500); --x-fg-destructive: var(--x-red-500);
+  --x-brand-subtle: color-mix(in srgb, var(--x-fg-brand) 10%, var(--x-bg-primary));
+  --x-fg-success: var(--x-green-500); --x-fg-warning: var(--x-yellow-500);
+  --x-fg-subscribe: var(--x-plum-500);
+  --x-bg-destructive: #fedee3; --x-bg-success: #edfff9; --x-bg-warning: #fffdea;
+  --x-bg-info: #eafaff; --x-bg-subscribe: #fae0fa;
+  --x-border-normal: #00000026; --x-border-hover: #0003;
+  --x-border-active: #0000004d; --x-border-media: #0000000a;
+  --x-border-destructive: var(--x-red-500);
+  --x-btn-primary: #000; --x-btn-primary-hover: #000c; --x-btn-primary-pressed: #000000b3;
+  --x-btn-secondary: #ebebeb; --x-btn-secondary-hover: #d9d9d9; --x-btn-secondary-pressed: #ccc;
+  --x-btn-tertiary: #0000000a; --x-btn-tertiary-hover: #00000014; --x-btn-tertiary-pressed: #00000026;
+  --x-btn-brand: var(--x-blue-500); --x-btn-brand-hover: #0083eb;
+  --x-btn-destructive: var(--x-red-500); --x-btn-destructive-hover: #d11a28;
+  --x-ring: #000;
+  --background: 0 0% 100%; --foreground: 210 25% 8%;
+  --card: 180 14% 97%; --card-foreground: 210 25% 8%;
+  --popover: 0 0% 100%; --popover-foreground: 210 25% 8%;
+  --color-background: 0 0% 100%; --color-text: 210 25% 8%;
+  --color-badge: 204 88% 53%; --chart-3: 356 91% 54%;
+  --chat-accent: 204 88% 53%; --destructive: 356 91% 54%;
+  background-color: #fff;
+}
+:root[data-theme="dark"], [data-theme="dark"] {
+  --x-bg-primary: #000; --x-bg-secondary: #141414; --x-bg-tertiary: #262626;
+  --x-bg-quaternary: #ffffff0a; --x-bg-sheets: #141414;
+  --x-bg-modal: #141414; --x-bg-inputs: #ffffff14;
+  --x-fg-primary: #fff; --x-fg-secondary: #fff9; --x-fg-tertiary: #ffffff4d;
+  --x-fg-inverted: #000;
+  --x-brand-subtle: color-mix(in srgb, var(--x-fg-brand) 14%, var(--x-bg-primary));
+  --x-border-normal: #ffffff26; --x-border-hover: #fff3;
+  --x-border-active: #ffffff4d; --x-border-media: #ffffff0a;
+  --x-btn-primary: #fff; --x-btn-primary-hover: #fffc; --x-btn-primary-pressed: #ffffffb3;
+  --x-btn-secondary: #262626; --x-btn-secondary-hover: #333; --x-btn-secondary-pressed: #4d4d4d;
+  --x-btn-tertiary: #ffffff1a; --x-btn-tertiary-hover: #ffffff26; --x-btn-tertiary-pressed: #fff3;
+  --x-ring: #fff;
+  --background: 0 0% 0%; --foreground: 200 7% 91%;
+  --card: 220 12% 10%; --card-foreground: 200 7% 91%;
+  --popover: 0 0% 0%; --popover-foreground: 200 7% 91%;
+  --color-background: 0 0% 0%; --color-text: 200 7% 91%;
+  --destructive: 0 62.8% 30.6%;
+  background-color: #000;
+}
+body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); }
+#sidebar { background: var(--x-bg-secondary); color: var(--x-fg-secondary); }
+#secondary { color: var(--x-fg-secondary); }
+#muted { color: var(--x-fg-tertiary); }
+#menu, #dialog { background: var(--x-bg-modal); color: var(--x-fg-primary); border: 1px solid var(--x-border-normal); }
+#input { background: var(--x-bg-inputs); color: var(--x-fg-primary); border: 1px solid var(--x-border-active); }
+#button { background: var(--x-btn-primary); color: var(--x-fg-inverted); }
+#button:hover { background: var(--x-btn-primary-hover); }
+#button:active { background: var(--x-btn-primary-pressed); }
+#neutral-button { background: var(--x-btn-secondary); color: var(--x-fg-primary); }
+#pressed { background: var(--x-btn-secondary-pressed); color: var(--x-fg-primary); }
+#pressed-secondary { color: var(--x-fg-secondary); }
+#pressed-muted { color: var(--x-fg-tertiary); }
+#scope, #opposite, .inserted { background: var(--x-bg-primary); color: var(--x-fg-primary); }
+#legacy { background: hsl(var(--card)); color: hsl(var(--card-foreground)); }
+#error { background: var(--x-bg-destructive); color: var(--x-fg-destructive); border: 1px solid var(--x-border-destructive); }
+#success { background: var(--x-bg-success); color: var(--x-fg-success); }
+#warning { background: var(--x-bg-warning); color: var(--x-fg-warning); }
+#badge { background: hsl(var(--color-badge)); color: #fff; }
+#verified { color: var(--x-blue-500); }
+#liked { color: var(--x-magenta-500); }
+#reposted { color: var(--x-green-500); }
+#subscribe { background: var(--x-bg-subscribe); color: var(--x-fg-subscribe); }
+#brand-button { background: var(--x-btn-brand); color: var(--x-fg-on-brand); }
+#brand-tint { background: var(--x-brand-subtle); color: var(--x-fg-brand); }
+#chart { color: hsl(var(--chart-3)); }
+#chat { color: hsl(var(--chat-accent)); }
+#destructive { color: hsl(var(--destructive)); }
+#media { background: linear-gradient(30deg, #8b5cf6, #ec4899); color: #fff; border: 1px solid var(--x-border-media); }
+#authored { background: #155e75; color: #fde047; }
+#syntax { color: #e83e8c; }
+</style><script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  document.getElementById('scope').dataset.theme = dark ? 'dark' : 'light';
+  document.getElementById('opposite').dataset.theme = dark ? 'light' : 'dark';
+});
+</script></head><body>
+<aside id="sidebar">Navigation</aside><main>
+<p>Timeline <span id="secondary">Secondary</span><span id="muted">Metadata</span></p>
+<div id="menu">Menu</div><div id="dialog">Dialog</div><input id="input" value="Search">
+<button id="button">Post</button><button id="neutral-button">Cancel</button>
+<div id="pressed">Pressed neutral control
+  <span id="pressed-secondary">Secondary label</span><span id="pressed-muted">Hint</span>
+</div>
+<div id="scope">Matching scope</div><div id="opposite">Opposite scope</div>
+<div id="legacy">Legacy neutral card</div>
+<div id="error">Error</div><div id="success">Success</div><div id="warning">Warning</div>
+<span id="badge">2</span><span id="verified">Verified</span><span id="liked">Liked</span><span id="reposted">Reposted</span>
+<span id="subscribe">Subscribe</span><button id="brand-button">Brand button</button>
+<div id="brand-tint">Branded tint</div>
+<span id="chart">Chart</span><span id="chat">Chat accent</span><span id="destructive">Destructive action</span>
+<div id="media">Authored media gradient</div><div id="authored">Authored colours</div><code id="syntax">keyword</code>
+</main></body></html>

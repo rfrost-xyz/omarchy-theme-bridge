@@ -38,6 +38,36 @@ const RESOLVE = `(selector) => {
 }`;
 
 const CHECKS = {
+  x: [
+    ['body', 4.5, 'primary text on page'],
+    ['#secondary', 4.5, 'secondary text'],
+    ['#muted', 3, 'tertiary text'],
+    ['#sidebar', 4.5, 'sidebar text'],
+    ['#dialog', 4.5, 'dialog text'],
+    ['#input', 4.5, 'input text'],
+    ['#button', 4.5, 'neutral filled button label'],
+    ['#scope', 4.5, 'matching scoped text'],
+    ['#legacy', 4.5, 'legacy neutral text'],
+    ['#pressed', 4.5, 'pressed neutral primary text'],
+    ['#pressed-secondary', 4.5, 'pressed neutral secondary text'],
+    ['#pressed-muted', 3, 'pressed neutral tertiary text'],
+  ],
+  grok: [
+    ['body', 4.5, 'primary text on page'],
+    ['#secondary', 4.5, 'secondary text'],
+    ['#muted', 3, 'tertiary text'],
+    ['#link', 4.5, 'link text'],
+    ['#sidebar', 4.5, 'sidebar text'],
+    ['#dialog', 4.5, 'dialog text'],
+    ['#input', 4.5, 'input text'],
+    ['#button', 4.5, 'neutral filled button label'],
+    ['#scope', 4.5, 'matching scoped text'],
+    ['#deep', 4.5, 'deepest surface text'],
+    ['#deep-hover', 4.5, 'deepest hover surface text'],
+    ['#deep-secondary', 4.5, 'deepest secondary text'],
+    ['#deep-muted', 3, 'deepest tertiary text'],
+    ['#deep-link', 4.5, 'deepest link text'],
+  ],
   notion: [
     ['body', 4.5, 'primary text on page'],
     ['#sidebar', 4.5, 'secondary text on sidebar'],
@@ -141,7 +171,7 @@ const REMAPPED = {
     ['#call-error', 4.5, 'remapped error text on the call screen'],
   ],
 };
-const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/', gitlab: 'https://git.squintopera.com/' };
+const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/', gitlab: 'https://git.squintopera.com/', x: 'https://x.com/', grok: 'https://grok.com/' };
 
 let browser;
 let options;
@@ -164,6 +194,8 @@ for (const theme of themes) {
     const cases = [
       { app: 'notion', mode: theme.mode, checks: CHECKS.notion },
       { app: 'gitlab', mode: theme.mode, checks: CHECKS.gitlab },
+      { app: 'x', mode: theme.mode, checks: CHECKS.x },
+      { app: 'grok', mode: theme.mode, checks: CHECKS.grok },
       { app: 'slack', mode: theme.mode, checks: theme.mode === 'light' ? [...CHECKS.slack, ...PRESERVED_LIGHT.slack] : CHECKS.slack },
       // Slack cannot follow the system appearance, so it is also themed when
       // its own mode is the opposite one, with status colours remapped.

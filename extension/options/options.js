@@ -37,7 +37,7 @@ async function render() {
       if (box.checked) current.delete(id); else current.add(id);
       await chrome.storage.local.set({ disabledAdapters: [...current] });
     });
-    label.append(box, ` ${id[0].toUpperCase()}${id.slice(1)}`);
+    label.append(box, ` ${id === 'grok' ? 'Grok.com' : id[0].toUpperCase() + id.slice(1)}`);
     const status = document.createElement('span');
     status.className = 'status';
     const state = values[`adapter:${id}`];

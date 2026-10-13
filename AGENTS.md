@@ -1,8 +1,8 @@
 # omarchy-theme-bridge
 
 A minimal Chromium extension and read-only native helper that keep web apps in
-step with the active Omarchy theme. Notion, Slack, Google Meet and Squint Opera
-GitLab are the supported web apps; others may be added as separate adapters.
+step with the active Omarchy theme. Notion, Slack, Google Meet, Squint Opera
+GitLab, X and Grok.com are the supported web apps; others may be added as separate adapters.
 Grok Build is the one supported terminal app, through its own terminal theme.
 See README.md for setup and limitations.
 
@@ -10,7 +10,8 @@ See README.md for setup and limitations.
 
 - Browser scope is Chromium on Omarchy and the web apps with an adapter: currently
   Notion (`app.notion.com`), Slack (`app.slack.com`), Google Meet
-  (`meet.google.com`) and Squint Opera GitLab (`git.squintopera.com`). Add an
+  (`meet.google.com`), Squint Opera GitLab (`git.squintopera.com`), X (`x.com`)
+  and Grok.com (`grok.com`). Add an
   app only as a new adapter with its own origin match; never widen to all sites. No other
   browsers, general stylesheet management or theme installation or switching.
 - Grok Build is the only terminal app. It follows Omarchy through the
@@ -44,6 +45,8 @@ See README.md for setup and limitations.
   Keep Meet's named colour families and gradients; leave Meet's dark call
   screen alone under light palettes. Preserve GitLab's status, pipeline, diff,
   syntax and authored label colours; theme GitLab only in matching mode.
+  Theme X and Grok.com only in recognised matching modes; preserve status,
+  destructive, badge, syntax, authored media and branded gradient colours.
 - No runtime dependencies beyond system `python3` and Chromium. Tests use
   Node's built-in test runner, Python's `unittest` and a throwaway headless
   Chromium profile. Never read or write the live browser profile, live theme

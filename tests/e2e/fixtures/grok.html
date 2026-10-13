@@ -1,0 +1,183 @@
+<!doctype html>
+<!-- Synthetic consumers of Grok.com's public semantic tokens inspected on
+     2026-10-13 at https://grok.com/ and its primary stylesheet:
+     https://cdn.grok.com/_next/static/chunks/01_1py3b_-l92.css
+     Includes root and warm body redeclarations. No account or app data;
+     authenticated conversation workflows have not been inspected. -->
+<html><head><meta charset="utf-8"><title>Grok.com fixture</title><style>
+:root, .light {
+  --neutral-50: 0 0% 97%; --neutral-100: 0 0% 95%;
+  --neutral-150: 0 0% 91%; --neutral-200: 0 0% 87%;
+  --neutral-300: 0 0% 62%; --neutral-400: 0 0% 52%;
+  --neutral-500: 0 0% 39%; --neutral-700: 0 0% 21%;
+  --neutral-800: 0 0% 16%; --neutral-900: 0 0% 13%;
+  --neutral-950: 0 0% 8%; --neutral-1000: 0 0% 2%;
+  --white: 0 0% 99%; --black: 0 0% 2%;
+  --red-300: 357 82% 71%; --red-500: 355 63% 44%;
+  --green-300: 122 61% 72%; --green-600: 136 100% 29%;
+  --yellow-300: 48 98% 62%; --yellow-700: 45 100% 29%;
+  --blue-300: 227 85% 75%; --blue-500: 227 56% 50%;
+  --surface-base: hsl(var(--white));
+  --surface-inset: hsl(var(--neutral-50));
+  --surface-l1: hsl(var(--neutral-50));
+  --surface-l1-hover: hsl(var(--neutral-100));
+  --surface-l2: hsl(var(--neutral-100));
+  --surface-l2-active: hsl(var(--neutral-150));
+  --surface-l3: hsl(var(--neutral-150));
+  --surface-l4: hsl(var(--neutral-200));
+  --surface-l4-hover: hsl(0 0% 78%);
+  --surface-elevated: hsl(var(--white));
+  --surface-invert: hsl(var(--neutral-1000));
+  --fg-primary: hsl(var(--neutral-1000));
+  --fg-secondary: hsl(var(--neutral-500));
+  --fg-tertiary: hsl(var(--neutral-400));
+  --fg-quaternary: hsl(var(--neutral-300));
+  --fg-invert: hsl(var(--white));
+  --fg-danger: hsl(var(--red-500));
+  --fg-success: hsl(var(--green-600));
+  --fg-warning: hsl(var(--yellow-700));
+  --fg-link: hsl(var(--blue-500));
+  --fg-link-hover: hsl(var(--blue-300));
+  --border-l1: hsl(var(--black) / 6%);
+  --border-l2: hsl(var(--black) / 10%);
+  --border-l3: hsl(var(--black) / 15%);
+  --ring: hsl(var(--neutral-400));
+  --button-filled: hsl(var(--neutral-1000));
+  --button-filled-hover: hsl(var(--neutral-800));
+  --button-filled-active: hsl(var(--neutral-700));
+  --button-secondary-fill: hsl(var(--black) / 4%);
+  --button-danger-fill: color-mix(in srgb, var(--fg-danger) 6%, transparent);
+  --input: hsl(var(--white));
+  --input-border: hsl(var(--neutral-200) / 38%);
+  --input-border-focus: hsl(var(--neutral-500) / 50%);
+  --background-color: hsl(var(--neutral-50));
+  --background: var(--background-color);
+  --popover: hsl(var(--neutral-100));
+  --card: hsl(var(--white) / 80%);
+  --surface-banner: #3f7846;
+}
+.dark {
+  --surface-base: hsl(var(--neutral-1000));
+  --surface-inset: hsl(var(--neutral-1000));
+  --surface-l1: hsl(var(--neutral-950));
+  --surface-l1-hover: hsl(var(--neutral-800));
+  --surface-l2: hsl(var(--neutral-900));
+  --surface-l2-active: hsl(var(--neutral-800));
+  --surface-l3: hsl(var(--neutral-700));
+  --surface-l4: hsl(var(--neutral-700));
+  --surface-l4-hover: hsl(var(--neutral-700));
+  --surface-elevated: hsl(var(--neutral-700));
+  --surface-invert: hsl(var(--white));
+  --fg-primary: hsl(var(--white));
+  --fg-secondary: hsl(var(--neutral-300));
+  --fg-tertiary: hsl(var(--neutral-400));
+  --fg-quaternary: hsl(var(--neutral-500));
+  --fg-invert: hsl(var(--neutral-1000));
+  --fg-danger: hsl(var(--red-300));
+  --fg-success: hsl(var(--green-300));
+  --fg-warning: hsl(var(--yellow-300));
+  --fg-link: hsl(var(--blue-300));
+  --fg-link-hover: hsl(var(--blue-500));
+  --border-l1: hsl(var(--white) / 8%);
+  --border-l2: hsl(var(--white) / 14%);
+  --border-l3: hsl(var(--white) / 20%);
+  --button-filled: hsl(var(--white));
+  --button-filled-hover: hsl(var(--neutral-200));
+  --button-filled-active: hsl(var(--neutral-300));
+  --button-secondary-fill: hsl(var(--white) / 8%);
+  --input: hsl(var(--neutral-700));
+  --input-border: hsl(var(--neutral-200) / 4%);
+  --input-border-focus: hsl(var(--white) / 16%);
+  --background-color: hsl(var(--neutral-950));
+  --background: var(--background-color);
+  --popover: hsl(var(--neutral-700));
+  --card: hsl(var(--neutral-200) / 8%);
+}
+body {
+  --surface-base: #f9f8f7; --surface-inset: hsl(20 13% 95.5%);
+  --surface-l1: hsl(20 13% 95.5%); --surface-l1-hover: #f0eeed;
+  --surface-l2: #eae8e6; --surface-l2-active: #e6e5e3;
+  --surface-elevated: #fff; --fg-primary: #050505;
+  --fg-secondary: #636363; --fg-tertiary: #858585;
+  --border-l1: hsl(36 20% 5% / 4%); --border-l2: hsl(36 20% 5% / 8%);
+  --fg-accent: #0890ff; --fg-accent-hover: #0078d8;
+  --surface-user-bubble: #f0efed; --surface-composer: #fff;
+  --border-composer: #e6e5e3;
+  --fg-diff-add: #2f7448; --fg-diff-del: #a7444b;
+  --fg-incognito: hsl(268 47% 51%);
+  --surface-incognito: hsl(268 100% 96%);
+  --input-background: hsl(20 13% 95.5%);
+  --input-button-background: #f5f3f2;
+  --input-button-background-hover: #f0eeed;
+  --background-color: var(--surface-base); --background: var(--background-color);
+}
+:root.dark body {
+  --surface-base: #131211; --surface-inset: hsl(30 5% 9%);
+  --surface-l1: hsl(30 5% 9%); --surface-l1-hover: #23211f;
+  --surface-l2: #201f1d; --surface-l2-active: #2b2927;
+  --surface-elevated: #23211f; --popover: #23211f;
+  --fg-primary: hsl(var(--white)); --fg-secondary: hsl(var(--neutral-300));
+  --fg-tertiary: hsl(var(--neutral-400));
+  --border-l1: hsl(var(--white) / 6%); --border-l2: hsl(var(--white) / 10%);
+  --fg-accent: #299fff; --fg-accent-hover: #47acff;
+  --surface-user-bubble: var(--surface-l2);
+  --surface-composer: var(--surface-user-bubble); --border-composer: var(--border-l1);
+  --fg-diff-add: #63b67c; --fg-diff-del: #cd8489;
+  --fg-incognito: hsl(268 74% 74%); --surface-incognito: hsl(268 33% 14%);
+  --input-background: hsl(30 5% 9%);
+  --input-button-background: #23211f; --input-button-background-hover: #2b2927;
+}
+body { background: var(--surface-base); color: var(--fg-primary); }
+#sidebar { background: var(--surface-l1); color: var(--fg-secondary); }
+#secondary { color: var(--fg-secondary); } #muted { color: var(--fg-tertiary); }
+#link { color: var(--fg-link); }
+#dialog { background: var(--surface-elevated); color: var(--fg-primary); border: 1px solid var(--border-l2); }
+#input { background: var(--input); color: var(--fg-primary); border: 1px solid var(--input-border); }
+#input:focus { border-color: var(--input-border-focus); }
+#button { background: var(--button-filled); color: var(--fg-invert); border: none; }
+#button:hover { background: var(--button-filled-hover); }
+#button:active { background: var(--button-filled-active); }
+#composer { background: var(--surface-composer); border: 1px solid var(--border-composer); }
+#bubble { background: var(--surface-user-bubble); color: var(--fg-primary); }
+#legacy { background: var(--background); color: var(--fg-primary); }
+#scope, #inserted { background: var(--surface-l2); color: var(--fg-primary); }
+#deep { background: var(--surface-l4); color: var(--fg-primary); }
+#deep-hover { background: var(--surface-l4-hover); color: var(--fg-primary); }
+#deep-secondary { color: var(--fg-secondary); }
+#deep-muted { color: var(--fg-tertiary); }
+#deep-link { color: var(--fg-link); }
+#opposite { background: var(--surface-base); color: var(--fg-primary); }
+#danger { color: var(--fg-danger); background: var(--button-danger-fill); }
+#success { color: var(--fg-success); } #warning { color: var(--fg-warning); }
+#added { color: var(--fg-diff-add); } #removed { color: var(--fg-diff-del); }
+#incognito { color: var(--fg-incognito); background: var(--surface-incognito); }
+#brand { color: var(--fg-accent); }
+#banner { background: var(--surface-banner); color: white; }
+#badge { background: #f91880; color: white; }
+#code { --tw-prose-pre-code: #e5e7eb; --tw-prose-pre-bg: #1e2939; color: var(--tw-prose-pre-code); background: var(--tw-prose-pre-bg); }
+#syntax { color: #a78bfa; }
+#gradient { background: linear-gradient(135deg, hsl(var(--blue-300)), hsl(var(--blue-500))); }
+</style><script>
+document.documentElement.className = 'scheme-light dark:scheme-dark {{MODE}}';
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('opposite').className = '{{MODE}}' === 'dark' ? 'light' : 'dark';
+});
+</script></head><body>
+<aside id="sidebar">Chats</aside><main id="scope">Conversation
+<span id="secondary">Description</span><span id="muted">Metadata</span>
+<a id="link" href="#">Reference</a><div id="dialog">Menu</div>
+<input id="input" value="Ask Grok"><button id="button">Send</button>
+<div id="composer">Composer</div><div id="bubble">User message</div>
+<div id="legacy">Legacy background</div><div id="opposite">Opposite appearance scope</div>
+<div id="deep">Deepest surface</div><div id="deep-hover">Deepest hover surface
+  <span id="deep-secondary">Secondary label</span><span id="deep-muted">Hint</span>
+  <a id="deep-link" href="#">Reference</a>
+</div>
+<span id="danger">Error</span><span id="success">Done</span><span id="warning">Warning</span>
+<span id="added">Added</span><span id="removed">Removed</span>
+<div id="incognito">Private chat</div><span id="brand">Brand accent</span>
+<div id="banner">Notice</div><span id="badge">Badge</span>
+<pre id="code">Code <span id="syntax">keyword</span></pre>
+<div id="gradient">Branded gradient</div>
+<img id="media" alt="Authored image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23f91880'/%3E%3C/svg%3E">
+</main></body></html>

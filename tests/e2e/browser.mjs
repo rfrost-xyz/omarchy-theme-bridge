@@ -207,7 +207,15 @@ export class Browser {
     // The connection closes before Chromium can reply, so do not wait for one.
     this.send('Browser.close').catch(() => {});
     this.ws?.close();
-    await new Promise((resolve) => { if (this.proc.exitCode !== null) resolve(); else { this.proc.once('exit', resolve); setTimeout(() => { this.proc.kill('SIGKILL'); resolve(); }, 3000); } });
+    // Hold this process: after a restart this.proc is the new browser, which a
+    // late kill must not reach.
+    const proc = this.proc;
+    await new Promise((resolve) => {
+      if (proc.exitCode !== null || proc.signalCode !== null) { resolve(); return; }
+      // A killed browser still holds the profile lock until it exits.
+      const timer = setTimeout(() => { proc.kill('SIGKILL'); setTimeout(resolve, 2000); }, 3000);
+      proc.once('exit', () => { clearTimeout(timer); resolve(); });
+    });
     this.killHost();
   }
 

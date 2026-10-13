@@ -33,11 +33,17 @@ fi
 
 require_absolute_dirs
 
+# An update must be followed by a reload in each profile: Chromium keeps the
+# registered background script across restarts.
+UPDATE=0
+[[ -f $DATA_DIR/$MARKER ]] && UPDATE=1
+
 # A marked install under the former name is migrated; its flags entry is
 # replaced by ours, so the entry counts as a request for --load-extension-flag.
 legacy_detect
 LEGACY_FLAG_ENTRY=0
 if ((LEGACY_FOUND)); then
+  UPDATE=1
   legacy_flags_plan || exit 1
   if [[ $LEGACY_FLAGS_PLAN != unchanged ]]; then
     LEGACY_FLAG_ENTRY=1
@@ -185,10 +191,21 @@ if ((GROK)); then
 fi
 
 echo "Installed."
+RELOAD="reload Omarchy Theme Bridge in chrome://extensions in each Chromium profile that uses it. Restarting Chromium alone keeps the previous background script."
 if ((FLAG)); then
   echo "Restart Chromium once so it reads the new flag. Later theme changes need no restart."
+  if ((UPDATE)); then echo "Then $RELOAD"; fi
 elif [[ -f $FLAGS_FILE ]] && flags_edit mentions 2>/dev/null; then
-  echo "Chromium already loads it: reload Omarchy Theme Bridge in chrome://extensions (or restart Chromium) to pick up updated files."
+  if ((UPDATE)); then
+    echo "Chromium already loads it: $RELOAD"
+  else
+    echo "The flags file already names it: restart Chromium once so it loads the extension."
+  fi
+elif ((LEGACY_FOUND)); then
+  : # The migration notice below says to load it again from the new path.
+elif ((UPDATE)); then
+  echo "Updated: $RELOAD"
+  echo "To add it to another profile, choose \"Load unpacked\" in chrome://extensions and select $EXTENSION_DIR"
 else
   cat <<EOF
 Load the extension once in each Chromium profile that opens Notion, Slack, Google Meet, Squint Opera GitLab, X or Grok.com.

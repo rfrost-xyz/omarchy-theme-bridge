@@ -84,6 +84,13 @@ It has three parts:
    pages once after updating. Grok.com's browser adapter is separate from the
    optional Grok Build terminal setup below.
 
+4. After updating (running `./install.sh` again over an install), open
+   `chrome://extensions` in each Chromium profile that uses the extension and
+   reload Omarchy Theme Bridge, then reload open app pages. Restarting
+   Chromium is not enough: it keeps running the previously registered
+   background script, even with the `--load-extension` flag. If a profile
+   still runs an older background script, its options page says so.
+
 ### Grok Build
 
 Optional, and off unless you ask for it:
@@ -349,6 +356,15 @@ tests.
 - **Extension reloads**: Chromium does not re-inject content scripts into tabs
   that are already open. After reinstalling or reloading the extension, open
   Notion, Slack, Meet and GitLab windows drop back to the apps' own colours until reloaded.
+- **Stale background script**: Chromium keeps an extension's registered
+  background script across restarts after its files change, and replaces it
+  only when the extension is reloaded in that profile. Until then the profile
+  can run old code; after the rename to omarchy-theme-bridge that meant asking
+  for a helper that no longer existed, so pages kept a stale palette. The
+  options page reports this for updates made after the check was added; older
+  installs need one manual reload in each profile. The extension does not
+  reload itself, because in headless testing Chromium removed an extension loaded with
+  `--load-extension` instead of reloading it.
 - **Hand-written themes**: the helper reads `colors.toml` the way
   `omarchy-theme-color` does, including legacy `bg`, `fg` and `colorN` names
   and the same light or dark rule, so it agrees with the desktop's colour

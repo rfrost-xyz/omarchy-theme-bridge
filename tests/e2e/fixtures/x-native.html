@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- Synthetic fixed-colour consumers based on signed-in X DOM/style inspection
+     on 2026-10-13. All content and class names below are invented. -->
+<html data-theme="light"><head><meta charset="utf-8"><title>Native X fixture</title>
+<style id="react-native-stylesheet">
+.page-light { background-color: rgb(255, 255, 255); color: rgb(15, 20, 25); border-color: rgb(239, 243, 244); }
+.page-dark { background-color: rgb(0, 0, 0); color: rgb(231, 233, 234); border-color: rgb(47, 51, 54); }
+.card-light { background-color: rgb(247, 249, 249); color: rgb(15, 20, 25); }
+.card-dark { background-color: rgb(22, 24, 28); color: rgb(231, 233, 234); }
+.sticky-light { background-color: rgba(255, 255, 255, 0.85); color: rgb(15, 20, 25); }
+.sticky-dark { background-color: rgba(0, 0, 0, 0.85); color: rgb(231, 233, 234); }
+.secondary-light { color: rgb(83, 100, 113); }
+.secondary-dark { color: rgb(113, 118, 123); }
+.hint-light { color: rgb(130, 154, 171); }
+.neutral-important-light { color: rgb(83, 100, 113) !important; }
+.neutral-important-dark { color: rgb(113, 118, 123) !important; }
+.blue { color: rgb(29, 155, 240); }
+.liked { color: rgb(249, 24, 128); }
+.status { color: rgb(0, 186, 124); }
+.badge { background-color: rgb(29, 155, 240); color: rgb(255, 255, 255); }
+.inverted-light { background-color: rgb(15, 20, 25); color: rgb(255, 255, 255); }
+.inverted-dark { background-color: rgb(231, 233, 234); color: rgb(15, 20, 25); }
+</style>
+<style>
+body { margin: 0; }
+#timeline, #sidebar, #sticky, #inline, #opposite, #important { border-style: solid; border-width: 1px; padding: 12px; }
+#image { width: 100px; height: 70px; }
+</style></head><body>
+<script>
+function setNativeMode(mode) {
+  const dark = mode === 'dark';
+  document.body.style.backgroundColor = dark ? 'rgb(0, 0, 0)' : mode === 'light' ? 'rgb(255, 255, 255)' : 'rgb(21, 32, 43)';
+  document.body.style.color = dark ? 'rgb(231, 233, 234)' : 'rgb(15, 20, 25)';
+  for (const [id, role] of [['timeline','page'],['sidebar','card'],['sticky','sticky'],['important','neutral-important'],['inverted','inverted']]) {
+    const e = document.getElementById(id); if (e) e.className = role + '-' + (dark ? 'dark' : 'light');
+  }
+  for (const id of ['secondary','sidebar-secondary']) {const e=document.getElementById(id);if(e)e.className='secondary-'+(dark?'dark':'light');}
+  const inline=document.getElementById('inline');
+  if(inline) {inline.style.backgroundColor=dark?'rgb(0, 0, 0)':'rgb(255, 255, 255)';inline.style.color=dark?'rgb(231, 233, 234)':'rgb(15, 20, 25)';inline.style.borderColor=dark?'rgb(47, 51, 54)':'rgb(207, 217, 222)';}
+  const opposite=document.getElementById('opposite');if(opposite)opposite.className='page-'+(dark?'light':'dark');
+}
+setNativeMode('{{MODE}}');
+document.addEventListener('DOMContentLoaded',()=>setNativeMode('{{MODE}}'));
+</script>
+<main id="timeline" data-testid="primaryColumn">Synthetic timeline
+  <span id="secondary">Timestamp</span><div id="sticky">Sticky navigation</div>
+  <svg id="inherited-graphic"><circle fill="currentColor" cx="20" cy="20" r="10"/></svg>
+</main>
+<aside id="sidebar" data-testid="sidebarColumn">Synthetic card <span id="sidebar-secondary">Description</span></aside>
+<div id="inline">Inline neutral surface</div><div id="important">Important secondary text</div>
+<div id="opposite">Opposite appearance surface</div>
+<a id="brand" class="blue" href="#">Brand link</a><span id="engagement" class="liked">Liked</span>
+<span id="status" class="status">Success</span><span id="badge" class="badge">Badge</span>
+<button id="inverted">Post</button>
+<div id="media" data-testid="tweetPhoto" style="background-color: rgb(255, 255, 255); color: rgb(15, 20, 25)">
+  <img id="image" style="background-color: rgb(255, 255, 255)" alt="Synthetic authored image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='70'%3E%3Crect width='100' height='70' fill='white'/%3E%3Ccircle cx='50' cy='35' r='20' fill='%231d9bf0'/%3E%3C/svg%3E">
+</div>
+<svg id="graphic" style="color: rgb(15, 20, 25)"><circle fill="#f91880" cx="20" cy="20" r="10"/></svg>
+<div id="authored" style="background:linear-gradient(30deg,#8b5cf6,#ec4899);color:#fff">Authored gradient</div>
+</body></html>

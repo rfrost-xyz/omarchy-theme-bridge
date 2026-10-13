@@ -172,6 +172,17 @@ const REMAPPED = {
   ],
 };
 const URLS = { notion: 'https://app.notion.com/', slack: 'https://app.slack.com/', meet: 'https://meet.google.com/', gitlab: 'https://git.squintopera.com/', x: 'https://x.com/', grok: 'https://grok.com/' };
+const NATIVE_X = [
+  ['body',4.5,'native body text'],
+  ['#timeline',4.5,'native timeline text'],
+  ['#secondary',4.5,'native secondary text'],
+  ['#sidebar',4.5,'native sidebar text'],
+  ['#sidebar-secondary',4.5,'native sidebar secondary text'],
+  ['#sticky',4.5,'native sticky header text'],
+  ['#inline',4.5,'native inline text'],
+  ['#important',4.5,'native priority text'],
+  ['#inverted',4.5,'native inverted button label'],
+];
 
 let browser;
 let options;
@@ -195,6 +206,7 @@ for (const theme of themes) {
       { app: 'notion', mode: theme.mode, checks: CHECKS.notion },
       { app: 'gitlab', mode: theme.mode, checks: CHECKS.gitlab },
       { app: 'x', mode: theme.mode, checks: CHECKS.x },
+      { app: 'x', client: 'native', mode: theme.mode, checks: NATIVE_X },
       { app: 'grok', mode: theme.mode, checks: CHECKS.grok },
       { app: 'slack', mode: theme.mode, checks: theme.mode === 'light' ? [...CHECKS.slack, ...PRESERVED_LIGHT.slack] : CHECKS.slack },
       // Slack cannot follow the system appearance, so it is also themed when
@@ -204,9 +216,10 @@ for (const theme of themes) {
       // screen takes the palette only under dark palettes.
       { app: 'meet', mode: 'light', checks: theme.mode === 'light' ? [...CHECKS.meet, ...PRESERVED_LIGHT.meet] : [...CHECKS.meet, ...MEET_CALL, ...REMAPPED.meet] },
     ];
-    for (const { app, mode, checks } of cases) {
-      const page = await browser.open(`${URLS[app]}?mode=${mode}`);
+    for (const { app, mode, checks, client } of cases) {
+      const page = await browser.open(`${URLS[app]}?mode=${mode}${client === 'native' ? '&client=native' : ''}`);
       await page.waitFor(`document.documentElement.getAttribute('data-omarchy-adapters') === '${app}' && getComputedStyle(document.documentElement).getPropertyValue('--omarchy-background').trim() === '${theme.colors.background}'`);
+      if(client==='native') await page.waitFor(`getComputedStyle(document.querySelector('#timeline')).backgroundColor === 'rgb(${C.triplet(theme.colors.background)})'`);
       for (const [selector, min, label] of checks) {
         const { fg, bg } = await page.eval(`(${RESOLVE})(${JSON.stringify(selector)})`);
         const ratio = C.contrast(fg, bg);

@@ -169,8 +169,9 @@ over because the extension ID is unchanged.
 
 ## How the adapters map colours
 
-Adapters only assign the apps' own CSS variables; they do not restyle layout
-classes. In Notion, overrides apply to the page root and to theme containers in
+Adapters map colour through CSS variables without restyling layout classes.
+X's signed-in client also needs the bounded neutral declaration translation
+described below. In Notion, overrides apply to the page root and to theme containers in
 the same mode, so deliberately opposite-mode elements keep Notion's styling.
 Slack's handling of tooltips, reactions and its two modes is described below.
 
@@ -220,10 +221,20 @@ Slack's handling of tooltips, reactions and its two modes is described below.
 - **X** (only `x.com`): semantic `--x-*` neutral surfaces, text, borders,
   menus and buttons, plus the current stylesheet's legacy neutral HSL slots.
   The fixed page-root backdrop consumes the mapped background. The adapter
-  reads X's `data-theme` marker, recognising light and dark; it waits for
-  other values. Status, destructive, badges, brand colours, authored media
+  reads X's `data-theme` marker in the public client and its untouched inline
+  body background in the classic signed-in client, recognising light and
+  dark; it waits for other values. The classic client's fixed neutral colour
+  declarations in its named React Native stylesheet and inline styles are
+  translated to palette variables, without selecting generated classes or
+  changing layout. Newly inserted declarations are checked within a second.
+  Original values and priorities restore on disable or extension removal
+  while they are still the adapter's. Later app edits are preserved.
+  Native media fallbacks and a private original-colour cascade preserve
+  shared and inherited SVG colours, including native colour animations.
+  Status, destructive, badges, brand colours, authored media
   and gradients keep X's values. Appearance changes are picked up by the
-  existing two-second visible-page re-check.
+  existing two-second visible-page re-check. Body inline background stays
+  untouched, so the adapter cannot mistake its own styling for X's mode.
 
 - **Grok.com** (only `grok.com`): semantic neutral `--surface-*`, `--fg-*`,
   `--border-*`, `--input-*` and `--button-*` tokens, including composer and
@@ -308,9 +319,12 @@ tests.
 - **X and Grok.com** (2026-10-13): public signed-out pages and current public
   stylesheets were inspected. Synthetic tests cover neutral tokens, both
   modes, live updates, independent persistent switches, preserved meaning
-  colours, origin isolation and stock-theme contrast. Signed-in timelines,
-  chat histories and account-only screens have not been checked live with
-  the extension. App updates or fixed colours outside the mapped tokens may
+  colours, origin isolation and stock-theme contrast. X's signed-in timeline
+  style model was also inspected; synthetic native-client tests cover fixed
+  neutral declarations, CSSOM insertion, inline edits, preservation and
+  restoration. Live verification of the corrected signed-in mapping requires
+  reloading the updated extension. Grok chat histories and account-only
+  screens remain unverified. App updates or unrecognised fixed colours may
   leave some surfaces unchanged.
 - **Light and dark switching**: Notion follows the desktop only when set to
   use the system setting; until then the Notion adapter leaves it uncoloured.

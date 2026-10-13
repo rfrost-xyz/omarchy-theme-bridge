@@ -1,3 +1,11 @@
+/* Typed native proxy follows colour interpolation in the app's keyframes
+   and mirrored transitions. CSS owns this removable registration. */
+@property --omarchy-x-native-original-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0, 0, 0);
+}
+
 /* X semantic tokens observed in its public web stylesheet on 2026-10-13.
    Keep primitive ramps, brand, engagement, status, badge and media colours.
    Explicit opposite-mode scopes keep X's own declarations. */
@@ -76,4 +84,67 @@ html[data-omarchy-adapters~="x"][data-omarchy-mode="light"] [data-theme="light"]
 html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"],
 html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"] [data-theme="dark"] {
   --x-brand-subtle: color-mix(in srgb, var(--x-fg-brand) 14%, var(--x-black)) !important;
+}
+
+/* Classic X declarations reference these aliases with native fallbacks.
+   Define them only while both the untouched native mode and palette match. */
+html[data-omarchy-adapters~="x"][data-omarchy-mode="light"][data-omarchy-x-native="light"] {
+  --omarchy-x-native-light-background: var(--omarchy-background);
+  --omarchy-x-native-light-background-rgb: var(--omarchy-background-rgb);
+  --omarchy-x-native-light-surface: var(--omarchy-mix-4);
+  --omarchy-x-native-light-raised: var(--omarchy-mix-8);
+  --omarchy-x-native-light-text: var(--omarchy-text);
+  --omarchy-x-native-light-secondary: var(--omarchy-text-secondary);
+  --omarchy-x-native-light-tertiary: var(--omarchy-text-tertiary);
+  --omarchy-x-native-light-border: var(--omarchy-mix-12);
+}
+html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"][data-omarchy-x-native="dark"] {
+  --omarchy-x-native-dark-background: var(--omarchy-background);
+  --omarchy-x-native-dark-background-rgb: var(--omarchy-background-rgb);
+  --omarchy-x-native-dark-surface: var(--omarchy-mix-4);
+  --omarchy-x-native-dark-raised: var(--omarchy-mix-8);
+  --omarchy-x-native-dark-text: var(--omarchy-text);
+  --omarchy-x-native-dark-secondary: var(--omarchy-text-secondary);
+  --omarchy-x-native-dark-tertiary: var(--omarchy-text-tertiary);
+  --omarchy-x-native-dark-border: var(--omarchy-mix-12);
+}
+/* Keep the body's inline background as the native appearance signal. */
+html[data-omarchy-adapters~="x"][data-omarchy-mode="light"][data-omarchy-x-native="light"] body,
+html[data-omarchy-adapters~="x"][data-omarchy-mode="dark"][data-omarchy-x-native="dark"] body {
+  background-color: var(--omarchy-background) !important;
+}
+
+/* Shared native rules keep live original fallbacks inside authored media.
+   Reset aliases rather than pinning colours, so hover, focus, responsive
+   rules and animations continue through the app's normal cascade. The whole
+   inherited-colour default has zero specificity; app colour rules win. */
+:where(
+  html[data-omarchy-adapters~="x"]:is([data-omarchy-mode="light"][data-omarchy-x-native="light"], [data-omarchy-mode="dark"][data-omarchy-x-native="dark"]) :is(svg, img, video, canvas, picture, [data-testid="tweetPhoto"], [data-testid="videoPlayer"]),
+  html[data-omarchy-adapters~="x"]:is([data-omarchy-mode="light"][data-omarchy-x-native="light"], [data-omarchy-mode="dark"][data-omarchy-x-native="dark"]) :is(svg, img, video, canvas, picture, [data-testid="tweetPhoto"], [data-testid="videoPlayer"]) *
+) {
+  --omarchy-x-native-light-background: initial !important;
+  --omarchy-x-native-light-background-rgb: initial !important;
+  --omarchy-x-native-light-surface: initial !important;
+  --omarchy-x-native-light-raised: initial !important;
+  --omarchy-x-native-light-text: initial !important;
+  --omarchy-x-native-light-secondary: initial !important;
+  --omarchy-x-native-light-tertiary: initial !important;
+  --omarchy-x-native-light-border: initial !important;
+  --omarchy-x-native-dark-background: initial !important;
+  --omarchy-x-native-dark-background-rgb: initial !important;
+  --omarchy-x-native-dark-surface: initial !important;
+  --omarchy-x-native-dark-raised: initial !important;
+  --omarchy-x-native-dark-text: initial !important;
+  --omarchy-x-native-dark-secondary: initial !important;
+  --omarchy-x-native-dark-tertiary: initial !important;
+  --omarchy-x-native-dark-border: initial !important;
+  --omarchy-x-native-protected-color: initial !important;
+}
+/* Only outer media roots need an inherited-colour default. Descendants
+   inherit their parent's live colour, including animated and hover colours. */
+:where(
+  html[data-omarchy-adapters~="x"]:is([data-omarchy-mode="light"][data-omarchy-x-native="light"], [data-omarchy-mode="dark"][data-omarchy-x-native="dark"]) :is(svg, img, video, canvas, picture, [data-testid="tweetPhoto"], [data-testid="videoPlayer"]):not(:is(svg, img, video, canvas, picture, [data-testid="tweetPhoto"], [data-testid="videoPlayer"]) *)
+) {
+  --omarchy-x-native-protected-color: var(--omarchy-x-native-original-color, CanvasText) !important;
+  color: var(--omarchy-x-native-original-color, inherit);
 }

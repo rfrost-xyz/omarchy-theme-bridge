@@ -93,7 +93,7 @@ export class Browser {
 
   fulfil({ requestId, request }, sessionId) {
     const url = new URL(request.url);
-    const fixture = FIXTURES[url.host];
+    const fixture = url.host === 'x.com' && url.searchParams.get('client') === 'native' ? 'x-native.html' : FIXTURES[url.host];
     if (!fixture || url.pathname !== '/') {
       this.send('Fetch.fulfillRequest', { requestId, responseCode: 404, body: '' }, sessionId).catch(() => {});
       return;

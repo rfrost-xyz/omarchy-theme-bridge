@@ -16,10 +16,14 @@ test('reloading the extension removes stale styling from open pages', async () =
     await page.waitFor(`document.documentElement.getAttribute('data-omarchy-adapters') === '${id}'`);
     pages.push(page);
   }
+  const native = await browser.open('https://x.com/?client=native&mode=dark');
+  await native.waitFor("getComputedStyle(document.querySelector('#timeline')).backgroundColor === 'rgb(26, 27, 38)'");
+  pages.push(native);
   const options = await browser.options();
   await options.eval('setTimeout(() => chrome.runtime.reload(), 50); true');
   for (const page of pages) {
     await page.waitFor("document.getElementById('omarchy-theme-bridge-palette') === null && !document.documentElement.hasAttribute('data-omarchy-mode') && !document.documentElement.hasAttribute('data-omarchy-adapters')", 6000);
-    await page.close();
   }
+  await native.waitFor("!document.documentElement.hasAttribute('data-omarchy-x-native') && !document.querySelector('#inline').style.cssText.includes('--omarchy-x-native') && ![...document.querySelector('#react-native-stylesheet').sheet.cssRules].some(r=>r.style?.cssText.includes('--omarchy-x-native'))",6000);
+  for (const page of pages) await page.close();
 });

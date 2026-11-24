@@ -10,4 +10,4 @@
 
 ## 3. Verify delivery
 
-- [ ] 3.1 Run `./scripts/check` in full and obtain independent review.
+- [x] 3.1 Run `./scripts/check` in full and obtain independent review.

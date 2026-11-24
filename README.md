@@ -295,7 +295,7 @@ mode gating, preserved colours and a contrast matrix over every stock theme in
 `/usr/share/omarchy/themes`. They never touch your browser profile or theme.
 
 Requirements: system `/usr/bin/python3` and Chromium at run time; Node and
-`mise` for the checks.
+`mise` for the checks (run `mise trust && mise install` once per checkout).
 
 ## Known limitations
 

@@ -285,8 +285,8 @@ lists adapters from the manifest.
 
 This runs shell syntax checks, the helper tests (Python `unittest`), the
 installer tests (temporary `HOME`), the extension unit tests and the headless
-Chromium tests (`node --test`), and strict OpenSpec validation (set `SKIP_OPENSPEC=1` where OpenSpec is not
-installed). The browser
+Chromium tests (`node --test`), and strict OpenSpec validation with the
+version pinned in `mise.toml` (run through `mise`). The browser
 tests use a throwaway profile, the real extension and helper, a temporary
 Omarchy state directory and synthetic pages served on the real origins through
 the DevTools protocol. They cover theme changes, directory replacement, helper
@@ -294,8 +294,8 @@ and service worker restarts, missing and malformed palettes, adapter toggles,
 mode gating, preserved colours and a contrast matrix over every stock theme in
 `/usr/share/omarchy/themes`. They never touch your browser profile or theme.
 
-Requirements: system `/usr/bin/python3` and Chromium at run time; Node for the
-tests.
+Requirements: system `/usr/bin/python3` and Chromium at run time; Node and
+`mise` for the checks (run `mise trust && mise install` once per checkout).
 
 ## Known limitations
 

@@ -19,11 +19,15 @@ node --test tests/extension/
 echo "== headless Chromium"
 node --test --test-concurrency=1 --test-timeout=60000 tests/e2e/
 echo "== openspec"
-if command -v openspec >/dev/null; then
-  openspec validate --all --strict
-elif [[ ${SKIP_OPENSPEC:-} == 1 ]]; then
-  echo "openspec not found: skipped (SKIP_OPENSPEC=1)"
-else
-  echo "openspec not found; install it or set SKIP_OPENSPEC=1" >&2
+if ! command -v mise >/dev/null; then
+  echo "mise not found; install mise to run the OpenSpec version pinned in mise.toml" >&2
   exit 1
 fi
+pinned=$(mise current npm:@fission-ai/openspec)
+running=$(mise exec -- openspec --version)
+if [[ $running != "$pinned" ]]; then
+  echo "openspec $running is not the $pinned pinned in mise.toml; run mise install" >&2
+  exit 1
+fi
+mise exec -- openspec validate --all --strict --no-interactive
+mise exec -- openspec validate --archived --strict --no-interactive

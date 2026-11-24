@@ -8,6 +8,14 @@ context: |
   ~/.local/state/omarchy/current, /usr/share/omarchy and managed browser policy;
   this project must not modify them. Write artifacts in British English without em dashes.
 
+operations:
+  apply:
+    guidance:
+      - Run ./scripts/check and keep it passing before ticking a task.
+  archive:
+    guidance:
+      - Run ./scripts/check after syncing specs and archive only when it passes.
+
 # Project context (optional)
 # Add only constraints that should guide OpenSpec artifacts and workflows.
 # Include constraints an agent cannot infer by reading the code.

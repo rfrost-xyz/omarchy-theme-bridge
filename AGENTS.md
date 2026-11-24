@@ -52,6 +52,11 @@ See README.md for setup and limitations.
   Chromium profile. Never read or write the live browser profile, live theme
   state or credentials in tests. Fixtures are synthetic.
 
+## Specs
+
+`openspec/` holds the specs and changes. Project rules for OpenSpec work are
+in `openspec/config.yaml`.
+
 ## Checks
 
 Run `./scripts/check` before committing. It runs every unit, installer and
